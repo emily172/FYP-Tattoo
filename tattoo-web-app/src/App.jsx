@@ -5,15 +5,17 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
 import Artists from "./pages/Artists";
-import ArtistProfile from "./pages/ArtistProfile"
+import ArtistProfile from "./pages/ArtistProfile";
 import Dashboard from "./pages/Dashboard";
-import BookingForm from "./pages/BookingForm"
-import BookingConfirmation from "./pages/BookingConfirmation"; 
+import BookingForm from "./pages/BookingForm";
+import BookingConfirmation from "./pages/BookingConfirmation";
 import MyBookings from "./pages/MyBookings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
+// Import Toastify CSS
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
@@ -26,14 +28,17 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/artists" element={<Artists />} />
-            <Route path="artists/:id" element={<ArtistProfile/>}/>
+            <Route path="artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
-            <Route path="/my-bookings" element={<MyBookings />} /> {/* New route */}
+            <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>
+
+          {/* Global Toastify Notifications */}
+          <ToastContainer />
         </main>
         <Footer /> {/* Always at the bottom */}
       </div>
