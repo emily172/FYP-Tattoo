@@ -20,10 +20,17 @@ const Dashboard = () => {
     return true; // Default: show all bookings
   });
 
-  // Show a notification (e.g., for deleted bookings)
-  const showNotification = (message) => {
-    toast.success(message, { autoClose: 2000 });
-  };
+const showNotification = (message) => {
+  toast.success(message, {
+    position: "top-right", // Position of the toast
+    autoClose: 5000, // 5 seconds
+    hideProgressBar: false, // Show the progress bar
+    closeOnClick: true, // Close when clicked
+    pauseOnHover: true, // Pause when hovering
+    draggable: true, // Allow dragging
+  });
+};
+
 
   if (bookings.length === 0) {
     return (

@@ -19,8 +19,38 @@ const BookingForm = () => {
   const [notes, setNotes] = useState(editingData.notes || "");
   const [index, setIndex] = useState(editingData.index); // Booking index, if editing
 
+  // Utility to format a date as YYYY-MM-DD
+  const formatDate = (inputDate) => {
+    return new Date(inputDate).toISOString().split("T")[0];
+  };
+
+  // Check if a date is valid based on availability (open and blocked)
+  const isDateBlocked = (selectedDate) => {
+    const formattedDate = formatDate(selectedDate);
+    console.log("Checking availability for date:", formattedDate);
+    // Blocked dates override open dates
+    if (artist.availability.blocked.includes(formattedDate)) return true;
+
+    // If `open` dates are defined, allow only those dates
+    if (
+      artist.availability.open &&
+      !artist.availability.open.includes(formattedDate)
+    ) {
+      return true; // If not in the open array, block it
+    }
+
+    // Otherwise, the date is valid
+    return false;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate if the selected date is unavailable
+    if (isDateBlocked(date)) {
+      alert("Selected date is unavailable. Please choose a different date.");
+      return;
+    }
 
     const bookingDetails = {
       artistId: artist.id, // Ensure the artist ID is included
@@ -50,8 +80,13 @@ const BookingForm = () => {
     return (
       <div className="container mt-5">
         <h2>Artist Not Found</h2>
-        <p>Oops! The artist you're booking with does not exist. Please go back and try again.</p>
-        <button onClick={() => navigate("/artists")} className="btn btn-secondary">
+        <p>
+          Oops! The artist you're booking with does not exist. Please go back and try again.
+        </p>
+        <button
+          onClick={() => navigate("/artists")}
+          className="btn btn-secondary"
+        >
           Back to Artists
         </button>
       </div>
@@ -89,8 +124,14 @@ const BookingForm = () => {
             className="form-control"
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            min={formatDate(new Date())} // Disable past dates
             required
           />
+          {date && isDateBlocked(date) && (
+            <p className="text-danger mt-2">
+              This date is unavailable. Please choose another date.
+            </p>
+          )}
         </div>
         <div className="mb-3">
           <label className="form-label">Preferred Time</label>
