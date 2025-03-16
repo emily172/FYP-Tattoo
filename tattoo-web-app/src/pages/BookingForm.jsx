@@ -4,6 +4,7 @@ import { artists } from "../data/artists";
 
 const BookingForm = () => {
   const { id } = useParams(); // Get artist ID from URL
+  const navigate = useNavigate(); 
   const artist = artists.find((artist) => artist.id === parseInt(id)); // Find artist by ID
 
   const [name, setName] = useState("");
