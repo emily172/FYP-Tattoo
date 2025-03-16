@@ -6,28 +6,32 @@ const ArtistProfile = () => {
   const { id } = useParams(); // Get artist ID from URL
   const [artist, setArtist] = useState(null); // State to store artist data
   const [sortOption, setSortOption] = useState("newest"); // Default sorting option
+  const [sortedReviews, setSortedReviews] = useState([]); // State for sorted reviews
 
   // Fetch artist data from localStorage (or fallback to the default array) when the component mounts
   useEffect(() => {
     const storedArtists = JSON.parse(localStorage.getItem("artists")) || artists;
     const selectedArtist = storedArtists.find((a) => a.id === parseInt(id));
     setArtist(selectedArtist); // Set the selected artist data
+    if (selectedArtist) {
+      setSortedReviews(selectedArtist.reviews || []); // Initialize reviews
+    }
   }, [id]);
 
   // Handle sorting reviews
   useEffect(() => {
     if (artist) {
-      let sortedReviews = [...artist.reviews];
+      let reviews = [...artist.reviews];
       if (sortOption === "newest") {
-        sortedReviews.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        reviews.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       } else if (sortOption === "oldest") {
-        sortedReviews.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        reviews.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       } else if (sortOption === "highest") {
-        sortedReviews.sort((a, b) => b.rating - a.rating);
+        reviews.sort((a, b) => b.rating - a.rating);
       } else if (sortOption === "lowest") {
-        sortedReviews.sort((a, b) => a.rating - b.rating);
+        reviews.sort((a, b) => a.rating - b.rating);
       }
-      setArtist((prev) => ({ ...prev, reviews: sortedReviews })); // Update artist reviews with sorted data
+      setSortedReviews(reviews); // Update sorted reviews
     }
   }, [sortOption, artist]);
 
@@ -57,6 +61,7 @@ const ArtistProfile = () => {
   }
 
   const ratingsBreakdown = getRatingsBreakdown(artist.reviews || []);
+  const totalReviews = artist.reviews?.length || 0; // Total number of reviews
 
   return (
     <div className="container mt-5">
@@ -123,15 +128,42 @@ const ArtistProfile = () => {
         <h3>Reviews</h3>
 
         {/* Ratings Breakdown */}
-        <div className="mb-3">
+        <div className="mb-4">
           <h5>Ratings Breakdown</h5>
-          <ul>
-            {Object.entries(ratingsBreakdown).map(([rating, count]) => (
-              <li key={rating}>
-                {rating} ⭐: {count} review{count !== 1 ? "s" : ""}
-              </li>
-            ))}
-          </ul>
+          <div className="mb-2">
+            {Object.entries(ratingsBreakdown).map(([rating, count]) => {
+              const percentage = totalReviews
+                ? ((count / totalReviews) * 100).toFixed(1)
+                : 0;
+              return (
+                <div key={rating} className="mb-2 d-flex align-items-center">
+                  <span style={{ width: "50px" }}>{rating} ⭐</span>
+                  <div
+                    className="progress flex-grow-1"
+                    style={{ height: "20px", margin: "0 10px" }}
+                  >
+                    <div
+                      className={`progress-bar progress-bar-striped bg-${
+                        rating >= 4
+                          ? "success"
+                          : rating === 3
+                          ? "warning"
+                          : "danger"
+                      }`}
+                      role="progressbar"
+                      style={{ width: `${percentage}%` }}
+                      aria-valuenow={percentage}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    >
+                      {percentage}%
+                    </div>
+                  </div>
+                  <span>{count} review{count !== 1 ? "s" : ""}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Sorting Options */}
@@ -153,8 +185,8 @@ const ArtistProfile = () => {
         </div>
 
         {/* Display Reviews */}
-        {artist.reviews && artist.reviews.length > 0 ? (
-          artist.reviews.map((review, index) => (
+        {sortedReviews.length > 0 ? (
+          sortedReviews.map((review, index) => (
             <div key={index} className="mb-3">
               <p>
                 <strong>{review.username}</strong> rated it {review.rating} ⭐
