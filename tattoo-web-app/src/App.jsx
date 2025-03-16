@@ -13,6 +13,8 @@ import MyBookings from "./pages/MyBookings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
+import "react-toastify/dist/ReactToastify.css";
+
 const App = () => {
   return (
     <Router>

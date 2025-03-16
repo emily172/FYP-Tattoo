@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/Dashboard.css"
+
 
 const Dashboard = () => {
   const bookings = JSON.parse(localStorage.getItem("bookings")) || []; // Retrieve bookings from localStorage
@@ -15,6 +19,11 @@ const Dashboard = () => {
     if (filter === "past") return bookingDate < today;
     return true; // Default: show all bookings
   });
+
+  // Show a notification (e.g., for deleted bookings)
+  const showNotification = (message) => {
+    toast.success(message, { autoClose: 2000 });
+  };
 
   if (bookings.length === 0) {
     return (
@@ -32,7 +41,7 @@ const Dashboard = () => {
       {/* Summary Section */}
       <div className="row mb-4">
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-primary text-center">
             <div className="card-body">
               <h5 className="card-title">Total Bookings</h5>
               <p className="card-text">{bookings.length}</p>
@@ -40,7 +49,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-success text-center">
             <div className="card-body">
               <h5 className="card-title">Upcoming</h5>
               <p className="card-text">
@@ -50,7 +59,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-warning text-center">
             <div className="card-body">
               <h5 className="card-title">Past</h5>
               <p className="card-text">
@@ -60,7 +69,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-info text-center">
             <div className="card-body">
               <h5 className="card-title">Completed</h5>
               <p className="card-text">
@@ -70,7 +79,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-secondary text-center">
             <div className="card-body">
               <h5 className="card-title">Confirmed</h5>
               <p className="card-text">
@@ -80,7 +89,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-md-2">
-          <div className="card text-center">
+          <div className="card text-white bg-danger text-center">
             <div className="card-body">
               <h5 className="card-title">Cancelled</h5>
               <p className="card-text">
@@ -108,7 +117,7 @@ const Dashboard = () => {
 
       {/* Table Section */}
       <div className="table-responsive">
-        <table className="table table-bordered">
+        <table className="table table-striped table-bordered">
           <thead>
             <tr>
               <th>#</th>
@@ -131,12 +140,14 @@ const Dashboard = () => {
                 <td>
                   <select
                     className="form-select"
-                    value={booking.status || "Confirmed"} // Default to "Confirmed"
+                    title="Update booking status"
+                    value={booking.status || "Confirmed"}
                     onChange={(e) => {
                       const updatedBookings = [...bookings];
-                      updatedBookings[index].status = e.target.value; // Update status
+                      updatedBookings[index].status = e.target.value;
                       localStorage.setItem("bookings", JSON.stringify(updatedBookings));
-                      window.location.reload(); // Refresh dashboard
+                      showNotification("Booking status updated!");
+                      window.location.reload();
                     }}
                   >
                     <option value="Confirmed">Confirmed</option>
@@ -148,7 +159,11 @@ const Dashboard = () => {
                   {/* Edit Button */}
                   <button
                     className="btn btn-warning btn-sm me-2"
-                    onClick={() => navigate(`/artists/${booking.artistId}/book`, { state: { ...booking, index } })}
+                    onClick={() =>
+                      navigate(`/artists/${booking.artistId}/book`, {
+                        state: { ...booking, index },
+                      })
+                    }
                   >
                     Edit
                   </button>
@@ -156,9 +171,10 @@ const Dashboard = () => {
                   <button
                     className="btn btn-danger btn-sm"
                     onClick={() => {
-                      const updatedBookings = bookings.filter((_, i) => i !== index); // Remove booking
-                      localStorage.setItem("bookings", JSON.stringify(updatedBookings)); // Save updated bookings
-                      window.location.reload(); // Refresh dashboard
+                      const updatedBookings = bookings.filter((_, i) => i !== index);
+                      localStorage.setItem("bookings", JSON.stringify(updatedBookings));
+                      showNotification("Booking deleted successfully!");
+                      window.location.reload();
                     }}
                   >
                     Delete
@@ -169,6 +185,9 @@ const Dashboard = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Notification Container */}
+      <ToastContainer />
     </div>
   );
 };
