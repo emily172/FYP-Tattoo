@@ -1,143 +1,107 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { artists } from "../data/artists";
 
 const BookingForm = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get artist ID from URL
   const navigate = useNavigate();
-  const artist = artists.find((artist) => artist.id === parseInt(id));// Get artist ID from URL
+  const location = useLocation(); // Access data passed from "Edit"
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [notes, setNotes] = useState("");
+  // Find the artist using the artist ID
+  const artist = artists.find((artist) => artist.id === parseInt(id));
 
-  // Track validation errors - Error Handling
-  const [errors, setErrors] = useState({}); 
+  // Extract booking details if editing
+  const editingData = location.state || {}; // If editing, booking data will be here
+  const [name, setName] = useState(editingData.name || ""); // Pre-fill if editing
+  const [email, setEmail] = useState(editingData.email || "");
+  const [date, setDate] = useState(editingData.date || "");
+  const [time, setTime] = useState(editingData.time || "");
+  const [notes, setNotes] = useState(editingData.notes || "");
+  const [index, setIndex] = useState(editingData.index); // Booking index, if editing
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    // Name validation
-    if (!name.trim()) {
-      newErrors.name = "Name is required.";
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!emailRegex.test(email)) {
-      newErrors.email = "Please enter a valid email address.";
-    }
-
-    // Date validation
-    if (!date) {
-      newErrors.date = "Please select a date.";
-    } else if (new Date(date) < new Date()) {
-      newErrors.date = "The selected date cannot be in the past.";
-    }
-
-    // Time validation
-    if (!time) {
-      newErrors.time = "Please select a time.";
-    }
-    // Return true if no errors
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; 
-  };
-
-  // Form submission handler
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate form
-    if (validateForm()) {
-      const bookingDetails = {
-        artist: artist.name,
-        name,
-        email,
-        date,
-        time,
-        notes,
-      };
+    const bookingDetails = {
+      artistId: artist.id, // Ensure the artist ID is included
+      artist: artist.name,
+      name,
+      email,
+      date,
+      time,
+      notes,
+    };
 
-      // Save booking to localStorage
-      const existingBookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      const updatedBookings = [...existingBookings, bookingDetails];
-      localStorage.setItem("bookings", JSON.stringify(updatedBookings));
-
-      // Navigate to confirmation page with booking details
-      navigate("/booking-confirmation", { state: bookingDetails });
+    const existingBookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    if (index !== undefined) {
+      // Update the existing booking
+      existingBookings[index] = bookingDetails;
+    } else {
+      // Add new booking
+      existingBookings.push(bookingDetails);
     }
+    localStorage.setItem("bookings", JSON.stringify(existingBookings));
+
+    // Redirect to confirmation page
+    navigate("/booking-confirmation", { state: bookingDetails });
   };
 
   if (!artist) {
     return (
       <div className="container mt-5">
         <h2>Artist Not Found</h2>
-        <p>Oops! The artist you're booking with does not exist.</p>
+        <p>Oops! The artist you're booking with does not exist. Please go back and try again.</p>
+        <button onClick={() => navigate("/artists")} className="btn btn-secondary">
+          Back to Artists
+        </button>
       </div>
     );
   }
 
   return (
     <div className="container mt-5">
-      <h2>Book an Appointment with {artist.name}</h2>
+      <h2>{index !== undefined ? "Edit" : "Book"} an Appointment with {artist.name}</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Your Name</label>
           <input
             type="text"
-            className={`form-control ${errors.name ? "is-invalid" : ""}`} //Check if the Name is valid to pass through
+            className="form-control"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-          {/**If not valid pass in information to explain why and action to take */}
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>} 
         </div>
-
         <div className="mb-3">
           <label className="form-label">Your Email</label>
           <input
             type="email"
-            className={`form-control ${errors.email ? "is-invalid" : ""}`}//Check if the Email is valid to pass through
+            className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-           {/**If not valid pass in information to explain why and action to take */}
-          {errors.email && <div className="invalid-feedback">{errors.email}</div>}
         </div>
-
         <div className="mb-3">
           <label className="form-label">Preferred Date</label>
           <input
             type="date"
-            className={`form-control ${errors.date ? "is-invalid" : ""}`}  //Check if the Email is valid to pass through
+            className="form-control"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
           />
-           {/**If not valid pass in information to explain why and action to take */}
-          {errors.date && <div className="invalid-feedback">{errors.date}</div>}
         </div>
-
         <div className="mb-3">
           <label className="form-label">Preferred Time</label>
           <input
             type="time"
-            className={`form-control ${errors.time ? "is-invalid" : ""}`}  //Check if the Email is valid to pass through
+            className="form-control"
             value={time}
             onChange={(e) => setTime(e.target.value)}
             required
           />
-           {/**If not valid pass in information to explain why and action to take */}
-          {errors.time && <div className="invalid-feedback">{errors.time}</div>}
         </div>
-
         <div className="mb-3">
           <label className="form-label">Additional Notes</label>
           <textarea
@@ -147,9 +111,8 @@ const BookingForm = () => {
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
-
         <button type="submit" className="btn btn-primary">
-          Submit Booking
+          {index !== undefined ? "Save Changes" : "Submit Booking"}
         </button>
       </form>
     </div>
