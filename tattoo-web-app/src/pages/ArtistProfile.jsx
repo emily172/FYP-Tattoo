@@ -37,6 +37,13 @@ const ArtistProfile = () => {
     }
   }, [sortOption, artist]);
 
+  // Helper function to calculate the average rating
+  const getAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return "No reviews yet"; // No reviews available
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1); // Average rating with 1 decimal
+  };
+
   // Helper function to calculate the ratings breakdown
   const getRatingsBreakdown = (reviews) => {
     const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -118,17 +125,46 @@ const ArtistProfile = () => {
             <strong>Specialty:</strong> {artist.specialty}
           </p>
           <p>
-            <strong>Bio:</strong> {artist.bio || "This artist has not added a biography yet."}
+            <strong>Bio:</strong>{" "}
+            {artist.bio || "This artist has not added a biography yet."}
           </p>
           <p>
-            <strong>Average Rating:</strong> {totalReviews > 0 ? `${getRatingsBreakdown(artist.reviews)} ⭐` : "No Reviews"}
+            <strong>Average Rating:</strong> {getAverageRating(artist.reviews)} ⭐
           </p>
           <div>
-            <Link to={`/artists/${artist.id}/book`} className="btn btn-primary mt-3">
+            <Link
+              to={`/artists/${artist.id}/book`}
+              className="btn btn-primary mt-3"
+            >
               Book Now
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Portfolio Section */}
+      <div className="row mb-5">
+        <h3 className="mb-4">Portfolio</h3>
+        {artist.portfolio && artist.portfolio.length > 0 ? (
+          <div className="row">
+            {artist.portfolio.map((image, index) => (
+              <div className="col-md-4 mb-3" key={index}>
+                <img
+                  src={image}
+                  alt={`Portfolio Item ${index + 1}`}
+                  className="img-fluid rounded"
+                  style={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "200px",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>This artist has not uploaded any portfolio items yet.</p>
+        )}
       </div>
 
       {/* Ratings Breakdown */}
@@ -158,23 +194,7 @@ const ArtistProfile = () => {
           );
         })}
       </div>
-
       {/* Reviews Section */}
-      <div className="mb-3">
-        <label htmlFor="sortReviews" className="form-label">Sort Reviews</label>
-        <select
-          id="sortReviews"
-          className="form-select"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="highest">Highest Rating</option>
-          <option value="lowest">Lowest Rating</option>
-        </select>
-      </div>
-
       {sortedReviews.length > 0 ? (
         sortedReviews.map((review, index) => (
           <div key={index} className="mb-3">
@@ -186,10 +206,24 @@ const ArtistProfile = () => {
                   <strong>{review.username}</strong> rated it {review.rating} ⭐
                 </p>
                 <p>{review.comment}</p>
-                <p><small><em>Reviewed on {review.timestamp}</em></small></p>
+                <p>
+                  <small>
+                    <em>Reviewed on {review.timestamp}</em>
+                  </small>
+                </p>
                 <div>
-                  <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditReview(index)}>Edit</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteReview(index)}>Delete</button>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => handleEditReview(index)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteReview(index)}
+                  >
+                    Delete
+                  </button>
                 </div>
                 <hr />
               </>
@@ -200,8 +234,11 @@ const ArtistProfile = () => {
         <p>No reviews yet. Be the first to leave a review!</p>
       )}
 
+      {/* Leave a Review Button */}
       <div className="mt-4">
-        <Link to={`/artists/${artist.id}/review`} className="btn btn-secondary">Leave a Review</Link>
+        <Link to={`/artists/${artist.id}/review`} className="btn btn-secondary">
+          Leave a Review
+        </Link>
       </div>
     </div>
   );
