@@ -101,6 +101,11 @@ const ArtistProfile = () => {
               </p>
               <p>{review.comment}</p>
               <hr />
+              <p>
+                <small>
+                  <em>Reviewed on {review.timestamp}</em>
+                </small>
+              </p>
             </div>
           ))
         ) : (
