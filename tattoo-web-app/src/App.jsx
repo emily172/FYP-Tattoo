@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
+import ReviewForm from "./pages/ReviewForm";
 import Dashboard from "./pages/Dashboard";
 import BookingForm from "./pages/BookingForm";
 import BookingConfirmation from "./pages/BookingConfirmation";
@@ -30,6 +31,8 @@ const App = () => {
             <Route path="/artists" element={<Artists />} />
             <Route path="artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />
+            <Route path="/artists/:id/review" element={<ReviewForm />} />
+
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}

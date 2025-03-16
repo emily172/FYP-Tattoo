@@ -14,6 +14,18 @@ export const artists = [
       open: ["2025-03-20", "2025-03-21"], // Available dates
       blocked: ["2025-03-22", "2025-03-23"], // Blocked dates
     },
+    reviews: [
+      {
+        username: "JohnDoe",
+        rating: 5,
+        comment: "Alice was amazing! The geometric design came out better than I expected.",
+      },
+      {
+        username: "JaneSmith",
+        rating: 4,
+        comment: "Alice is great, but the session lasted longer than planned.",
+      },
+    ],
   },
   {
     id: 2,
@@ -29,6 +41,18 @@ export const artists = [
       open: ["2025-03-24", "2025-03-25"],
       blocked: ["2025-03-26", "2025-03-27"],
     },
+    reviews: [
+      {
+        username: "SarahConnor",
+        rating: 5,
+        comment: "Bob's designs are bold and beautiful! Highly recommend.",
+      },
+      {
+        username: "RickGrimes",
+        rating: 3,
+        comment: "Good work, but the communication could have been better.",
+      },
+    ],
   },
   {
     id: 3,
@@ -46,5 +70,17 @@ export const artists = [
       open: ["2025-03-28", "2025-03-29"],
       blocked: ["2025-03-30", "2025-03-31"],
     },
+    reviews: [
+      {
+        username: "DarylDixon",
+        rating: 5,
+        comment: "Cara is an incredible artist! The portrait she created was perfect.",
+      },
+      {
+        username: "MaggieGreene",
+        rating: 4,
+        comment: "Very detailed work. Love the tattoo, but the session took a bit too long.",
+      },
+    ],
   },
 ];
