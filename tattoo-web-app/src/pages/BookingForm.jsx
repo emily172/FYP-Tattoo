@@ -48,9 +48,11 @@ const BookingForm = () => {
     return Object.keys(newErrors).length === 0; 
   };
 
+  // Form submission handler
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validate form
     if (validateForm()) {
       const bookingDetails = {
         artist: artist.name,
@@ -60,6 +62,11 @@ const BookingForm = () => {
         time,
         notes,
       };
+
+      // Save booking to localStorage
+      const existingBookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      const updatedBookings = [...existingBookings, bookingDetails];
+      localStorage.setItem("bookings", JSON.stringify(updatedBookings));
 
       // Navigate to confirmation page with booking details
       navigate("/booking-confirmation", { state: bookingDetails });

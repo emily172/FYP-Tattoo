@@ -8,6 +8,7 @@ import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile"
 import BookingForm from "./pages/BookingForm"
 import BookingConfirmation from "./pages/BookingConfirmation"; 
+import MyBookings from "./pages/MyBookings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="artists/:id" element={<ArtistProfile/>}/>
             <Route path="/artists/:id/book" element={<BookingForm />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+            <Route path="/my-bookings" element={<MyBookings />} /> {/* New route */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>
