@@ -5,6 +5,7 @@ import { artists } from "../data/artists";
 const ArtistProfile = () => {
   const { id } = useParams(); // Get artist ID from URL
   const [artist, setArtist] = useState(null); // State to store artist data
+  const [sortOption, setSortOption] = useState("newest"); // Default sorting option
 
   // Fetch artist data from localStorage (or fallback to the default array) when the component mounts
   useEffect(() => {
@@ -13,11 +14,37 @@ const ArtistProfile = () => {
     setArtist(selectedArtist); // Set the selected artist data
   }, [id]);
 
+  // Handle sorting reviews
+  useEffect(() => {
+    if (artist) {
+      let sortedReviews = [...artist.reviews];
+      if (sortOption === "newest") {
+        sortedReviews.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      } else if (sortOption === "oldest") {
+        sortedReviews.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      } else if (sortOption === "highest") {
+        sortedReviews.sort((a, b) => b.rating - a.rating);
+      } else if (sortOption === "lowest") {
+        sortedReviews.sort((a, b) => a.rating - b.rating);
+      }
+      setArtist((prev) => ({ ...prev, reviews: sortedReviews })); // Update artist reviews with sorted data
+    }
+  }, [sortOption, artist]);
+
   // Helper function to calculate the average rating
   const getAverageRating = (reviews) => {
     if (!reviews || reviews.length === 0) return "No reviews yet"; // No reviews available
     const total = reviews.reduce((sum, review) => sum + review.rating, 0);
     return (total / reviews.length).toFixed(1); // Average rating with 1 decimal
+  };
+
+  // Helper function to calculate the ratings breakdown
+  const getRatingsBreakdown = (reviews) => {
+    const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }; // Initialize counts for each rating
+    reviews.forEach((review) => {
+      breakdown[review.rating] = (breakdown[review.rating] || 0) + 1;
+    });
+    return breakdown;
   };
 
   if (!artist) {
@@ -28,6 +55,8 @@ const ArtistProfile = () => {
       </div>
     );
   }
+
+  const ratingsBreakdown = getRatingsBreakdown(artist.reviews || []);
 
   return (
     <div className="container mt-5">
@@ -50,8 +79,7 @@ const ArtistProfile = () => {
             {artist.bio || "This artist has not added a biography yet."}
           </p>
           <p>
-            <strong>Average Rating:</strong> {" "}
-            {getAverageRating(artist.reviews)} ⭐
+            <strong>Average Rating:</strong> {getAverageRating(artist.reviews)} ⭐
           </p>
           <div>
             {/* Book Now Button */}
@@ -93,6 +121,38 @@ const ArtistProfile = () => {
       {/* Reviews Section */}
       <div className="row mt-5">
         <h3>Reviews</h3>
+
+        {/* Ratings Breakdown */}
+        <div className="mb-3">
+          <h5>Ratings Breakdown</h5>
+          <ul>
+            {Object.entries(ratingsBreakdown).map(([rating, count]) => (
+              <li key={rating}>
+                {rating} ⭐: {count} review{count !== 1 ? "s" : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Sorting Options */}
+        <div className="mb-3">
+          <label htmlFor="sortReviews" className="form-label">
+            Sort Reviews
+          </label>
+          <select
+            id="sortReviews"
+            className="form-select"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="highest">Highest Rating</option>
+            <option value="lowest">Lowest Rating</option>
+          </select>
+        </div>
+
+        {/* Display Reviews */}
         {artist.reviews && artist.reviews.length > 0 ? (
           artist.reviews.map((review, index) => (
             <div key={index} className="mb-3">
@@ -100,12 +160,12 @@ const ArtistProfile = () => {
                 <strong>{review.username}</strong> rated it {review.rating} ⭐
               </p>
               <p>{review.comment}</p>
-              <hr />
               <p>
                 <small>
                   <em>Reviewed on {review.timestamp}</em>
                 </small>
               </p>
+              <hr />
             </div>
           ))
         ) : (
