@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
 const BookingForm = () => {
@@ -14,16 +14,18 @@ const BookingForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Trigger submitting booking data
-    console.log("Booking details:", {
+
+    const bookingDetails = {
       artist: artist.name,
       name,
       email,
       date,
       time,
       notes,
-    });
-    alert("Booking successfully submitted!");
+    };
+
+    // Navigate to confirmation page with booking details
+    navigate("/booking-confirmation", { state: bookingDetails });
   };
 
   if (!artist) {
