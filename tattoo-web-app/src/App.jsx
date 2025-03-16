@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
 import Artists from "./pages/Artists";
+import ArtistProfile from "./pages/ArtistProfile"
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/artists" element={<Artists />} />
+            <Route path="artists/:id" element={<ArtistProfile/>}/>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>
