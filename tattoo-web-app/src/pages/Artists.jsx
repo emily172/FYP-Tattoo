@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
 const Artists = () => {
@@ -44,20 +45,23 @@ const Artists = () => {
           filteredArtists.map((artist) => (
             <div className="col-md-4 mb-4" key={artist.id}>
               <div className="card">
-                <img
-                  src={artist.image || "https://placehold.co/350x200"}
-                  alt={artist.name || "Artist"}
-                  className="card-img-top"
-                  style={{
-                    objectFit: "cover", // Ensures image proportions remain consistent
-                    height: "200px",
-                    width: "100%",
-                  }}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{artist.name}</h5>
-                  <p>{artist.specialty}</p>
-                </div>
+                {/* Link to the artist's profile page passing the id to the page */}
+                <Link to={`/artists/${artist.id}`} className="text-decoration-none">
+                  <img
+                    src={artist.image || "https://placehold.co/350x200"}
+                    alt={artist.name || "Artist"}
+                    className="card-img-top"
+                    style={{
+                      objectFit: "cover",
+                      height: "200px",
+                      width: "100%",
+                    }}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{artist.name}</h5>
+                    <p>{artist.specialty}</p>
+                  </div>
+                </Link>
               </div>
             </div>
           ))
