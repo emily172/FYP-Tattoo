@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
 const ArtistProfile = () => {
@@ -31,6 +31,12 @@ const ArtistProfile = () => {
           <h2>{artist.name}</h2>
           <p><strong>Specialty:</strong> {artist.specialty}</p>
           <p><strong>Bio:</strong> {artist.bio || "This artist has not added a biography yet."}</p>
+          <div>
+          {/* Book Now Button */}
+               <Link to={`/artists/${artist.id}/book`} className="btn btn-primary mt-3">
+                 Book Now
+                </Link>
+            </div>
         </div>
       </div>
        {/* Portfolio Section */}
