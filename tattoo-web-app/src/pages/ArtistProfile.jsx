@@ -166,7 +166,6 @@ const ArtistProfile = () => {
           <p>This artist has not uploaded any portfolio items yet.</p>
         )}
       </div>
-
       {/* Ratings Breakdown */}
       <div className="mb-4">
         <h5>Ratings Breakdown</h5>
@@ -174,7 +173,9 @@ const ArtistProfile = () => {
           const percentage = totalReviews ? ((count / totalReviews) * 100).toFixed(1) : 0;
           return (
             <div key={rating} className="d-flex align-items-center mb-2">
-              <span style={{ width: "50px" }}>{rating} ⭐</span>
+              <span style={{ width: "100px" }}>
+                {"⭐".repeat(rating)} {/* Display yellow stars for the rating */}
+              </span>
               <div className="progress flex-grow-1 mx-2" style={{ height: "20px" }}>
                 <div
                   className={`progress-bar progress-bar-striped bg-${
@@ -189,13 +190,14 @@ const ArtistProfile = () => {
                   {percentage}%
                 </div>
               </div>
-              <span>{count}</span>
+              <span>{count} review{count !== 1 ? "s" : ""}</span>
             </div>
           );
         })}
+
       </div>
-           {/* Reviews Section */}
-           {sortedReviews.length > 0 ? (
+                    {/* Reviews Section */}
+      {sortedReviews.length > 0 ? (
         sortedReviews.map((review, index) => (
           <div key={index} className="mb-3">
             {isEditing && editingReview.index === index ? (
@@ -211,7 +213,16 @@ const ArtistProfile = () => {
                 <p>{review.comment}</p>
                 <p>
                   <small>
-                    <em>Reviewed on {review.timestamp}</em>
+                    <em>
+                      Reviewed on{" "}
+                      {review.timestamp
+                        ? new Date(review.timestamp).toLocaleDateString()
+                        : "Unknown Date"}{" "}
+                      at{" "}
+                      {review.timestamp
+                        ? new Date(review.timestamp).toLocaleTimeString()
+                        : "Unknown Time"}
+                    </em>
                   </small>
                 </p>
                 <div>
@@ -236,7 +247,6 @@ const ArtistProfile = () => {
       ) : (
         <p>No reviews yet. Be the first to leave a review!</p>
       )}
-
 
       {/* Leave a Review Button */}
       <div className="mt-4">

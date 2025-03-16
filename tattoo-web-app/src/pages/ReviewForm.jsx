@@ -28,36 +28,37 @@ const ReviewForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Create a new review object
+  
+    // Create a new review object with a timestamp
     const newReview = {
       username,
       rating: parseInt(rating),
       comment,
+      timestamp: new Date().toISOString(), // Add current date and time as timestamp
     };
-
+  
     // Add the new review to the current reviews state
     const updatedReviews = [...reviews, newReview];
     setReviews(updatedReviews);
-
+  
     // Persist the updated reviews to localStorage
     const storedArtists = JSON.parse(localStorage.getItem("artists")) || artists;
     const updatedArtists = storedArtists.map((a) =>
       a.id === artist.id ? { ...a, reviews: updatedReviews } : a
     );
     localStorage.setItem("artists", JSON.stringify(updatedArtists));
-
+  
     alert("Thank you for your review!");
-
+  
     // Reset the form fields
     setUsername("");
     setRating(5);
     setComment("");
-
+  
     // Navigate back to the artist's profile page
     navigate(`/artists/${artist.id}`);
-    
   };
+  
 
   if (!artist) {
     return (
@@ -118,28 +119,38 @@ const ReviewForm = () => {
         </button>
       </form>
 
-      {/* Display Existing Reviews */}
-      <div className="mt-5">
-        <h3>Existing Reviews</h3>
-        {reviews.length > 0 ? (
-          reviews.map((review, index) => (
-            <div key={index} className="mb-3">
-              <p>
-                <strong>{review.username}</strong> rated it {review.rating} ⭐
-              </p>
-              <p>{review.comment}</p>
-              <hr />
-              <p>
-                <small>
-                  <em>Reviewed on {review.timestamp}</em>
-                </small>
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No reviews yet. Be the first to leave a review!</p>
-        )}
+{/* Display Existing Reviews */}
+<div className="mt-5">
+  <h3>Existing Reviews</h3>
+  {reviews.length > 0 ? (
+    reviews.map((review, index) => (
+      <div key={index} className="mb-3">
+        <p>
+          <strong>{review.username}</strong> rated it {review.rating} ⭐
+        </p>
+        <p>{review.comment}</p>
+        <hr />
+        <p>
+          <small>
+            <em>
+              Reviewed on{" "}
+              {review.timestamp
+                ? new Date(review.timestamp).toLocaleDateString()
+                : "Unknown Date"}{" "}
+              at{" "}
+              {review.timestamp
+                ? new Date(review.timestamp).toLocaleTimeString()
+                : "Unknown Time"}
+            </em>
+          </small>
+        </p>
       </div>
+    ))
+  ) : (
+    <p>No reviews yet. Be the first to leave a review!</p>
+  )}
+</div>
+
     </div>
   );
 };
