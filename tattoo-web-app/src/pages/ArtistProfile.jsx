@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
 const ArtistProfile = () => {
-  // Get artist ID from URL
-  const { id } = useParams();
-  const artist = artists.find((artist) => artist.id === parseInt(id));
+  const { id } = useParams(); // Get artist ID from URL
+  const [artist, setArtist] = useState(null); // State to store artist data
+
+  // Fetch artist data from localStorage (or fallback to the default array) when the component mounts
+  useEffect(() => {
+    const storedArtists = JSON.parse(localStorage.getItem("artists")) || artists;
+    const selectedArtist = storedArtists.find((a) => a.id === parseInt(id));
+    setArtist(selectedArtist); // Set the selected artist data
+  }, [id]);
+
+  // Helper function to calculate the average rating
+  const getAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return "No reviews yet"; // No reviews available
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1); // Average rating with 1 decimal
+  };
 
   if (!artist) {
     return (
@@ -15,13 +28,6 @@ const ArtistProfile = () => {
       </div>
     );
   }
-
-  // Helper function to calculate the average rating
-  const getAverageRating = (reviews) => {
-    if (reviews.length === 0) return "No reviews yet"; // No reviews available
-    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
-    return (total / reviews.length).toFixed(1); // Average rating with 1 decimal
-  };
 
   return (
     <div className="container mt-5">
@@ -44,7 +50,7 @@ const ArtistProfile = () => {
             {artist.bio || "This artist has not added a biography yet."}
           </p>
           <p>
-            <strong>Average Rating:</strong>{" "}
+            <strong>Average Rating:</strong> {" "}
             {getAverageRating(artist.reviews)} ⭐
           </p>
           <div>
