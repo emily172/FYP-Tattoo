@@ -19,7 +19,7 @@ const ArtistProfile = () => {
   return (
     <div className="container mt-5">
       {/* Artist Details Section */}
-      <div className="row">
+      <div className="row mb-4">
         <div className="col-md-4">
           <img
             src={artist.image || "https://via.placeholder.com/350x200"}
@@ -34,7 +34,7 @@ const ArtistProfile = () => {
         </div>
       </div>
        {/* Portfolio Section */}
-       <div className="row">
+       <div className="row mb">
         <h3 className="mb-4">Portfolio</h3>
         {artist.portfolio && artist.portfolio.length > 0 ? (
           <div className="row">
