@@ -4,6 +4,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import TatStyles from "./pages/TatStyles";
+import Gallery from "./pages/Gallery"; // Import the Gallery component
+import Category from "./pages/Category";
+import Design from "./pages/Design"
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
 import ReviewForm from "./pages/ReviewForm";
@@ -18,6 +21,7 @@ import Signup from "./pages/Signup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
+
 const App = () => {
   return (
     <Router>
@@ -28,11 +32,13 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/tatstyles" element={<TatStyles />} />
+            <Route path="/gallery" element={<Gallery />} /> {/* Gallery Route */}
+            <Route path="/category" element={<Category/>} />
+            <Route path="/design" element={<Design/>} />
             <Route path="/artists" element={<Artists />} />
-            <Route path="artists/:id" element={<ArtistProfile />} />
+            <Route path="/artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />
             <Route path="/artists/:id/review" element={<ReviewForm />} />
-
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}
