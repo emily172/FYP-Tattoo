@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import Gallery from "./pages/Gallery";
+import TatStyles from "./pages/TatStyles";
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
 import ReviewForm from "./pages/ReviewForm";
@@ -27,7 +27,7 @@ const App = () => {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/tatstyles" element={<TatStyles />} />
             <Route path="/artists" element={<Artists />} />
             <Route path="artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />

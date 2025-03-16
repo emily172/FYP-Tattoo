@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { designs } from "../data/designs";
 
-const Gallery = () => {
+const TatStyles = () => {
   const [selectedStyle, setSelectedStyle] = useState(""); // Filter state
 
   const handleStyleChange = (e) => {
@@ -14,7 +14,7 @@ const Gallery = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Tattoo Gallery</h2>
+      <h2 className="mb-4">Tattoo Styles</h2>
 
       {/* Dropdown for Filtering */}
       <div className="mb-4">
@@ -63,4 +63,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default TatStyles;
