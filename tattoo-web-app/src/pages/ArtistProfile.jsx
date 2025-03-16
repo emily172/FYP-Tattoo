@@ -194,8 +194,8 @@ const ArtistProfile = () => {
           );
         })}
       </div>
-      {/* Reviews Section */}
-      {sortedReviews.length > 0 ? (
+           {/* Reviews Section */}
+           {sortedReviews.length > 0 ? (
         sortedReviews.map((review, index) => (
           <div key={index} className="mb-3">
             {isEditing && editingReview.index === index ? (
@@ -203,7 +203,10 @@ const ArtistProfile = () => {
             ) : (
               <>
                 <p>
-                  <strong>{review.username}</strong> rated it {review.rating} ⭐
+                  <strong>{review.username}</strong> rated it{" "}
+                  <span>
+                    {"⭐".repeat(review.rating)} {/* Yellow stars for the rating */}
+                  </span>
                 </p>
                 <p>{review.comment}</p>
                 <p>
@@ -233,6 +236,7 @@ const ArtistProfile = () => {
       ) : (
         <p>No reviews yet. Be the first to leave a review!</p>
       )}
+
 
       {/* Leave a Review Button */}
       <div className="mt-4">
