@@ -38,8 +38,8 @@ export const artists = [
       "https://placehold.co/300x200?text=Design+5",
     ],
     availability: {
-      open: ["2025-03-24", "2025-03-25"],
-      blocked: ["2025-03-26", "2025-03-27"],
+      open: ["2025-03-25", "2025-03-26","2025-03-27","2025-03-28"],
+      blocked: ["2025-04-10", "2025-04-12"],
     },
     reviews: [
       {
