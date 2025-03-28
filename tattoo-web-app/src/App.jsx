@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Studio from "./pages/Studio";
+import History from "./pages/History";
 import TatStyles from "./pages/TatStyles";
 import Gallery from "./pages/Gallery"; // Import the Gallery component
 import Category from "./pages/Category";
@@ -37,6 +38,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/studio" element={<Studio />} />
+            <Route path="/history" element={<History />} />
             <Route path="/tatstyles" element={<TatStyles />} />
             <Route path="/gallery" element={<Gallery />} /> {/* Gallery Route */}
             <Route path="/category" element={<Category/>} />
