@@ -17,6 +17,7 @@ import FAQResources from "./pages/FAQResources";
 import Aftercare from "./pages/Aftercare";
 import BlogList from "./pages/BlogList";
 import BlogDetail from "./pages/BlogDetail";
+import Contact from "./pages/Contact";
 import ReviewForm from "./pages/ReviewForm";
 import Dashboard from "./pages/Dashboard";
 import BookingForm from "./pages/BookingForm";
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/aftercare" element={<Aftercare />} />
             <Route path="/blog" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}
