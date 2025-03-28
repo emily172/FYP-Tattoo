@@ -51,6 +51,27 @@ const History = () => {
         </ul>
       </div>
 
+      {/* Photo Timeline Section */}
+      <div className="mt-4">
+        <h4>Photo Timeline</h4>
+        <div className="row">
+          {studioHistory.milestones.map((milestone, index) => (
+            <div key={index} className="col-md-4 mb-3">
+              <div className="card">
+                <img
+                  src={`https://placehold.co/300x200?text=${milestone.year}`}
+                  alt={`Milestone ${index + 1}`}
+                  className="card-img-top"
+                />
+                <div className="card-body">
+                  <p>{milestone.event}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Founder Section */}
       <div className="mt-4">
         <h4>Meet the Founder</h4>
