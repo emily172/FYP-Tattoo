@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Import Bootstrap JS
+
 const ArtistProfile = () => {
   const { id } = useParams(); // Get artist ID from URL
   const [artist, setArtist] = useState(null); // State to store artist data
