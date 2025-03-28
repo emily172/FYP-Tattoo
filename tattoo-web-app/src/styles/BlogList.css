@@ -1,0 +1,85 @@
+/* BlogList General Styling */
+.container {
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  h2 {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Search Bar Styling */
+  input.form-control {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  input.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  }
+  
+  /* Category Tags Styling */
+  button.btn {
+    font-size: 0.9rem;
+    padding: 5px 15px;
+    border-radius: 20px;
+  }
+  
+  button.btn.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+  
+  button.btn:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Article Card Styling */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  .card-title {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .card-text {
+    color: #555;
+    font-size: 0.95rem;
+  }
+  
+  /* Buttons Styling */
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004080;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .card {
+      margin-bottom: 20px;
+    }
+  
+    button.btn {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  
