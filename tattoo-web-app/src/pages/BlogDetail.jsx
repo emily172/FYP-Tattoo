@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { articles } from "../data/articles"; // Import articles data
 
@@ -6,25 +6,43 @@ const BlogDetail = () => {
   const { id } = useParams(); // Get the article ID from the URL
   const article = articles.find((a) => a.id === parseInt(id)); // Find the article
 
-  const [comments, setComments] = useState([]); // State for comments
+  const [comments, setComments] = useState([]); // State to store comments
   const [newComment, setNewComment] = useState(""); // State for new comment
   const [rating, setRating] = useState(null); // State for current rating
-  const [ratings, setRatings] = useState([]); // State for list of ratings
+  const [ratings, setRatings] = useState([]); // State for all submitted ratings
 
-  // Handle adding a comment
-  const handleAddComment = () => {
-    if (newComment.trim() !== "") {
-      setComments([...comments, { text: newComment, date: new Date() }]);
-      setNewComment(""); // Clear the input
+  // Load comments and ratings from localStorage
+  useEffect(() => {
+    const storedComments = JSON.parse(localStorage.getItem(`comments_${id}`)) || [];
+    const storedRatings = JSON.parse(localStorage.getItem(`ratings_${id}`)) || [];
+    setComments(storedComments);
+    setRatings(storedRatings);
+  }, [id]);
+
+  // Save comments and ratings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(`comments_${id}`, JSON.stringify(comments));
+    localStorage.setItem(`ratings_${id}`, JSON.stringify(ratings));
+  }, [comments, ratings, id]);
+
+  // Handle posting a comment and rating together
+  const handleAddCommentAndRating = () => {
+    if (newComment.trim() !== "" && rating !== null) {
+      const newEntry = { text: newComment, rating, date: new Date() };
+      setComments([...comments, newEntry]); // Add new comment and rating
+      setRatings([...ratings, rating]); // Save rating separately for averaging
+      setNewComment(""); // Clear comment input
+      setRating(null); // Clear rating input
+    } else {
+      alert("You must provide both a rating and a comment.");
     }
   };
 
-  // Handle rating submission
-  const handleRating = (rate) => {
-    if (rate) {
-      setRatings([...ratings, rate]);
-      setRating(null); // Reset selected rating
-    }
+  // Calculate average rating
+  const getAverageRating = () => {
+    if (ratings.length === 0) return "No ratings yet";
+    const average = ratings.reduce((acc, curr) => acc + curr, 0) / ratings.length;
+    return average.toFixed(1);
   };
 
   // Find related articles based on category
@@ -69,36 +87,40 @@ const BlogDetail = () => {
         </div>
       )}
 
-      {/* Rating Feature */}
+      {/* Rating and Comment Feature */}
       <div className="mt-4">
-        <h4>Rate this Article</h4>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            style={{
-              cursor: "pointer",
-              color: star <= (rating || Math.round(ratings.reduce((a, b) => a + b, 0) / (ratings.length || 1)))
-                ? "#ffc107"
-                : "#e4e5e9",
-              fontSize: "1.5rem",
-            }}
-            onClick={() => setRating(star)}
-          >
-            ★
-          </span>
-        ))}
+        <h4>Rate and Comment on this Article</h4>
+        <div>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              style={{
+                cursor: "pointer",
+                color: star <= rating ? "#ffc107" : "#e4e5e9",
+                fontSize: "1.5rem",
+              }}
+              onClick={() => setRating(star)}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+        <textarea
+          className="form-control mt-3"
+          rows="3"
+          placeholder="Add a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        ></textarea>
         <button
-          className="btn btn-primary ms-2"
-          onClick={() => handleRating(rating)}
-          disabled={!rating}
+          className="btn btn-primary mt-2"
+          onClick={handleAddCommentAndRating}
+          disabled={!newComment.trim() || rating === null}
         >
-          Submit Rating
+          Post Comment and Rating
         </button>
         <div className="mt-2">
-          <strong>Average Rating:</strong>{" "}
-          {ratings.length
-            ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
-            : "No ratings yet"}
+          <strong>Average Rating:</strong> {getAverageRating()}
         </div>
       </div>
 
@@ -109,6 +131,8 @@ const BlogDetail = () => {
           <ul className="list-group">
             {comments.map((comment, index) => (
               <li key={index} className="list-group-item">
+                <strong>Rating:</strong> {"⭐".repeat(comment.rating)}
+                <br />
                 {comment.text}{" "}
                 <small className="text-muted">
                   ({new Date(comment.date).toLocaleString()})
@@ -119,20 +143,6 @@ const BlogDetail = () => {
         ) : (
           <p className="text-muted">No comments yet. Be the first to comment!</p>
         )}
-        <textarea
-          className="form-control mt-3"
-          rows="3"
-          placeholder="Add a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        ></textarea>
-        <button
-          className="btn btn-primary mt-2"
-          onClick={handleAddComment}
-          disabled={!newComment.trim()}
-        >
-          Post Comment
-        </button>
       </div>
 
       {/* Related Articles Section */}
