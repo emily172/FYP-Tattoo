@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Studio = () => {
   // Studio data (you can later fetch this dynamically or from props)
@@ -7,6 +7,7 @@ const Studio = () => {
     location: "Cork Rd, Kilbarry, Waterford",
     facilities: ["Private Rooms", "Waiting Area", "Free Wi-Fi"],
     contact: "123-456-7890",
+    email: "contact@inkpots.com", // Added email
     description:
       "Ink Pots offers top-notch tattoo services with hygienic practices and professional artists. We ensure a comfortable environment for every client.",
     gallery: [
@@ -14,11 +15,37 @@ const Studio = () => {
       "https://placehold.co/300x200?text=Studio+2",
       "https://placehold.co/300x200?text=Studio+3",
     ],
-   // mapLocation: "123 Main Street, Dublin",
+    // mapLocation: "123 Main Street, Dublin", // Commented out as per request
     reviews: [
-      { username: "Alex", rating: 5, comment: "Amazing experience!", timestamp: "2023-04-01T10:00:00" },
-      { username: "Jamie", rating: 4, comment: "Great service but a bit pricey.", timestamp: "2023-03-28T15:45:00" },
+      {
+        username: "Alex",
+        rating: 5,
+        comment: "Amazing experience!",
+        timestamp: "2025-04-01T10:00:00",
+      },
+      {
+        username: "Jamie",
+        rating: 4,
+        comment: "Great service but a bit pricey.",
+        timestamp: "2025-03-28T15:45:00",
+      },
     ],
+    policies: [
+      "All clients must provide a valid ID (18+ years only).",
+      "Appointments must be canceled at least 24 hours in advance.",
+      "No external companions allowed in the work area.",
+    ],
+  };
+
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" }); // Contact form state
+  const [formSubmitted, setFormSubmitted] = useState(false); // Form submission status
+
+  // Handle form submission
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+    console.log("Form submitted:", formData); // Simulated form submission
+    setFormData({ name: "", email: "", message: "" }); // Reset form
   };
 
   // Helper to calculate average rating
@@ -50,9 +77,14 @@ const Studio = () => {
         <p>
           <strong>Phone:</strong> {studio.contact}
         </p>
+        <p>
+          <strong>Email:</strong>{" "}
+          <a href={`mailto:${studio.email}`}>{studio.email}</a>
+        </p>
       </div>
 
-      {/* Map Section 
+      {/* Map Section */}
+      {/*
       <div className="mt-4">
         <h4>Studio Location</h4>
         <iframe
@@ -67,7 +99,8 @@ const Studio = () => {
           title="Studio Location"
         ></iframe>
       </div>
-*/}
+      */}
+
       {/* Gallery Section */}
       <div className="mt-4">
         <h4>Gallery</h4>
@@ -84,7 +117,7 @@ const Studio = () => {
         </div>
       </div>
 
-      {/* Reviews Section */}
+      {/* Testimonials Section */}
       <div className="mt-4">
         <h4>Client Reviews</h4>
         <p>
@@ -107,6 +140,77 @@ const Studio = () => {
           ))
         ) : (
           <p className="text-muted">No reviews yet.</p>
+        )}
+      </div>
+
+      {/* Virtual Tour Section */}
+      <div className="mt-4">
+        <h4>Virtual Tour</h4>
+        <p>
+          Explore our studio through this virtual tour video and see what we have
+          to offer!
+        </p>
+        <iframe
+          width="100%"
+          height="315"
+          src="https://www.youtube.com/embed/sample-video"
+          title="Studio Virtual Tour"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+
+      {/* Studio Policies Section */}
+      <div className="mt-4">
+        <h4>Studio Policies</h4>
+        <ul>
+          {studio.policies.map((policy, index) => (
+            <li key={index}>{policy}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Contact Form Section */}
+      <div className="mt-4">
+        <h4>Contact Us</h4>
+        {formSubmitted ? (
+          <p className="text-success">Thank you for your message! We'll get back to you soon.</p>
+        ) : (
+          <form onSubmit={handleFormSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Your Name</label>
+              <input
+                type="text"
+                className="form-control"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Your Email</label>
+              <input
+                type="email"
+                className="form-control"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Your Message</label>
+              <textarea
+                className="form-control"
+                rows="4"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                required
+              ></textarea>
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </form>
         )}
       </div>
 
