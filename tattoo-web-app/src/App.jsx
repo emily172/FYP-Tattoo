@@ -9,8 +9,10 @@ import Category from "./pages/Category";
 import Design from "./pages/Design"
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
-import ArtistSpotlight from "./components/ArtistSpotlight";
+import ArtistSpotlight from "./pages/artistSpotlight";
 import FAQResources from "./pages/FAQResources";
+import BlogList from "./pages/BlogList";
+import BlogDetail from "./pages/BlogDetail";
 import ReviewForm from "./pages/ReviewForm";
 import Dashboard from "./pages/Dashboard";
 import BookingForm from "./pages/BookingForm";
@@ -43,6 +45,8 @@ const App = () => {
             <Route path="/artists/:id/review" element={<ReviewForm />} />
             <Route path="/artist-spotlight" element={<ArtistSpotlight />} />
             <Route path="/faq-resources" element={<FAQResources />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}
