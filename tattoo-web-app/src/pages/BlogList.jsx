@@ -4,28 +4,18 @@ import { articles } from "../data/articles"; // Import articles data
 
 const BlogList = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State to store search query
-  const [sortOption, setSortOption] = useState("newest"); // State to store sorting option
+  const [selectedCategory, setSelectedCategory] = useState(""); // State to store selected category filter
 
-  // Filter articles based on search query
+  // Get unique categories from articles
+  const uniqueCategories = [...new Set(articles.map((article) => article.category))];
+
+  // Filter articles based on search query and selected category
   const filteredArticles = articles.filter(
     (article) =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.category.toLowerCase().includes(searchQuery.toLowerCase())
+      (selectedCategory === "" || article.category === selectedCategory) &&
+      (article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.category.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
-  // Sort articles based on selected sorting option
-  const sortedArticles = [...filteredArticles].sort((a, b) => {
-    if (sortOption === "newest") {
-      return new Date(b.date) - new Date(a.date); // Sort by newest
-    } else if (sortOption === "oldest") {
-      return new Date(a.date) - new Date(b.date); // Sort by oldest
-    } else if (sortOption === "title") {
-      return a.title.localeCompare(b.title); // Sort alphabetically by title
-    } else if (sortOption === "category") {
-      return a.category.localeCompare(b.category); // Sort alphabetically by category
-    }
-    return 0; // Default sorting
-  });
 
   return (
     <div className="container mt-5">
@@ -42,24 +32,35 @@ const BlogList = () => {
         />
       </div>
 
-      {/* Sorting Options */}
+      {/* Category Tags */}
       <div className="mb-4">
-        <label className="form-label me-3">Sort By:</label>
-        <select
-          className="form-select"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-        >
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="title">Title</option>
-          <option value="category">Category</option>
-        </select>
+        <h5>Filter by Category:</h5>
+        <div className="d-flex flex-wrap">
+          <button
+            className={`btn btn-outline-primary me-2 mb-2 ${
+              selectedCategory === "" ? "active" : ""
+            }`}
+            onClick={() => setSelectedCategory("")}
+          >
+            All
+          </button>
+          {uniqueCategories.map((category) => (
+            <button
+              key={category}
+              className={`btn btn-outline-primary me-2 mb-2 ${
+                selectedCategory === category ? "active" : ""
+              }`}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* List of Filtered and Sorted Articles */}
+      {/* List of Filtered Articles */}
       <div className="row">
-        {sortedArticles.map((article) => (
+        {filteredArticles.map((article) => (
           <div key={article.id} className="col-md-6 mb-4">
             <div className="card">
               <div className="card-body">
@@ -77,9 +78,9 @@ const BlogList = () => {
             </div>
           </div>
         ))}
-        {sortedArticles.length === 0 && (
+        {filteredArticles.length === 0 && (
           <div className="text-center">
-            <p>No articles found. Try searching with a different keyword.</p>
+            <p>No articles found. Try searching or selecting a different category.</p>
           </div>
         )}
       </div>
