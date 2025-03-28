@@ -9,6 +9,7 @@ import TatStyles from "./pages/TatStyles";
 import Gallery from "./pages/Gallery"; // Import the Gallery component
 import Category from "./pages/Category";
 import Design from "./pages/Design"
+import CoverUp from "./pages/CoverUp";
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
 import ArtistSpotlight from "./pages/artistSpotlight";
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/gallery" element={<Gallery />} /> {/* Gallery Route */}
             <Route path="/category" element={<Category/>} />
             <Route path="/design" element={<Design/>} />
+            <Route path="/coverups" element={<CoverUp/>} />
             <Route path="/artists" element={<Artists />} />
             <Route path="/artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />
