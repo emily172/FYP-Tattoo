@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
+import Studio from "./pages/Studio";
 import TatStyles from "./pages/TatStyles";
 import Gallery from "./pages/Gallery"; // Import the Gallery component
 import Category from "./pages/Category";
@@ -35,6 +36,7 @@ const App = () => {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/studio" element={<Studio />} />
             <Route path="/tatstyles" element={<TatStyles />} />
             <Route path="/gallery" element={<Gallery />} /> {/* Gallery Route */}
             <Route path="/category" element={<Category/>} />
