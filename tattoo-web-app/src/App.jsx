@@ -13,6 +13,7 @@ import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
 import ArtistSpotlight from "./pages/artistSpotlight";
 import FAQResources from "./pages/FAQResources";
+import Aftercare from "./pages/Aftercare";
 import BlogList from "./pages/BlogList";
 import BlogDetail from "./pages/BlogDetail";
 import ReviewForm from "./pages/ReviewForm";
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/artists/:id/review" element={<ReviewForm />} />
             <Route path="/artist-spotlight" element={<ArtistSpotlight />} />
             <Route path="/faq-resources" element={<FAQResources />} />
+            <Route path="/aftercare" element={<Aftercare />} />
             <Route path="/blog" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
