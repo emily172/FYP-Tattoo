@@ -4,6 +4,7 @@ import { articles } from "../data/articles"; // Import articles data
 
 const BlogList = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State to store search query
+  const [sortOption, setSortOption] = useState("newest"); // State to store sorting option
 
   // Filter articles based on search query
   const filteredArticles = articles.filter(
@@ -11,6 +12,20 @@ const BlogList = () => {
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Sort articles based on selected sorting option
+  const sortedArticles = [...filteredArticles].sort((a, b) => {
+    if (sortOption === "newest") {
+      return new Date(b.date) - new Date(a.date); // Sort by newest
+    } else if (sortOption === "oldest") {
+      return new Date(a.date) - new Date(b.date); // Sort by oldest
+    } else if (sortOption === "title") {
+      return a.title.localeCompare(b.title); // Sort alphabetically by title
+    } else if (sortOption === "category") {
+      return a.category.localeCompare(b.category); // Sort alphabetically by category
+    }
+    return 0; // Default sorting
+  });
 
   return (
     <div className="container mt-5">
@@ -27,9 +42,24 @@ const BlogList = () => {
         />
       </div>
 
-      {/* List of Filtered Articles */}
+      {/* Sorting Options */}
+      <div className="mb-4">
+        <label className="form-label me-3">Sort By:</label>
+        <select
+          className="form-select"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="title">Title</option>
+          <option value="category">Category</option>
+        </select>
+      </div>
+
+      {/* List of Filtered and Sorted Articles */}
       <div className="row">
-        {filteredArticles.map((article) => (
+        {sortedArticles.map((article) => (
           <div key={article.id} className="col-md-6 mb-4">
             <div className="card">
               <div className="card-body">
@@ -47,7 +77,7 @@ const BlogList = () => {
             </div>
           </div>
         ))}
-        {filteredArticles.length === 0 && (
+        {sortedArticles.length === 0 && (
           <div className="text-center">
             <p>No articles found. Try searching with a different keyword.</p>
           </div>
