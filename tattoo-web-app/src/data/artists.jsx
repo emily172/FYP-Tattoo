@@ -11,7 +11,7 @@ export const artists = [
       "https://placehold.co/300x200?text=Design+3",
     ],
     availability: {
-      open: ["2025-03-20", "2025-03-21"], // Available dates
+      open: ["2025-03-28", "2025-03-29","2025-03-30", "2025-03-31"], // Available dates
       blocked: ["2025-03-22", "2025-03-23"], // Blocked dates
     },
     reviews: [
@@ -38,8 +38,8 @@ export const artists = [
       "https://placehold.co/300x200?text=Design+5",
     ],
     availability: {
-      open: ["2025-03-25", "2025-03-26","2025-03-27","2025-03-28"],
-      blocked: ["2025-04-10", "2025-04-12"],
+      open: ["2025-03-28", "2025-03-29","2025-03-30", "2025-03-31"],
+      blocked: ["2025-06-10", "2025-06-12"],
     },
     reviews: [
       {
@@ -67,7 +67,7 @@ export const artists = [
       "https://placehold.co/300x200?text=Design+9",
     ],
     availability: {
-      open: ["2025-03-28", "2025-03-29"],
+      open: ["2025-03-28", "2025-03-29","2025-03-30", "2025-03-31"],
       blocked: ["2025-03-30", "2025-03-31"],
     },
     reviews: [
