@@ -9,6 +9,7 @@ import Category from "./pages/Category";
 import Design from "./pages/Design"
 import Artists from "./pages/Artists";
 import ArtistProfile from "./pages/ArtistProfile";
+import FAQResources from "./pages/FAQResources";
 import ReviewForm from "./pages/ReviewForm";
 import Dashboard from "./pages/Dashboard";
 import BookingForm from "./pages/BookingForm";
@@ -39,6 +40,7 @@ const App = () => {
             <Route path="/artists/:id" element={<ArtistProfile />} />
             <Route path="/artists/:id/book" element={<BookingForm />} />
             <Route path="/artists/:id/review" element={<ReviewForm />} />
+            <Route path="/faq-resources" element={<FAQResources />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} /> {/* My Bookings */}
