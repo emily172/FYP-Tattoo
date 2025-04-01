@@ -3,16 +3,47 @@ const Artist = require("../models/Artist");
 
 const router = express.Router();
 
-// CREATE ARTIST
-router.post("/", async (req, res) => {
+
+//Manually hashing the password before saving them - prevents email duplicaton
+const bcrypt = require("bcryptjs");
+
+// CREATE ARTIST - updated with new field
+router.post("/register", async (req, res) => {
   try {
-    const artist = new Artist(req.body);
+    const { name, bio, specialty, email, password } = req.body;
+    
+    const artistExists = await Artist.findOne({ email });
+    if (artistExists) {
+      return res.status(400).json({ message: "Artist email already in use" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const artist = new Artist({ name, bio, specialty, email, password: hashedPassword });
+
     await artist.save();
-    res.status(201).json({ message: "Artist added successfully!", artist });
+    res.status(201).json({ message: "Artist registered successfully!", artist });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const artist = await Artist.findOne({ email });
+    if (!artist || !(await artist.comparePassword(password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    res.json({ message: "Login successful!", artist });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // GET ALL ARTISTS
 router.get("/", async (req, res) => {
