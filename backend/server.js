@@ -37,14 +37,14 @@ const userRoutes = require("./routes/userRoutes");
 app.use("/api/users", userRoutes);
 
 
-const adminRoutes = require("./routes/adminRoutes");
-app.use("/api/admins", adminRoutes);
+/*const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admins", adminRoutes);*/
 
 const artistRoutes = require("./routes/artistRoutes")
 app.use("/api/artists", artistRoutes);
 
-/*
+
 const bookingRoutes = require("./routes/bookingRoutes")
 app.use("/api/bookings", bookingRoutes);
-*/
+
 

@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 
-const BookingSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },  // Link to User model
-  artist: { type: mongoose.Schema.Types.ObjectId, ref: "Artist", required: true },  // Link to Artist model
-  date: { type: Date, required: true },
-  status: { type: String, enum: ["pending", "confirmed", "completed"], default: "pending" }
-}, { timestamps: true });
+const AdminSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
+}, { timestamps: true }); // Adds createdAt & updatedAt timestamps
 
-module.exports = mongoose.model("Booking", BookingSchema);
+module.exports = mongoose.model("Admin", AdminSchema);
+*/
