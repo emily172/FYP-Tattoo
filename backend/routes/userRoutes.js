@@ -25,4 +25,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+//Updating the users to change content
+router.put("/:id", async (req, res) => {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id, // Get user ID from request
+        req.body,      // Update fields from request body
+        { new: true, runValidators: true } // Return updated user & validate input
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.json({ message: "User updated successfully!", updatedUser });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+
 module.exports = router;
