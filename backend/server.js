@@ -30,5 +30,20 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
 //Routes
+
+//User, Admin, Artist, Bookings
+
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/users", userRoutes);
+
+
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admins", adminRoutes);
+
+const artistRoutes = require("./routes/artistRoutes")
+app.use("/api/artists", artistRoutes);
+
+const bookingRoutes = require("./routes/bookingRoutes")
+app.use("/api/bookings", bookingRoutes);
+
+
