@@ -1,12 +1,12 @@
 const bcrypt = require("bcryptjs");
 
-const password = "secretsout123--";
-const storedHash = "$2b$10$4hwJJAWM7ehFUfGWa6DjI.EfCy0QlV5tAH5lZtfRK6d2LqxvcIYi2"; // Diego's hash from MongoDB
+const passwordEntered = "secretsout123";
+const storedHash = "$2b$10$iJz16DKClLzCaPZwGiQPbOIVlbgev0/es9j2OtsyRqxk6aVf.FOe2"; // Retrieved from MongoDB
 
 async function testBcrypt() {
-  const match = await bcrypt.compare(password, storedHash);
+  const match = await bcrypt.compare(passwordEntered, storedHash);
   
-  console.log("🟢 Password match:", match);
+  console.log("🟢 Password match result:", match);
 }
 
 testBcrypt();

@@ -4,6 +4,8 @@ const cors = require("cors");
 //Import Mongoose
 const mongoose = require("mongoose");
 require("dotenv").config();
+console.log("🟢 JWT Secret Key:", process.env.JWT_SECRET);
+
 
 const app = express();
 app.use(express.json());
