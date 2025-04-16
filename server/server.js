@@ -324,58 +324,125 @@ app.delete('/studio', async (req, res) => {
 // Get all tattoo styles
 app.get('/tattoo-styles', async (req, res) => {
   try {
-    const styles = await TattooStyle.find().sort({ createdAt: -1 });
-    res.json(styles);
+    const styles = await TattooStyle.find(); // Fetch all styles
+    res.json(styles); // Include all fields in the response
   } catch (err) {
+    console.error('Error fetching tattoo styles:', err);
     res.status(500).json({ error: 'Failed to fetch tattoo styles' });
   }
 });
 
+
 // Get a single tattoo style
 app.get('/tattoo-styles/:id', async (req, res) => {
   try {
-    const style = await TattooStyle.findById(req.params.id);
+    const style = await TattooStyle.findById(req.params.id); // Fetch style by ID
     if (!style) return res.status(404).json({ error: 'Style not found' });
-    res.json(style);
+    res.json(style); // Include all fields in the response
   } catch (err) {
+    console.error('Error fetching tattoo style:', err);
     res.status(500).json({ error: 'Failed to fetch tattoo style' });
   }
 });
 
+
+
 // Add a new tattoo style
 app.post('/tattoo-styles', async (req, res) => {
   try {
-    const { name, description, image } = req.body;
-    const newStyle = new TattooStyle({ name, description, image });
+    const {
+      name, description, image, descriptor, images, commonLocations,
+      preparation, aftercare, funFacts, history, challenges,
+      toolsTechniques, maintenanceTimeline, iconicDesigns,
+      studioEnvironment, estimatedDuration,
+    } = req.body; // Include all new fields
+
+    const newStyle = new TattooStyle({
+      name,
+      description,
+      image,
+      descriptor,
+      images,
+      commonLocations,
+      preparation,
+      aftercare,
+      funFacts,
+      history,
+      challenges,
+      toolsTechniques,
+      maintenanceTimeline,
+      iconicDesigns,
+      studioEnvironment,
+      estimatedDuration,
+    });
+
     await newStyle.save();
-    res.status(201).json(newStyle);
+    res.status(201).json(newStyle); // Return the newly created style
   } catch (err) {
     console.error('Error adding tattoo style:', err);
     res.status(500).json({ error: 'Failed to add tattoo style' });
   }
 });
 
+
+
+
 // Update a tattoo style
 app.put('/tattoo-styles/:id', async (req, res) => {
   try {
-    const updatedStyle = await TattooStyle.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const {
+      name, description, image, descriptor, images, commonLocations,
+      preparation, aftercare, funFacts, history, challenges,
+      toolsTechniques, maintenanceTimeline, iconicDesigns,
+      studioEnvironment, estimatedDuration,
+    } = req.body; // Accept updated fields
+
+    const updatedStyle = await TattooStyle.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        description,
+        image,
+        descriptor,
+        images,
+        commonLocations,
+        preparation,
+        aftercare,
+        funFacts,
+        history,
+        challenges,
+        toolsTechniques,
+        maintenanceTimeline,
+        iconicDesigns,
+        studioEnvironment,
+        estimatedDuration,
+      },
+      { new: true } // Return the updated style
+    );
+
     if (!updatedStyle) return res.status(404).json({ error: 'Style not found' });
     res.json(updatedStyle);
   } catch (err) {
+    console.error('Error updating tattoo style:', err);
     res.status(500).json({ error: 'Failed to update tattoo style' });
   }
 });
 
+
+
+
 // Delete a tattoo style
 app.delete('/tattoo-styles/:id', async (req, res) => {
   try {
-    const deletedStyle = await TattooStyle.findByIdAndDelete(req.params.id);
+    const deletedStyle = await TattooStyle.findByIdAndDelete(req.params.id); // Delete style by ID
     if (!deletedStyle) return res.status(404).json({ error: 'Style not found' });
-    res.json({ message: 'Tattoo style deleted' });
+    res.json({ message: 'Tattoo style deleted successfully' });
   } catch (err) {
+    console.error('Error deleting tattoo style:', err);
     res.status(500).json({ error: 'Failed to delete tattoo style' });
   }
 });
+
 
 // Start the Server
 app.listen(5000, () => console.log('Server running on port 5000'));
