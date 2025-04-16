@@ -15,8 +15,9 @@ import ManageArtists from './pages/ManageArtists'; // Artists management
 import ManageGallery from './pages/ManageGallery'; // Gallery management
 import ManageStudio from './pages/ManageStudio'; // Admin Studio management
 import AdminBlogManager from './pages/AdminBlogManager'; // Admin Blog Management
-import TattooStyles from './pages/TattooStyles';
-import ManageTattooStyles from './pages/ManageTattooStyles';
+import TattooStyles from './pages/TattooStyles'; // User-facing Tattoo Styles page
+import TattooStylePage from './pages/TattooStylePage'; // Single Tattoo Style page
+import ManageTattooStyles from './pages/ManageTattooStyles'; // Admin Tattoo Styles management
 
 function App() {
   return (
@@ -31,17 +32,18 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blogs" element={<BlogList />} /> {/* Blog List Page */}
         <Route path="/blogs/:id" element={<BlogPost />} /> {/* Single Blog Post Page */}
+        <Route path="/styles" element={<TattooStyles />} /> {/* Tattoo Styles List Page */}
+        <Route path="/styles/:id" element={<TattooStylePage />} /> {/* Dedicated Tattoo Style Page */}
 
         {/* Admin Routes */}
         <Route path="/register" element={<AdminRegister />} />
         <Route path="/login" element={<AdminLogin />} />
-        <Route path="/dashboard" element={<AdminDashboard />} />
-        <Route path="/dashboard/artists" element={<ManageArtists />} />
-        <Route path="/dashboard/gallery" element={<ManageGallery />} />
-        <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Studio management */}
+        <Route path="/dashboard" element={<AdminDashboard />} /> {/* Main Admin Dashboard */}
+        <Route path="/dashboard/artists" element={<ManageArtists />} /> {/* Artists Management */}
+        <Route path="/dashboard/gallery" element={<ManageGallery />} /> {/* Gallery Management */}
+        <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Studio Management */}
         <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Admin Blog Management */}
-        <Route path="/styles" element={<TattooStyles />} />
-        <Route path="/dashboard/styles" element={<ManageTattooStyles />} />
+        <Route path="/dashboard/styles" element={<ManageTattooStyles />} /> {/* Admin Tattoo Styles Management */}
       </Routes>
     </Router>
   );
