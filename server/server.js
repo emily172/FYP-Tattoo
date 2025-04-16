@@ -54,7 +54,7 @@ app.post('/admin/login', async (req, res) => {
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid password' });
 
     const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '6h',
     });
 
     res.json({ token });
@@ -185,6 +185,20 @@ app.put('/artists/:id', authenticateAdmin, async (req, res) => {
     res.status(500).json({ error: 'Failed to update artist' });
   }
 });
+
+app.delete('/artists/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params; // Ensure you're getting the correct ID
+    const deletedArtist = await Artist.findByIdAndDelete(id);
+    if (!deletedArtist) {
+      return res.status(404).json({ error: 'Artist not found' });
+    }
+    res.status(200).json({ message: 'Artist deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete artist' });
+  }
+});
+
 
 
 app.get('/stats/tattoos/popular-styles', authenticateAdmin, async (req, res) => {
