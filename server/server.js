@@ -11,7 +11,7 @@ const Tattoo = require('./models/Tattoo'); // Tattoo model
 const Artist = require('./models/Artist'); // Artist model
 const Blog = require('./models/Blog'); // Blog model
 const Studio = require('./models/Studio'); //Studio model
-
+const TattooStyle = require('./models/TattooStyle');
 
 
 const app = express();
@@ -320,6 +320,62 @@ app.delete('/studio', async (req, res) => {
   }
 });
 
+// Tattoo Styles Endpoints
+// Get all tattoo styles
+app.get('/tattoo-styles', async (req, res) => {
+  try {
+    const styles = await TattooStyle.find().sort({ createdAt: -1 });
+    res.json(styles);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch tattoo styles' });
+  }
+});
+
+// Get a single tattoo style
+app.get('/tattoo-styles/:id', async (req, res) => {
+  try {
+    const style = await TattooStyle.findById(req.params.id);
+    if (!style) return res.status(404).json({ error: 'Style not found' });
+    res.json(style);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch tattoo style' });
+  }
+});
+
+// Add a new tattoo style
+app.post('/tattoo-styles', async (req, res) => {
+  try {
+    const { name, description, image } = req.body;
+    const newStyle = new TattooStyle({ name, description, image });
+    await newStyle.save();
+    res.status(201).json(newStyle);
+  } catch (err) {
+    console.error('Error adding tattoo style:', err);
+    res.status(500).json({ error: 'Failed to add tattoo style' });
+  }
+});
+
+// Update a tattoo style
+app.put('/tattoo-styles/:id', async (req, res) => {
+  try {
+    const updatedStyle = await TattooStyle.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedStyle) return res.status(404).json({ error: 'Style not found' });
+    res.json(updatedStyle);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update tattoo style' });
+  }
+});
+
+// Delete a tattoo style
+app.delete('/tattoo-styles/:id', async (req, res) => {
+  try {
+    const deletedStyle = await TattooStyle.findByIdAndDelete(req.params.id);
+    if (!deletedStyle) return res.status(404).json({ error: 'Style not found' });
+    res.json({ message: 'Tattoo style deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete tattoo style' });
+  }
+});
 
 // Start the Server
 app.listen(5000, () => console.log('Server running on port 5000'));

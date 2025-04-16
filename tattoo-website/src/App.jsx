@@ -15,6 +15,8 @@ import ManageArtists from './pages/ManageArtists'; // Artists management
 import ManageGallery from './pages/ManageGallery'; // Gallery management
 import ManageStudio from './pages/ManageStudio'; // Admin Studio management
 import AdminBlogManager from './pages/AdminBlogManager'; // Admin Blog Management
+import TattooStyles from './pages/TattooStyles';
+import ManageTattooStyles from './pages/ManageTattooStyles';
 
 function App() {
   return (
@@ -38,10 +40,11 @@ function App() {
         <Route path="/dashboard/gallery" element={<ManageGallery />} />
         <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Studio management */}
         <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Admin Blog Management */}
+        <Route path="/styles" element={<TattooStyles />} />
+        <Route path="/dashboard/styles" element={<ManageTattooStyles />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

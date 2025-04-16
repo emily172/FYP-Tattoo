@@ -34,10 +34,19 @@ function Navbar() {
           >
             Artists
           </Link>
+
+          <Link 
+            to="/styles" 
+            className={`hover:text-indigo-500 ${location.pathname === '/styles' ? 'text-indigo-500' : ''}`}
+          >
+            Styles
+          </Link>
+
           <Link 
             to="/contact" 
             className={`hover:text-indigo-500 ${location.pathname === '/contact' ? 'text-indigo-500' : ''}`}
           >
+            
             Contact
           </Link>
           <Link 
@@ -89,6 +98,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
-

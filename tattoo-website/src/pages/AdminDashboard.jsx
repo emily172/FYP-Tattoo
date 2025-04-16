@@ -1,48 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-function AdminDashboard() {
+const AdminDashboard = () => {
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white">
-        <div className="p-4 text-center">
-          <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-        </div>
-        <nav className="p-4">
-          <ul className="space-y-4">
-            <li>
-              <Link to="/dashboard/artists" className="hover:text-indigo-400">
-                Manage Artists
-              </Link>
-            </li>
-            <li>
-              <Link to="/dashboard/gallery" className="hover:text-indigo-400">
-                Manage Gallery
-              </Link>
-            </li>
-            <li>
-              <Link to="/dashboard/blogs" className="hover:text-indigo-400">
-                Manage Blogs
-              </Link>
-            </li>
-            <li>
-              <Link to="/dashboard/studio" className="hover:text-indigo-400">
-                Manage Studio
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 bg-gray-100">
-        <h1 className="text-2xl font-bold">Welcome to the Admin Dashboard</h1>
-        <p>Select a section from the sidebar to manage content.</p>
-      </main>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Manage Artists */}
+        <NavLink
+          to="/dashboard/artists"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Artists</h2>
+          <p>View and edit the artist profiles.</p>
+        </NavLink>
+
+        {/* Manage Gallery */}
+        <NavLink
+          to="/dashboard/gallery"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Gallery</h2>
+          <p>Organize and update the tattoo gallery.</p>
+        </NavLink>
+
+        {/* Manage Studio */}
+        <NavLink
+          to="/dashboard/studio"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Studio</h2>
+          <p>Edit studio information and settings.</p>
+        </NavLink>
+
+        {/* Manage Blogs */}
+        <NavLink
+          to="/dashboard/blogs"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Blogs</h2>
+          <p>Manage blog posts and add new content.</p>
+        </NavLink>
+
+        {/* Manage Tattoo Styles */}
+        <NavLink
+          to="/dashboard/styles"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Tattoo Styles</h2>
+          <p>Add, edit, or delete tattoo styles.</p>
+        </NavLink>
+      </div>
     </div>
   );
-}
+};
 
 export default AdminDashboard;
 
