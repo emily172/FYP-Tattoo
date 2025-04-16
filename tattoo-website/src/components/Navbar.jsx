@@ -23,6 +23,12 @@ function Navbar() {
             Studio
           </Link>
           <Link 
+            to="/history" 
+            className={`hover:text-indigo-500 ${location.pathname === '/history' ? 'text-indigo-500' : ''}`}
+          >
+            History
+          </Link>
+          <Link 
             to="/gallery" 
             className={`hover:text-indigo-500 ${location.pathname === '/gallery' ? 'text-indigo-500' : ''}`}
           >
@@ -40,6 +46,13 @@ function Navbar() {
             className={`hover:text-indigo-500 ${location.pathname === '/styles' ? 'text-indigo-500' : ''}`}
           >
             Styles
+          </Link>
+
+          <Link 
+            to="/faq" 
+            className={`hover:text-indigo-500 ${location.pathname === '/faq' ? 'text-indigo-500' : ''}`}
+          >
+            FAQ
           </Link>
 
           <Link 

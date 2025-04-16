@@ -1,49 +1,61 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Gallery from './pages/Gallery';
-import Artists from './pages/Artists';
-import Contact from './pages/Contact';
+import Home from './pages/Home'; // Landing page
+import Gallery from './pages/Gallery'; // User-facing gallery page
+import Artists from './pages/Artists'; // List of all artists
+import ArtistProfilePage from './pages/ArtistProfilePage'; // Detailed artist profiles
+import Contact from './pages/Contact'; // Contact page
 import Studio from './pages/Studio'; // User-facing Studio page
 import BlogList from './pages/BlogList'; // Blog list page
 import BlogPost from './pages/BlogPost'; // Single blog post page
-import AdminRegister from './pages/AdminRegister'; // Admin Register
-import AdminLogin from './pages/AdminLogin'; // Admin Login
-import AdminDashboard from './pages/AdminDashboard'; // Admin Dashboard
-import ManageArtists from './pages/ManageArtists'; // Artists management
-import ManageGallery from './pages/ManageGallery'; // Gallery management
-import ManageStudio from './pages/ManageStudio'; // Admin Studio management
-import AdminBlogManager from './pages/AdminBlogManager'; // Admin Blog Management
-import TattooStyles from './pages/TattooStyles'; // User-facing Tattoo Styles page
-import TattooStylePage from './pages/TattooStylePage'; // Single Tattoo Style page
-import ManageTattooStyles from './pages/ManageTattooStyles'; // Admin Tattoo Styles management
+import AdminRegister from './pages/AdminRegister'; // Admin registration
+import AdminLogin from './pages/AdminLogin'; // Admin login
+import AdminDashboard from './pages/AdminDashboard'; // Main admin dashboard
+import ManageArtists from './pages/ManageArtists'; // Artists management dashboard
+import ManageGallery from './pages/ManageGallery'; // Gallery management dashboard
+import ManageStudio from './pages/ManageStudio'; // Studio management dashboard
+import AdminBlogManager from './pages/AdminBlogManager'; // Admin blog management dashboard
+import TattooStyles from './pages/TattooStyles'; // User-facing tattoo styles list
+import TattooStylePage from './pages/TattooStylePage'; // Single tattoo style page
+import ManageTattooStyles from './pages/ManageTattooStyles'; // Admin tattoo styles management
+import FAQPage from './pages/FAQPage';
+import FAQManagement from './pages/FAQManagement'; // Import the FAQManagement page
+import History from './pages/HistoryTimeline'; // Public History component
+import ManageHistory from './pages/ManageHistory'; // Admin History dashboard
+
+
 
 function App() {
   return (
     <Router>
-      <Navbar />
+      <Navbar /> {/* Navigation bar visible on all pages */}
       <Routes>
         {/* General User Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/studio" element={<Studio />} /> {/* Studio page */}
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/artists" element={<Artists />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/blogs" element={<BlogList />} /> {/* Blog List Page */}
-        <Route path="/blogs/:id" element={<BlogPost />} /> {/* Single Blog Post Page */}
-        <Route path="/styles" element={<TattooStyles />} /> {/* Tattoo Styles List Page */}
-        <Route path="/styles/:id" element={<TattooStylePage />} /> {/* Dedicated Tattoo Style Page */}
+        <Route path="/" element={<Home />} /> {/* Home page */}
+        <Route path="/studio" element={<Studio />} /> {/* Studio overview */}
+        <Route path="/gallery" element={<Gallery />} /> {/* Explore tattoo gallery */}
+        <Route path="/artists" element={<Artists />} /> {/* List of artists */}
+        <Route path="/artists/:id" element={<ArtistProfilePage />} /> {/* Detailed artist profile */}
+        <Route path="/contact" element={<Contact />} /> {/* Contact form */}
+        <Route path="/blogs" element={<BlogList />} /> {/* Blog list */}
+        <Route path="/blogs/:id" element={<BlogPost />} /> {/* Single blog post */}
+        <Route path="/styles" element={<TattooStyles />} /> {/* Tattoo styles overview */}
+        <Route path="/styles/:id" element={<TattooStylePage />} /> {/* Detailed tattoo style page */}
+        <Route path="/faq" element={<FAQPage />} /> {/* FAQ Page */}
+        <Route path="/history" element={<History />} /> {/* History page */}
 
         {/* Admin Routes */}
-        <Route path="/register" element={<AdminRegister />} />
-        <Route path="/login" element={<AdminLogin />} />
-        <Route path="/dashboard" element={<AdminDashboard />} /> {/* Main Admin Dashboard */}
-        <Route path="/dashboard/artists" element={<ManageArtists />} /> {/* Artists Management */}
-        <Route path="/dashboard/gallery" element={<ManageGallery />} /> {/* Gallery Management */}
-        <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Studio Management */}
-        <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Admin Blog Management */}
-        <Route path="/dashboard/styles" element={<ManageTattooStyles />} /> {/* Admin Tattoo Styles Management */}
+        <Route path="/register" element={<AdminRegister />} /> {/* Admin registration */}
+        <Route path="/login" element={<AdminLogin />} /> {/* Admin login */}
+        <Route path="/dashboard" element={<AdminDashboard />} /> {/* Admin dashboard */}
+        <Route path="/dashboard/artists" element={<ManageArtists />} /> {/* Manage artists */}
+        <Route path="/dashboard/gallery" element={<ManageGallery />} /> {/* Manage gallery */}
+        <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Manage studio */}
+        <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Manage blogs */}
+        <Route path="/dashboard/styles" element={<ManageTattooStyles />} /> {/* Manage tattoo styles */}
+        <Route path="/dashboard/faqs" element={<FAQManagement />} /> {/* Admin FAQ Management */}
+        <Route path="/dashboard/history" element={<ManageHistory />} /> {/* Admin History management */}
       </Routes>
     </Router>
   );

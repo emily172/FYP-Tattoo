@@ -51,10 +51,29 @@ const AdminDashboard = () => {
           <h2 className="text-xl font-bold">Manage Tattoo Styles</h2>
           <p>Add, edit, or delete tattoo styles.</p>
         </NavLink>
+
+        {/* Manage FAQs */}
+        <NavLink
+          to="/dashboard/faqs"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage FAQs</h2>
+          <p>View, create, edit, or delete FAQs.</p>
+        </NavLink>
+
+          {/* Manage History */}
+                <NavLink
+          to="/dashboard/history"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage History</h2>
+          <p>View, create, edit, or delete History.</p>
+        </NavLink>
       </div>
     </div>
   );
 };
 
 export default AdminDashboard;
+
 
