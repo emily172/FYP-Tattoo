@@ -9,6 +9,7 @@ function Navbar() {
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">Tattoo Studio</h1>
         <div className="space-x-4">
+          {/* General User Links */}
           <Link 
             to="/" 
             className={`hover:text-indigo-500 ${location.pathname === '/' ? 'text-indigo-500' : ''}`}
@@ -33,24 +34,15 @@ function Navbar() {
           >
             Contact
           </Link>
+          <Link 
+            to="/blogs" 
+            className={`hover:text-indigo-500 ${location.pathname === '/blogs' ? 'text-indigo-500' : ''}`}
+          >
+            Blog
+          </Link>
 
           {/* Admin Links */}
-          {!token ? (
-            <>
-              <Link 
-                to="/register" 
-                className={`hover:text-indigo-500 ${location.pathname === '/register' ? 'text-indigo-500' : ''}`}
-              >
-                Admin Register
-              </Link>
-              <Link 
-                to="/login" 
-                className={`hover:text-indigo-500 ${location.pathname === '/login' ? 'text-indigo-500' : ''}`}
-              >
-                Admin Login
-              </Link>
-            </>
-          ) : (
+          {token ? (
             <>
               <Link 
                 to="/dashboard" 
@@ -68,6 +60,21 @@ function Navbar() {
                 Logout
               </button>
             </>
+          ) : (
+            <>
+              <Link 
+                to="/register" 
+                className={`hover:text-indigo-500 ${location.pathname === '/register' ? 'text-indigo-500' : ''}`}
+              >
+                Admin Register
+              </Link>
+              <Link 
+                to="/login" 
+                className={`hover:text-indigo-500 ${location.pathname === '/login' ? 'text-indigo-500' : ''}`}
+              >
+                Admin Login
+              </Link>
+            </>
           )}
         </div>
       </div>
@@ -76,3 +83,5 @@ function Navbar() {
 }
 
 export default Navbar;
+
+
