@@ -59,6 +59,46 @@ const HistoryTimeline = () => {
     });
   };
 
+  // Handle keypress events
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (currentIndex !== null) {
+        if (event.key === 'ArrowLeft') {
+          goToPrevious(); // Navigate to the previous image
+        } else if (event.key === 'ArrowRight') {
+          goToNext(); // Navigate to the next image
+        } else if (event.key === 'Escape') {
+          closeCarousel(); // Close the modal on Escape key
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentIndex]);
+
+  // Handle mouse wheel scrolling
+  useEffect(() => {
+    const handleWheelScroll = (event) => {
+      if (currentIndex !== null) {
+        if (event.deltaY < 0) {
+          goToPrevious(); // Scroll up to go to previous image
+        } else if (event.deltaY > 0) {
+          goToNext(); // Scroll down to go to next image
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheelScroll);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheelScroll);
+    };
+  }, [currentIndex]);
+
   if (error) {
     return <p className="text-center text-red-600">{error}</p>;
   }
