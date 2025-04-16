@@ -17,6 +17,12 @@ function Navbar() {
             Home
           </Link>
           <Link 
+            to="/studio" 
+            className={`hover:text-indigo-500 ${location.pathname === '/studio' ? 'text-indigo-500' : ''}`}
+          >
+            Studio
+          </Link>
+          <Link 
             to="/gallery" 
             className={`hover:text-indigo-500 ${location.pathname === '/gallery' ? 'text-indigo-500' : ''}`}
           >
@@ -83,5 +89,6 @@ function Navbar() {
 }
 
 export default Navbar;
+
 
 
