@@ -1,4 +1,4 @@
-/* Overall Gallery Styling */
+/* Overall Gallery Styling 
 .gallery-container {
     padding: 20px;
     max-width: 1200px;
@@ -10,9 +10,9 @@
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 20px;
-  }
+  }*/
   
-  /* Masonry-Style Grid */
+  /* Masonry-Style Grid 
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -38,8 +38,8 @@
     object-fit: cover;
     border-radius: 8px;
   }
-  
-  /* Hover Effect on Gallery Items */
+  */
+  /* Hover Effect on Gallery Items 
   .gallery-item-hover {
     position: absolute;
     bottom: 0;
@@ -55,8 +55,8 @@
   .gallery-item:hover .gallery-item-hover {
     opacity: 1;
   }
-  
-  /* Lightbox (Modal) Styling */
+  */
+  /* Lightbox (Modal) Styling 
   .lightbox {
     position: fixed;
     top: 0;
@@ -116,4 +116,4 @@
   .lightbox-next:hover {
     color: #f0f0f0;
   }
-  
+  */

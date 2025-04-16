@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 
 const BookingSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },  // Link to User model
@@ -7,4 +7,4 @@ const BookingSchema = new mongoose.Schema({
   status: { type: String, enum: ["pending", "confirmed", "completed"], default: "pending" }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Booking", BookingSchema);
+module.exports = mongoose.model("Booking", BookingSchema);*/

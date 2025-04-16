@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 //Adding bcrypt to hash the passwords
 const bcrypt = require("bcryptjs");
 
@@ -17,3 +17,4 @@ UserSchema.pre("save", async function (next) {
   });
 
 module.exports = mongoose.model("User", UserSchema);
+*/

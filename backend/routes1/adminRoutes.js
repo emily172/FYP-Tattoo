@@ -1,4 +1,4 @@
-const express = require("express");
+/*const express = require("express");
 const Admin = require("../models/Admin");
 
 const router = express.Router();
@@ -86,3 +86,4 @@ router.put("/:id", async (req, res) => {
   
 
 module.exports = router;
+*/

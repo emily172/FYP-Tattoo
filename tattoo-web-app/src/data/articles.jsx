@@ -1,4 +1,4 @@
-export const articles = [
+/*export const articles = [
     {
       id: 1,
       title: "Top 10 Tattoo Aftercare Tips",
@@ -18,4 +18,4 @@ export const articles = [
       content: "When choosing a tattoo design, consider its meaning, size, and placement on your body..."
     }
   ];
-  
+  */

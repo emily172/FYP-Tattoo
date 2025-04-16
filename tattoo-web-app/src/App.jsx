@@ -5,8 +5,6 @@ import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import Artists from './pages/Artists';
 import Contact from './pages/Contact';
-import Register from './pages/Register'
-import Login from './pages/Login'
 
 function App() {
   return (
@@ -16,8 +14,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/artists" element={<Artists />} />
-        <Route path="/register" element={<Register/>} />
-        <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
     </Router>

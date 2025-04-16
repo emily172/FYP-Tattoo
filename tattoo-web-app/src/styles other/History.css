@@ -1,11 +1,11 @@
 /* Custom Styling for Timeline */
-/* General Styles */
+/* General Styles 
 body {
     font-family: "Roboto", sans-serif;
     background-color: #f9f9f9;
-  }
+  }*/
   
-  /* Header Styles */
+  /* Header Styles 
   .display-4 {
     font-weight: 700;
     color: #333333;
@@ -20,8 +20,8 @@ body {
     font-size: 1.1rem;
     color: #555555;
   }
-  
-  /* Milestones Section */
+  */
+  /* Milestones Section 
   .timeline {
     list-style: none;
     padding: 0;
@@ -56,8 +56,8 @@ body {
     font-size: 1rem;
     color: #333333;
   }
-  
-  /* Achievements Section */
+  */
+  /* Achievements Section 
   .text-success {
     color: #198754 !important;
   }
@@ -72,8 +72,8 @@ body {
   .list-group-item:not(:last-child) {
     margin-bottom: 10px;
   }
-  
-  /* Photo Timeline Section */
+  */
+  /* Photo Timeline Section 
   .card {
     border: none;
     border-radius: 10px;
@@ -96,8 +96,8 @@ body {
     color: #444444;
     margin-top: 10px;
   }
-  
-  /* Founder Section */
+  */
+  /* Founder Section 
   .card.border-0 {
     background-color: #f8f9fa;
     padding: 20px;
@@ -108,8 +108,8 @@ body {
   .text-warning {
     color: #ffc107 !important;
   }
-  
-  /* Responsive Design */
+  */
+  /* Responsive Design 
   @media (max-width: 768px) {
     .timeline-item {
       flex-wrap: wrap;
@@ -123,5 +123,5 @@ body {
       height: 150px;
     }
   }
-  
+  */
   

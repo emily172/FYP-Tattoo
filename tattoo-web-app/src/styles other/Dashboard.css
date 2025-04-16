@@ -1,5 +1,4 @@
-/* Style for card titles and text */
-.card-title {
+/* Style for card titles and text 
     font-size: 1.2rem;
     font-weight: bold;
   }
@@ -8,14 +7,14 @@
     font-size: 1.5rem;
     font-weight: bold;
   }
-  
-  /* Add hover effect for buttons */
+  */
+  /* Add hover effect for buttons 
   button:hover {
     transform: scale(1.05);
     transition: 0.2s ease-in-out;
   }
-  
-  /* Style for the table */
+  */
+  /* Style for the table 
   .table th {
     background-color: #f8f9fa;
     font-weight: bold;
@@ -25,13 +24,13 @@
     vertical-align: middle;
     text-align: center;
   }
-  
-  /* Spacing for the cards */
+  */
+  /* Spacing for the cards 
   .card {
     margin-bottom: 15px;
   }
-  
-  /* Responsive adjustments */
+  */
+  /* Responsive adjustments 
   @media (max-width: 768px) {
     .card-title {
       font-size: 1rem;
@@ -45,4 +44,4 @@
       font-size: 0.9rem;
     }
   }
-  
+  */
