@@ -10,6 +10,9 @@ const Admin = require('./models/Admin'); // Admin model
 const Tattoo = require('./models/Tattoo'); // Tattoo model
 const Artist = require('./models/Artist'); // Artist model
 const Blog = require('./models/Blog'); // Blog model
+const Studio = require('./models/Studio'); //Studio model
+
+
 
 const app = express();
 
@@ -55,7 +58,7 @@ app.post('/admin/login', async (req, res) => {
     if (!isPasswordValid) return res.status(401).json({ error: 'Invalid password' });
 
     const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, {
-      expiresIn: '6h',
+      expiresIn: '24h',
     });
 
     res.json({ token });
@@ -281,6 +284,39 @@ app.delete('/blogs/:id', async (req, res) => {
     res.json({ message: 'Blog post deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete blog post' });
+  }
+});
+
+
+//Studio 
+// Get studio details
+app.get('/studio', async (req, res) => {
+  try {
+    const studio = await Studio.findOne();
+    if (!studio) return res.status(404).json({ message: 'Studio details not found.' });
+    res.json(studio);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch studio details.' });
+  }
+});
+
+// Create or update studio details
+app.put('/studio', async (req, res) => {
+  try {
+    const updatedStudio = await Studio.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+    res.json(updatedStudio);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update studio details.' });
+  }
+});
+
+// Delete studio (if needed for resetting)
+app.delete('/studio', async (req, res) => {
+  try {
+    const deletedStudio = await Studio.findOneAndDelete();
+    res.json({ message: 'Studio details deleted.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete studio details.' });
   }
 });
 
