@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+/*import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { articles } from "../data/articles"; // Import articles data
 
@@ -63,16 +63,16 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5">*/
       {/* Article Details */}
-      <h2>{article.title}</h2>
+      /*<h2>{article.title}</h2>
       <p className="text-muted">
         By {article.author} | {article.date} | {article.category}
       </p>
-      <p>{article.content}</p>
+      <p>{article.content}</p>*/
 
       {/* Tags */}
-      {article.tags && (
+      /*{article.tags && (
         <div className="mt-4">
           <h4>Tags</h4>
           {article.tags.map((tag) => (
@@ -86,9 +86,9 @@ const BlogDetail = () => {
           ))}
         </div>
       )}
-
+*/
       {/* Rating and Comment Feature */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Rate and Comment on this Article</h4>
         <div>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -123,9 +123,9 @@ const BlogDetail = () => {
           <strong>Average Rating:</strong> {getAverageRating()}
         </div>
       </div>
-
+*/
       {/* Comment Section */}
-      <div className="mt-5">
+      /*<div className="mt-5">
         <h4>Comments</h4>
         {comments.length > 0 ? (
           <ul className="list-group">
@@ -144,9 +144,9 @@ const BlogDetail = () => {
           <p className="text-muted">No comments yet. Be the first to comment!</p>
         )}
       </div>
-
+*/
       {/* Related Articles Section */}
-      <div className="mt-5">
+      /*<div className="mt-5">
         <h4>Related Articles</h4>
         <div className="row">
           {relatedArticles.length > 0 ? (
@@ -167,9 +167,9 @@ const BlogDetail = () => {
           )}
         </div>
       </div>
-
+*/
       {/* Social Media Sharing */}
-      <div className="mt-5">
+     /* <div className="mt-5">
         <h4>Share this Article</h4>
         <button
           className="btn btn-outline-primary me-2"
@@ -205,13 +205,13 @@ const BlogDetail = () => {
           Share on LinkedIn
         </button>
       </div>
-
+*/
       {/* Back to Blog Link */}
-      <Link to="/blog" className="btn btn-secondary mt-4">
+    /*  <Link to="/blog" className="btn btn-secondary mt-4">
         Back to Blog
       </Link>
     </div>
   );
 };
 
-export default BlogDetail;
+export default BlogDetail;*/

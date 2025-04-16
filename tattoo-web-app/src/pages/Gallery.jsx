@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import "../styles/Gallery.css"// Import custom styles
 
 const designs = [
@@ -73,4 +73,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default Gallery;*/

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { designs } from "../data/designs";
 
 const TatStyles = () => {
@@ -14,10 +14,10 @@ const TatStyles = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Tattoo Styles</h2>
+      <h2 className="mb-4">Tattoo Styles</h2>*/
 
       {/* Dropdown for Filtering */}
-      <div className="mb-4">
+     /* <div className="mb-4">
         <select
           className="form-select"
           value={selectedStyle}
@@ -29,9 +29,9 @@ const TatStyles = () => {
           <option value="Geometric">Geometric</option>
         </select>
       </div>
-
+*/
       {/* Display Filtered Cards */}
-      <div className="row">
+      /*<div className="row">
         {filteredDesigns.length > 0 ? (
           filteredDesigns.map((design) => (
             <div className="col-md-4 mb-4" key={design.id}>
@@ -63,4 +63,4 @@ const TatStyles = () => {
   );
 };
 
-export default TatStyles;
+export default TatStyles;*/

@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import "../styles/Category.css"// Import custom styles
 
 const categorizedDesigns = {
@@ -47,4 +47,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default Category;*/

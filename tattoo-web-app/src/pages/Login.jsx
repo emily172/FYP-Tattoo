@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ const Login = () => {
     } catch (error) {
       console.error("Login failed:", error);
     }
-    */
+    
   };
 
   return (
@@ -53,3 +53,4 @@ const Login = () => {
 };
 
 export default Login;
+*/

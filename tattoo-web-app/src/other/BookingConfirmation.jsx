@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import { useLocation } from "react-router-dom";
 
 const BookingConfirmation = () => {
@@ -34,3 +34,4 @@ const BookingConfirmation = () => {
 };
 
 export default BookingConfirmation;
+*/

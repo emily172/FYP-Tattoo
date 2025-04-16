@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const designs = [
@@ -32,4 +32,4 @@ const Design = () => {
   );
 };
 
-export default Design;
+export default Design;*/

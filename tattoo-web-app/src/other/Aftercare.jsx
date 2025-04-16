@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 
 const Aftercare = () => {
     const aftercareSteps = [
@@ -52,9 +52,9 @@ const Aftercare = () => {
             <h1 className="display-4 mb-4">Tattoo Aftercare</h1>
             <p className="lead text-muted">Follow these steps to ensure your tattoo heals perfectly and looks amazing!</p>
           </div>
-    
+    */
           {/* Aftercare Steps */}
-          <div className="mt-4">
+         /* <div className="mt-4">
             <h4 className="text-uppercase text-primary mb-3">Aftercare Steps</h4>
             {aftercareSteps.map((step) => (
               <div key={step.step} className="mb-3">
@@ -64,20 +64,20 @@ const Aftercare = () => {
                 <p>{step.description}</p>
               </div>
             ))}
-          </div>
+          </div>*/
     
           {/* Tips Section */}
-          <div className="mt-4">
+         /* <div className="mt-4">
             <h4 className="text-uppercase text-success mb-3">Helpful Tips</h4>
             <ul>
               {tips.map((tip, index) => (
                 <li key={index}>{tip}</li>
               ))}
             </ul>
-          </div>
+          </div>*/
     
           {/* Recommended Products Section */}
-          <div className="mt-4">
+         /* <div className="mt-4">
             <h4 className="text-uppercase text-info mb-3">Recommended Products</h4>
             <div className="row">
               {recommendedProducts.map((product, index) => (
@@ -91,10 +91,10 @@ const Aftercare = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div>*/
     
           {/* FAQs Section */}
-          <div className="mt-4">
+          /*<div className="mt-4">
             <h4 className="text-uppercase text-warning mb-3">Frequently Asked Questions</h4>
             <div className="accordion" id="aftercareFAQ">
               <div className="accordion-item">
@@ -151,4 +151,4 @@ const Aftercare = () => {
       );
     };
 
-export default Aftercare;
+export default Aftercare;*/

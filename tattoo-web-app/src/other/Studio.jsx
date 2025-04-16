@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 
 const Studio = () => {
   // Studio data (you can later fetch this dynamically or from props)
@@ -59,20 +59,20 @@ const Studio = () => {
     <div className="container mt-5">
       <h1>{studio.name}</h1>
       <p className="text-muted">{studio.location}</p>
-      <p>{studio.description}</p>
+      <p>{studio.description}</p>*/
 
       {/* Facilities Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Facilities</h4>
         <ul>
           {studio.facilities.map((facility, index) => (
             <li key={index}>{facility}</li>
           ))}
         </ul>
-      </div>
+      </div>*/
 
       {/* Contact Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Contact Information</h4>
         <p>
           <strong>Phone:</strong> {studio.contact}
@@ -82,7 +82,7 @@ const Studio = () => {
           <a href={`mailto:${studio.email}`}>{studio.email}</a>
         </p>
       </div>
-
+*/
       {/* Map Section */}
       {/*
       <div className="mt-4">
@@ -102,7 +102,7 @@ const Studio = () => {
       */}
 
       {/* Gallery Section */}
-      <div className="mt-4">
+      /*<div className="mt-4">
         <h4>Gallery</h4>
         <div className="row">
           {studio.gallery.map((image, index) => (
@@ -116,9 +116,9 @@ const Studio = () => {
           ))}
         </div>
       </div>
-
+*/
       {/* Testimonials Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Client Reviews</h4>
         <p>
           <strong>Average Rating:</strong> {calculateAverageRating(studio.reviews)} ⭐
@@ -142,9 +142,9 @@ const Studio = () => {
           <p className="text-muted">No reviews yet.</p>
         )}
       </div>
-
+*/
       {/* Virtual Tour Section */}
-      <div className="mt-4">
+      /*<div className="mt-4">
         <h4>Virtual Tour</h4>
         <p>
           Explore our studio through this virtual tour video and see what we have
@@ -158,10 +158,10 @@ const Studio = () => {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
-      </div>
+      </div>*/
 
       {/* Studio Policies Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Studio Policies</h4>
         <ul>
           {studio.policies.map((policy, index) => (
@@ -169,9 +169,9 @@ const Studio = () => {
           ))}
         </ul>
       </div>
-
+*/
       {/* Contact Form Section */}
-      <div className="mt-4">
+      /*<div className="mt-4">
         <h4>Contact Us</h4>
         {formSubmitted ? (
           <p className="text-success">Thank you for your message! We'll get back to you soon.</p>
@@ -212,10 +212,10 @@ const Studio = () => {
             </button>
           </form>
         )}
-      </div>
+      </div>*/
 
       {/* Booking Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4>Book an Appointment</h4>
         <p>
           Call us or visit our studio to book your next session with our
@@ -229,4 +229,4 @@ const Studio = () => {
   );
 };
 
-export default Studio;
+export default Studio;*/

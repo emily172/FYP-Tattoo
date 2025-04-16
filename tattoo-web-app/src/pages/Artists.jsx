@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
@@ -17,9 +17,9 @@ const Artists = () => {
     <div className="container mt-5">
       <h2 className="mb-4">Our Artists</h2>
       <p>Explore profiles of skilled tattoo artists.</p>
-
+*/
       {/* Search and Filter */}
-      <div className="mb-4">
+      /*<div className="mb-4">
         <input
           type="text"
           placeholder="Search by name"
@@ -38,15 +38,15 @@ const Artists = () => {
           <option value="Realism Tattoos">Realism Tattoos</option>
         </select>
       </div>
-
+*/
       {/* Display Filtered Artists */}
-      <div className="row">
+     /* <div className="row">
         {filteredArtists.length > 0 ? (
           filteredArtists.map((artist) => (
             <div className="col-md-4 mb-4" key={artist.id}>
-              <div className="card">
+              <div className="card">*/
                 {/* Link to the artist's profile page passing the id to the page */}
-                <Link to={`/artists/${artist.id}`} className="text-decoration-none">
+               /* <Link to={`/artists/${artist.id}`} className="text-decoration-none">
                   <img
                     src={artist.image || "https://placehold.co/350x200"}
                     alt={artist.name || "Artist"}
@@ -75,4 +75,4 @@ const Artists = () => {
   );
 };
 
-export default Artists;
+export default Artists;*/

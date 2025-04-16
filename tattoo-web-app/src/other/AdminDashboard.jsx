@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,9 +44,9 @@ const showNotification = (message) => {
   return (
     <div className="container mt-5">
       <h2>Dashboard</h2>
-
+*/
       {/* Summary Section */}
-      <div className="row mb-4">
+     /* <div className="row mb-4">
         <div className="col-md-2">
           <div className="card text-white bg-primary text-center">
             <div className="card-body">
@@ -106,9 +106,9 @@ const showNotification = (message) => {
           </div>
         </div>
       </div>
-
+*/
       {/* Filter Section */}
-      <div className="mb-3">
+      /*<div className="mb-3">
         <label htmlFor="filter" className="form-label">Filter Bookings:</label>
         <select
           id="filter"
@@ -121,9 +121,9 @@ const showNotification = (message) => {
           <option value="past">Past</option>
         </select>
       </div>
-
+*/
       {/* Table Section */}
-      <div className="table-responsive">
+     /* <div className="table-responsive">
         <table className="table table-striped table-bordered">
           <thead>
             <tr>
@@ -162,9 +162,9 @@ const showNotification = (message) => {
                     <option value="Cancelled">Cancelled</option>
                   </select>
                 </td>
-                <td>
+                <td>*/
                   {/* Edit Button */}
-                  <button
+                /*  <button
                     className="btn btn-warning btn-sm me-2"
                     onClick={() =>
                       navigate(`/artists/${booking.artistId}/book`, {
@@ -173,9 +173,9 @@ const showNotification = (message) => {
                     }
                   >
                     Edit
-                  </button>
+                  </button>*/
                   {/* Delete Button */}
-                  <button
+                 /* <button
                     className="btn btn-danger btn-sm"
                     onClick={() => {
                       const updatedBookings = bookings.filter((_, i) => i !== index);
@@ -192,11 +192,11 @@ const showNotification = (message) => {
           </tbody>
         </table>
       </div>
-
+*/
       {/* Notification Container */}
-      <ToastContainer />
+    /*  <ToastContainer />
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard;*/

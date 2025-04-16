@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
 const artistSpotlight = {
@@ -51,4 +51,4 @@ const ArtistSpotlight = () => {
   );
 };
 
-export default ArtistSpotlight;
+export default ArtistSpotlight;*/

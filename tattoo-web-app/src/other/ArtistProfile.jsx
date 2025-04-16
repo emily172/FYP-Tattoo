@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+/*import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
@@ -112,9 +112,9 @@ const ArtistProfile = () => {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5">*/
       {/* Artist Details Section */}
-      <div className="row mb-4">
+      /*<div className="row mb-4">
         <div className="col-md-4">
           <img
             src={artist.image || "https://via.placeholder.com/350x200"}
@@ -144,9 +144,9 @@ const ArtistProfile = () => {
           </div>
         </div>
       </div>
-
+*/
       {/* Portfolio Section */}
-      <div className="row mb-5">
+      /*<div className="row mb-5">
         <h3 className="mb-4">Portfolio</h3>
         {artist.portfolio && artist.portfolio.length > 0 ? (
           <div className="row">
@@ -168,17 +168,17 @@ const ArtistProfile = () => {
         ) : (
           <p>This artist has not uploaded any portfolio items yet.</p>
         )}
-      </div>
+      </div>*/
       {/* Ratings Breakdown */}
-      <div className="mb-4">
+      /*<div className="mb-4">
         <h5>Ratings Breakdown</h5>
         {Object.entries(ratingsBreakdown).map(([rating, count]) => {
           const percentage = totalReviews ? ((count / totalReviews) * 100).toFixed(1) : 0;
           return (
             <div key={rating} className="d-flex align-items-center mb-2">
-              <span style={{ width: "100px" }}>
-                {"⭐".repeat(rating)} {/* Display yellow stars for the rating */}
-              </span>
+              <span style={{ width: "100px" }}
+                {"⭐".repeat(rating)}*/ {/* Display yellow stars for the rating */}
+              /*</span>
               <div className="progress flex-grow-1 mx-2" style={{ height: "20px" }}>
                 <div
                   className={`progress-bar progress-bar-striped bg-${
@@ -198,9 +198,9 @@ const ArtistProfile = () => {
           );
         })}
 
-      </div>
+      </div>*/
                     {/* Reviews Section */}
-      {sortedReviews.length > 0 ? (
+     /* {sortedReviews.length > 0 ? (
         sortedReviews.map((review, index) => (
           <div key={index} className="mb-3">
             {isEditing && editingReview.index === index ? (
@@ -210,8 +210,8 @@ const ArtistProfile = () => {
                 <p>
                   <strong>{review.username}</strong> rated it{" "}
                   <span>
-                    {"⭐".repeat(review.rating)} {/* Yellow stars for the rating */}
-                  </span>
+                    {"⭐".repeat(review.rating)}*/ {/* Yellow stars for the rating */}
+                /*  </span>
                 </p>
                 <p>{review.comment}</p>
                 <p>
@@ -250,9 +250,9 @@ const ArtistProfile = () => {
       ) : (
         <p>No reviews yet. Be the first to leave a review!</p>
       )}
-
+*/
       {/* Leave a Review Button */}
-      <div className="mt-4">
+    /*  <div className="mt-4">
         <Link to={`/artists/${artist.id}/review`} className="btn btn-secondary">
           Leave a Review
         </Link>
@@ -317,3 +317,4 @@ const EditReviewForm = ({ review, onSubmit }) => {
 };
 
 export default ArtistProfile;
+*/

@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 
 const CoverUp = () => {
   const coverUpInfo = {
@@ -40,19 +40,19 @@ const CoverUp = () => {
         <h1 className="display-4 mb-4">Tattoo Cover-Ups</h1>
         <p className="lead text-muted">{coverUpInfo.description}</p>
       </div>
-
+*/
       {/* Considerations Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4 className="text-uppercase text-primary mb-3">Key Considerations</h4>
         <ul>
           {coverUpInfo.considerations.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
         </ul>
-      </div>
+      </div>*/
 
       {/* Tips Section */}
-      <div className="mt-4">
+     /* <div className="mt-4">
         <h4 className="text-uppercase text-success mb-3">Helpful Tips</h4>
         <ul>
           {coverUpInfo.tips.map((tip, index) => (
@@ -60,9 +60,9 @@ const CoverUp = () => {
           ))}
         </ul>
       </div>
-
+*/
       {/* Examples Section */}
-      <div className="mt-4">
+      /*<div className="mt-4">
         <h4 className="text-uppercase text-info mb-3">Before & After Examples</h4>
         <div className="row">
           {examples.map((example, index) => (
@@ -92,4 +92,4 @@ const CoverUp = () => {
   );
 };
 
-export default CoverUp;
+export default CoverUp;*/

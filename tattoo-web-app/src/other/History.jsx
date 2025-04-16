@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import "../styles/History.css"// Import custom styles
 
 const History = () => {
@@ -29,9 +29,9 @@ const History = () => {
           <p className="text-muted">Established in {studioHistory.establishedYear}</p>
           <p className="lead">{studioHistory.description}</p>
         </div>
-  
+  */
         {/* Milestones Section */}
-        <div className="mt-5">
+       /* <div className="mt-5">
           <h4 className="text-uppercase text-primary mb-3">Milestones</h4>
           <ul className="timeline">
             {studioHistory.milestones.map((milestone, index) => (
@@ -42,9 +42,9 @@ const History = () => {
             ))}
           </ul>
         </div>
-  
+  */
         {/* Achievements Section */}
-        <div className="mt-5">
+       /* <div className="mt-5">
           <h4 className="text-uppercase text-success mb-3">Achievements</h4>
           <ul className="list-group">
             {studioHistory.achievements.map((achievement, index) => (
@@ -53,10 +53,10 @@ const History = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div>*/
   
         {/* Photo Timeline Section */}
-        <div className="mt-5">
+       /* <div className="mt-5">
           <h4 className="text-uppercase text-info mb-3">Photo Timeline</h4>
           <div className="row">
             {studioHistory.milestones.map((milestone, index) => (
@@ -75,9 +75,9 @@ const History = () => {
             ))}
           </div>
         </div>
-  
+  */
         {/* Founder Section */}
-        <div className="mt-5">
+        /*<div className="mt-5">
           <h4 className="text-uppercase text-warning mb-3">Meet the Founder</h4>
           <div className="card border-0 shadow-sm">
             <div className="card-body">
@@ -93,3 +93,4 @@ const History = () => {
   };
 
 export default History;
+*/

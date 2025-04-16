@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { artists } from "../data/artists";
 
@@ -160,4 +160,4 @@ const BookingForm = () => {
   );
 };
 
-export default BookingForm;
+export default BookingForm;*/

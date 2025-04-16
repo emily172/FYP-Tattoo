@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { articles } from "../data/articles"; // Import articles data
 import "../styles/BlogList.css"; // Import CSS for styling
@@ -55,11 +55,11 @@ const BlogList = () => {
     <div className="container mt-5">
       <h2 className="text-center mb-4">Blog & Articles</h2>
 
-      <div className="row">
+      <div className="row">*/
         {/* Sidebar */}
-        <div className="col-md-3">
+       /* <div className="col-md-3">*/
           {/* Search Bar */}
-          <div className="mb-4">
+        /*  <div className="mb-4">
             <input
               type="text"
               className="form-control"
@@ -67,10 +67,10 @@ const BlogList = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </div>
+          </div>*/
 
           {/* Category Tags */}
-          <div className="mb-4">
+         /* <div className="mb-4">
             <h5>Filter by Category:</h5>
             <div className="d-flex flex-column">
               <button
@@ -94,9 +94,9 @@ const BlogList = () => {
               ))}
             </div>
           </div>
-
+*/
           {/* Sorting Options */}
-          <div className="mb-4">
+         /* <div className="mb-4">
             <h5>Sort Articles:</h5>
             <select
               className="form-select"
@@ -110,11 +110,11 @@ const BlogList = () => {
             </select>
           </div>
         </div>
-
+*/
         {/* Main Content */}
-        <div className="col-md-9">
+       /* <div className="col-md-9">*/
           {/* Featured Articles */}
-          <div className="mb-4">
+         /*<div className="mb-4">
             <h3 className="text-center">Featured Articles</h3>
             <div className="row">
               {featuredArticles.map((article) => (
@@ -137,9 +137,9 @@ const BlogList = () => {
               )}
             </div>
           </div>
-
+*/
           {/* Paginated Articles */}
-          <div className="row">
+          /*<div className="row">
             {paginatedArticles.map((article) => (
               <div key={article.id} className="col-md-6 mb-4">
                 <div className="card">
@@ -164,9 +164,9 @@ const BlogList = () => {
               </div>
             )}
           </div>
-
+*/
           {/* Pagination Controls */}
-          <div className="d-flex justify-content-center mt-4">
+         /* <div className="d-flex justify-content-center mt-4">
             <button
               className="btn btn-outline-secondary me-2"
               disabled={currentPage === 1}
@@ -189,3 +189,4 @@ const BlogList = () => {
 };
 
 export default BlogList;
+*/

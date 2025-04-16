@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/FAQResources.css";
 
@@ -62,9 +62,9 @@ const categorizedFaqs = {
     return (
       <div className="container mt-5">
         <h2 className="text-center mb-4">FAQ & Resources</h2>
-  
+  */
         {/* Search Bar */}
-        <div className="mb-4">
+        /*<div className="mb-4">
           <input
             type="text"
             className="form-control"
@@ -72,10 +72,10 @@ const categorizedFaqs = {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div>
+        </div>*/
   
         {/* Categorized FAQ Accordion */}
-        {Object.entries(filteredCategories).map(([category, faqs], categoryIndex) => (
+       /* {Object.entries(filteredCategories).map(([category, faqs], categoryIndex) => (
           <div key={categoryIndex} className="mb-4">
             <h3>{category}</h3>
             <div className="accordion" id={`accordion-${categoryIndex}`}>
@@ -106,9 +106,9 @@ const categorizedFaqs = {
             </div>
           </div>
         ))}
-  
+  */
         {/* Helpful Resources Section */}
-        <div className="mb-5">
+       /* <div className="mb-5">
           <h3 className="mb-3">Helpful Resources</h3>
           <ul className="list-group">
             {resources.map((resource, index) => (
@@ -124,4 +124,4 @@ const categorizedFaqs = {
     );
   };
 
-export default FAQResources;
+export default FAQResources;*/
