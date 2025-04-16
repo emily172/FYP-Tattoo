@@ -26,6 +26,11 @@ function AdminDashboard() {
                 Manage Blogs
               </Link>
             </li>
+            <li>
+              <Link to="/dashboard/studio" className="hover:text-indigo-400">
+                Manage Studio
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -40,3 +45,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+
