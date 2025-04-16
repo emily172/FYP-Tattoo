@@ -11,7 +11,9 @@ const Tattoo = require('./models/Tattoo'); // Tattoo model
 const Artist = require('./models/Artist'); // Artist model
 const Blog = require('./models/Blog'); // Blog model
 const Studio = require('./models/Studio'); //Studio model
-const TattooStyle = require('./models/TattooStyle');
+const TattooStyle = require('./models/TattooStyle');//TattooStyle model
+const FAQ = require('./models/FAQ'); //FAQ model
+const History = require('./models/History'); //History model
 
 
 const app = express();
@@ -428,9 +430,6 @@ app.put('/tattoo-styles/:id', async (req, res) => {
   }
 });
 
-
-
-
 // Delete a tattoo style
 app.delete('/tattoo-styles/:id', async (req, res) => {
   try {
@@ -440,6 +439,102 @@ app.delete('/tattoo-styles/:id', async (req, res) => {
   } catch (err) {
     console.error('Error deleting tattoo style:', err);
     res.status(500).json({ error: 'Failed to delete tattoo style' });
+  }
+});
+
+
+// Routes for FAQs
+
+// GET all FAQs
+app.get('/api/faqs', async (req, res) => {
+  try {
+    const faqs = await FAQ.find(); // Fetch all FAQs from the database
+    res.status(200).json(faqs);
+  } catch (err) {
+    console.error('Error fetching FAQs:', err);
+    res.status(500).json({ error: 'Failed to fetch FAQs' });
+  }
+});
+
+// POST a new FAQ
+app.post('/api/faqs', async (req, res) => {
+  const { category, question, answer } = req.body;
+  try {
+    const newFAQ = new FAQ({ category, question, answer });
+    await newFAQ.save();
+    res.status(201).json(newFAQ); // Return the newly created FAQ
+  } catch (err) {
+    console.error('Error creating FAQ:', err);
+    res.status(500).json({ error: 'Failed to create FAQ' });
+  }
+});
+
+// PUT (Update an FAQ)
+app.put('/api/faqs/:id', async (req, res) => {
+  const { id } = req.params;
+  const { category, question, answer } = req.body;
+  try {
+    const updatedFAQ = await FAQ.findByIdAndUpdate(id, { category, question, answer }, { new: true });
+    if (!updatedFAQ) return res.status(404).json({ error: 'FAQ not found' });
+    res.status(200).json(updatedFAQ);
+  } catch (err) {
+    console.error('Error updating FAQ:', err);
+    res.status(500).json({ error: 'Failed to update FAQ' });
+  }
+});
+
+// DELETE an FAQ
+app.delete('/api/faqs/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedFAQ = await FAQ.findByIdAndDelete(id);
+    if (!deletedFAQ) return res.status(404).json({ error: 'FAQ not found' });
+    res.status(200).json({ message: 'FAQ deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting FAQ:', err);
+    res.status(500).json({ error: 'Failed to delete FAQ' });
+  }
+});
+
+
+//History Routes
+
+// GET History details
+app.get('/api/history', async (req, res) => {
+  try {
+    const history = await History.find(); // Fetch all history entries
+    res.status(200).json(history);
+  } catch (err) {
+    console.error('Error fetching history:', err);
+    res.status(500).json({ error: 'Failed to fetch history details' });
+  }
+});
+
+// POST to Create History Entry
+app.post('/api/history', async (req, res) => {
+  const historyData = req.body;
+  try {
+    const newHistory = new History(historyData);
+    await newHistory.save();
+    res.status(201).json(newHistory);
+  } catch (err) {
+    console.error('Error creating history entry:', err);
+    res.status(500).json({ error: 'Failed to create history entry' });
+  }
+});
+
+// DELETE a History Entry
+app.delete('/api/history/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedHistory = await History.findByIdAndDelete(id);
+    if (!deletedHistory) {
+      return res.status(404).json({ error: 'History entry not found' });
+    }
+    res.status(200).json({ message: 'History entry deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting history entry:', err);
+    res.status(500).json({ error: 'Failed to delete history entry' });
   }
 });
 
