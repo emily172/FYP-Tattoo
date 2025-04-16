@@ -9,6 +9,7 @@ const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentica
 const Admin = require('./models/Admin'); // Admin model
 const Tattoo = require('./models/Tattoo'); // Tattoo model
 const Artist = require('./models/Artist'); // Artist model
+const Blog = require('./models/Blog'); // Blog model
 
 const app = express();
 
@@ -223,6 +224,63 @@ app.get('/stats/general', authenticateAdmin, async (req, res) => {
     res.status(200).json({ totalTattoos, totalArtists }); // Return totals
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch statistics' });
+  }
+});
+
+
+//Blogs
+
+// Create a blog post
+app.post('/blogs', async (req, res) => {
+  try {
+    const newBlog = new Blog(req.body);
+    await newBlog.save();
+    res.status(201).json(newBlog);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create blog post' });
+  }
+});
+
+// Get all blog posts
+app.get('/blogs', async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 }); // Sort by date, newest first
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch blogs' });
+  }
+});
+
+// Get a single blog post
+app.get('/blogs/:id', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: 'Blog not found' });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch blog' });
+  }
+});
+
+// Update a blog post
+app.put('/blogs/:id', async (req, res) => {
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedBlog) return res.status(404).json({ error: 'Blog not found' });
+    res.json(updatedBlog);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update blog post' });
+  }
+});
+
+// Delete a blog post
+app.delete('/blogs/:id', async (req, res) => {
+  try {
+    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+    if (!deletedBlog) return res.status(404).json({ error: 'Blog not found' });
+    res.json({ message: 'Blog post deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete blog post' });
   }
 });
 
