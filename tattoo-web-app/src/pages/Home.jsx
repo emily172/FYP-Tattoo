@@ -1,12 +1,19 @@
-/*import React from "react";
+import React from 'react';
+import Hero from '../components/Hero';
+import FeaturedTattoos from '../components/FeaturedTattoos';
+import FeaturedArtists from '../components/FeaturedArtists';
+import Testimonials from '../components/Testimonials';
 
-const Home = () => {
+function Home() {
   return (
-    <div className="container mt-5">
-      <h1>Welcome to Ink Pots</h1>
-      <p>Discover amazing tattoo designs and connect with top artists.</p>
+    <div>
+      <Hero />
+      <FeaturedTattoos />
+      <FeaturedArtists />
+      <Testimonials />
     </div>
   );
-};
+}
 
-export default Home;*/
+export default Home;
+
