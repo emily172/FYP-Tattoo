@@ -3,7 +3,20 @@ import axios from 'axios';
 
 function ManageArtists() {
   const [artists, setArtists] = useState([]);
-  const [formData, setFormData] = useState({ name: '', bio: '', avatar: '', style: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    bio: '',
+    avatar: '',
+    style: '',
+    certifications: '',
+    portfolioLinks: '',
+    socialMedia: {
+      instagram: '',
+      facebook: '',
+      tiktok: '',
+    },
+    featuredTattoos: '',
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [error, setError] = useState('');
@@ -48,7 +61,6 @@ function ManageArtists() {
 
   // Handle deletion of an artist
   const handleDelete = (id) => {
-    console.log('Deleting Artist ID:', id); // Add this for debugging
     const token = localStorage.getItem('adminToken');
     axios
       .delete(`http://localhost:5000/artists/${id}`, {
@@ -57,18 +69,39 @@ function ManageArtists() {
       .then(() => setArtists((prev) => prev.filter((artist) => artist._id !== id)))
       .catch((err) => console.error('Error deleting artist:', err));
   };
-  
 
   // Handle editing an artist
   const handleEdit = (artist) => {
-    setFormData({ name: artist.name, bio: artist.bio, avatar: artist.avatar, style: artist.style });
+    setFormData({
+      name: artist.name,
+      bio: artist.bio,
+      avatar: artist.avatar,
+      style: artist.style,
+      certifications: artist.certifications || '',
+      portfolioLinks: artist.portfolioLinks || '',
+      socialMedia: {
+        instagram: artist.socialMedia?.instagram || '',
+        facebook: artist.socialMedia?.facebook || '',
+        tiktok: artist.socialMedia?.tiktok || '',
+      },
+      featuredTattoos: artist.featuredTattoos || '',
+    });
     setIsEditing(true);
     setCurrentId(artist._id);
   };
 
   // Reset the form state
   const resetForm = () => {
-    setFormData({ name: '', bio: '', avatar: '', style: '' });
+    setFormData({
+      name: '',
+      bio: '',
+      avatar: '',
+      style: '',
+      certifications: '',
+      portfolioLinks: '',
+      socialMedia: { instagram: '', facebook: '', tiktok: '' },
+      featuredTattoos: '',
+    });
     setIsEditing(false);
     setCurrentId(null);
     setError('');
@@ -110,6 +143,62 @@ function ManageArtists() {
           onChange={(e) => setFormData({ ...formData, style: e.target.value })}
           className="w-full p-2 border rounded mb-4"
           required
+        />
+        <textarea
+          placeholder="Certifications (Comma-separated)"
+          value={formData.certifications}
+          onChange={(e) => setFormData({ ...formData, certifications: e.target.value })}
+          className="w-full p-2 border rounded mb-4"
+        />
+        <textarea
+          placeholder="Portfolio Links (Comma-separated)"
+          value={formData.portfolioLinks}
+          onChange={(e) => setFormData({ ...formData, portfolioLinks: e.target.value })}
+          className="w-full p-2 border rounded mb-4"
+        />
+        <div className="mb-4">
+          <input
+            type="url"
+            placeholder="Instagram URL"
+            value={formData.socialMedia.instagram}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                socialMedia: { ...formData.socialMedia, instagram: e.target.value },
+              })
+            }
+            className="w-full p-2 border rounded mb-2"
+          />
+          <input
+            type="url"
+            placeholder="Facebook URL"
+            value={formData.socialMedia.facebook}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                socialMedia: { ...formData.socialMedia, facebook: e.target.value },
+              })
+            }
+            className="w-full p-2 border rounded mb-2"
+          />
+          <input
+            type="url"
+            placeholder="TikTok URL"
+            value={formData.socialMedia.tiktok}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                socialMedia: { ...formData.socialMedia, tiktok: e.target.value },
+              })
+            }
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <textarea
+          placeholder="Featured Tattoos (Comma-separated)"
+          value={formData.featuredTattoos}
+          onChange={(e) => setFormData({ ...formData, featuredTattoos: e.target.value })}
+          className="w-full p-2 border rounded mb-4"
         />
         <button
           type="submit"
