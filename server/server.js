@@ -172,6 +172,15 @@ app.get('/artists', async (req, res) => {
   }
 });
 
+app.get('/artists/styles', async (req, res) => {
+  try {
+    const styles = await Artist.distinct('style'); // Fetch unique styles from the database
+    res.status(200).json(styles); // Return the styles as an array
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch styles' });
+  }
+});
+
 app.put('/artists/:id', authenticateAdmin, async (req, res) => {
   const { id } = req.params; // Extract artist ID
   const { name, bio, avatar, style } = req.body; // Extract updated details
