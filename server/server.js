@@ -14,6 +14,7 @@ const Studio = require('./models/Studio'); //Studio model
 const TattooStyle = require('./models/TattooStyle');//TattooStyle model
 const FAQ = require('./models/FAQ'); //FAQ model
 const History = require('./models/History'); //History model
+const Profile = require('./models/Profile'); // /Profile model'
 
 
 const app = express();
@@ -439,6 +440,96 @@ app.delete('/tattoo-styles/:id', async (req, res) => {
   } catch (err) {
     console.error('Error deleting tattoo style:', err);
     res.status(500).json({ error: 'Failed to delete tattoo style' });
+  }
+});
+
+
+// Get all profiles
+app.get('/profiles', async (req, res) => {
+  try {
+    const profiles = await Profile.find(); // Fetch all profiles
+    res.json(profiles); // Include all fields in the response
+  } catch (err) {
+    console.error('Error fetching profiles:', err);
+    res.status(500).json({ error: 'Failed to fetch profiles' });
+  }
+});
+
+// Get a single profile
+app.get('/profiles/:id', async (req, res) => {
+  try {
+    const profile = await Profile.findById(req.params.id); // Fetch profile by ID
+    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+    res.json(profile); // Include all fields in the response
+  } catch (err) {
+    console.error('Error fetching profile:', err);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// Add a new profile
+app.post('/profiles', async (req, res) => {
+  try {
+    const {
+      name, age, bio, profileImage, interests, skills, contactInfo,
+    } = req.body; // Include all new fields
+
+    const newProfile = new Profile({
+      name,
+      age,
+      bio,
+      profileImage,
+      interests,
+      skills,
+      contactInfo,
+    });
+
+    await newProfile.save();
+    res.status(201).json(newProfile); // Return the newly created profile
+  } catch (err) {
+    console.error('Error adding profile:', err);
+    res.status(500).json({ error: 'Failed to add profile' });
+  }
+});
+
+// Update a profile
+app.put('/profiles/:id', async (req, res) => {
+  try {
+    const {
+      name, age, bio, profileImage, interests, skills, contactInfo,
+    } = req.body; // Accept updated fields
+
+    const updatedProfile = await Profile.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        age,
+        bio,
+        profileImage,
+        interests,
+        skills,
+        contactInfo,
+      },
+      { new: true } // Return the updated profile
+    );
+
+    if (!updatedProfile) return res.status(404).json({ error: 'Profile not found' });
+    res.json(updatedProfile);
+  } catch (err) {
+    console.error('Error updating profile:', err);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+// Delete a profile
+app.delete('/profiles/:id', async (req, res) => {
+  try {
+    const deletedProfile = await Profile.findByIdAndDelete(req.params.id); // Delete profile by ID
+    if (!deletedProfile) return res.status(404).json({ error: 'Profile not found' });
+    res.json({ message: 'Profile deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting profile:', err);
+    res.status(500).json({ error: 'Failed to delete profile' });
   }
 });
 

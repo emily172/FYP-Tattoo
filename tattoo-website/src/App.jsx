@@ -19,6 +19,9 @@ import AdminBlogManager from './pages/AdminBlogManager'; // Admin blog managemen
 import TattooStyles from './pages/TattooStyles'; // User-facing tattoo styles list
 import TattooStylePage from './pages/TattooStylePage'; // Single tattoo style page
 import ManageTattooStyles from './pages/ManageTattooStyles'; // Admin tattoo styles management
+import Profiles from './pages/Profiles'; // Included Profile pages
+import ProfliePage from './pages/ProfilePage'; // Single profile page
+import ManageProfiles from './pages/ManageProfiles'; // Admin profile management
 import FAQPage from './pages/FAQPage';
 import FAQManagement from './pages/FAQManagement'; // Import the FAQManagement page
 import History from './pages/HistoryTimeline'; // Public History component
@@ -42,6 +45,9 @@ function App() {
         <Route path="/blogs/:id" element={<BlogPost />} /> {/* Single blog post */}
         <Route path="/styles" element={<TattooStyles />} /> {/* Tattoo styles overview */}
         <Route path="/styles/:id" element={<TattooStylePage />} /> {/* Detailed tattoo style page */}
+        
+        <Route path="/profiles" element={<Profiles />} /> {/* Profile overview */}
+        <Route path="/profiles/:id" element={<ProfliePage />} /> {/* Detailed profile page */}
         <Route path="/faq" element={<FAQPage />} /> {/* FAQ Page */}
         <Route path="/history" element={<History />} /> {/* History page */}
 
@@ -54,6 +60,7 @@ function App() {
         <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Manage studio */}
         <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Manage blogs */}
         <Route path="/dashboard/styles" element={<ManageTattooStyles />} /> {/* Manage tattoo styles */}
+        <Route path="/dashboard/profiles" element={<ManageProfiles />} /> {/* Manage tattoo styles */}
         <Route path="/dashboard/faqs" element={<FAQManagement />} /> {/* Admin FAQ Management */}
         <Route path="/dashboard/history" element={<ManageHistory />} /> {/* Admin History management */}
       </Routes>

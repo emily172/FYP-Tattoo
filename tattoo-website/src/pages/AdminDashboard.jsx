@@ -52,6 +52,15 @@ const AdminDashboard = () => {
           <p>Add, edit, or delete tattoo styles.</p>
         </NavLink>
 
+        {/* Manage Profiles */}
+        <NavLink
+          to="/dashboard/profiles"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Manage Profiles</h2>
+          <p>Add, edit, or delete profiles.</p>
+        </NavLink>
+
         {/* Manage FAQs */}
         <NavLink
           to="/dashboard/faqs"
@@ -61,8 +70,8 @@ const AdminDashboard = () => {
           <p>View, create, edit, or delete FAQs.</p>
         </NavLink>
 
-          {/* Manage History */}
-                <NavLink
+        {/* Manage History */}
+        <NavLink
           to="/dashboard/history"
           className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
         >

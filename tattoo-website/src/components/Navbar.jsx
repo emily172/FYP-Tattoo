@@ -48,6 +48,14 @@ function Navbar() {
             Styles
           </Link>
 
+
+          <Link 
+            to="/profiles" 
+            className={`hover:text-indigo-500 ${location.pathname === '/profiles' ? 'text-indigo-500' : ''}`}
+          >
+            Profiles
+          </Link>
+
           <Link 
             to="/faq" 
             className={`hover:text-indigo-500 ${location.pathname === '/faq' ? 'text-indigo-500' : ''}`}
