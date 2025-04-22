@@ -1014,6 +1014,83 @@ app.get('/api/contact/autocomplete', async (req, res) => {
 });
 
 
+app.get('/api/contact/filter', async (req, res) => {
+  const { startDate, endDate, status, category } = req.query;
+
+  // Build filter object dynamically based on query parameters
+  const filter = {
+    ...(startDate && endDate && {
+      createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+    }),
+    ...(status && { status }),
+    ...(category && { category }),
+  };
+
+  try {
+    const results = await Contact.find(filter).sort({ createdAt: -1 }); // Filter and sort
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to filter messages', error: err });
+  }
+});
+
+
+app.put('/api/contact/:id/status', async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const updatedContact = await Contact.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    res.json(updatedContact);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update status', error: err });
+  }
+});
+
+
+app.get('/api/contact/stats', async (req, res) => {
+  try {
+    const stats = await Contact.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch stats', error: err });
+  }
+});
+
+
+
+app.put('/api/contact/bulk-update', async (req, res) => {
+  const { ids, status } = req.body;
+
+  try {
+    const updatedContacts = await Contact.updateMany(
+      { _id: { $in: ids } }, // Match the selected IDs
+      { $set: { status } }   // Update status
+    );
+    res.json({ message: 'Bulk update successful', updatedContacts });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update contacts', error: err });
+  }
+});
+
+
+app.delete('/api/contact/bulk-delete', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    await Contact.deleteMany({ _id: { $in: ids } }); // Delete all matching IDs
+    res.json({ message: 'Bulk delete successful' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete contacts', error: err });
+  }
+});
+
+
 
 // Start the Server
 app.listen(5000, () => console.log('Server running on port 5000'));
