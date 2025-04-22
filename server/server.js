@@ -21,6 +21,10 @@ const About = require('./models/About');
 const Image = require('./models/Image'); // Your Image schema
 
 
+
+const Contact = require('./models/Contact');
+
+
 const app = express();
 
 // Middleware
@@ -934,6 +938,78 @@ app.put('/api/images/:id', async (req, res) => {
   } catch (err) {
     console.error('Error updating image:', err);
     res.status(500).json({ error: 'Failed to update image' });
+  }
+});
+
+
+
+//Contact
+
+// Submit a Contact Message
+app.post('/api/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    const newContact = new Contact({ name, email, message });
+    const savedContact = await newContact.save();
+    res.status(201).json(savedContact);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to submit contact message', error: err });
+  }
+});
+
+// Get All Contact Messages (for Admins)
+app.get('/api/contact', async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json(contacts);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch contact messages', error: err });
+  }
+});
+
+
+app.get('/api/contact/search', async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    const results = await Contact.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+        { message: { $regex: query, $options: 'i' } },
+      ],
+    }).sort({ createdAt: -1 }); // Sort results by newest first
+
+    res.json(results); // Return filtered results
+  } catch (err) {
+    res.status(500).json({ message: 'Search failed', error: err });
+  }
+});
+
+
+app.get('/api/contact/autocomplete', async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    const results = await Contact.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+        { message: { $regex: query, $options: 'i' } },
+      ],
+    }).limit(5); // Limit to top 5 suggestions for efficiency
+
+    // Respond with simplified data for suggestions
+    const suggestions = results.map((result) => ({
+      name: result.name,
+      email: result.email,
+      messageSnippet: result.message.slice(0, 50) + '...', // Show first 50 characters of the message
+    }));
+
+    res.json(suggestions); // Return suggestions
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch autocomplete suggestions', error: err });
   }
 });
 

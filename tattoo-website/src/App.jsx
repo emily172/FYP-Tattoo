@@ -20,6 +20,7 @@ import Gallery from './pages/Gallery'; // User-facing gallery page
 
 import Artist from './pages/Artist';
 import ManageArtist from './pages/ManageArtist'; // Artist management
+import AdminMessages from './pages/AdminMessages';
 
 
 
@@ -131,6 +132,10 @@ function App() {
         <Route path="/dashboard/faqs" element={<FAQManagement />} /> {/* Admin FAQ Management */}
         <Route path="/dashboard/history" element={<ManageHistory />} /> {/* Admin History management */}
         <Route path="/dashboard/manage-about" element={<ManageAbout/>} />
+
+
+        <Route path="/dashboard/admin-messages" element={<AdminMessages/>} />
+
       </Routes>
     </Router>
   );

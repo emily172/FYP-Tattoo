@@ -78,6 +78,16 @@ const AdminDashboard = () => {
           <h2 className="text-xl font-bold">Manage History</h2>
           <p>View, create, edit, or delete History.</p>
         </NavLink>
+
+        
+        {/* Manage History */}
+        <NavLink
+          to="/dashboard/admin-messages"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">View New Messages</h2>
+          <p>View Message sent by Clients.</p>
+        </NavLink>
       </div>
     </div>
   );
