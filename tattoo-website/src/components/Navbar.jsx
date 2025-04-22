@@ -38,7 +38,7 @@ function Navbar() {
             to="/artist" 
             className={`hover:text-indigo-500 ${location.pathname === '/artist' ? 'text-indigo-500' : ''}`}
           >
-            Artists
+            Team
           </Link>
 
           <Link 

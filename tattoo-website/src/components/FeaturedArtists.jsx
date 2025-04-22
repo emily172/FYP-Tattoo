@@ -24,7 +24,7 @@ function FeaturedArtists() {
             {/* Updated Artist Image */}
             <div className="relative w-full h-48 mx-auto mb-4">
               <img
-                src={artist.avatar}
+                src={artist.image}
                 alt={artist.name}
                 className="w-full h-full object-cover rounded-md shadow-lg border border-indigo-500"
               />

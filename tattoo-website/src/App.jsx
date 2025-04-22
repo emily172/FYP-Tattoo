@@ -10,8 +10,18 @@ import ManageTattooGallery from './pages/ManageTattooGallery';
 
 
 import Gallery from './pages/Gallery'; // User-facing gallery page
+ //import Artist from './pages/Artist'; 
+//import ArtistProfilePage from './pages/ArtistProfilePage'; // Detailed artist profiles
+
+
+
+//import ArtistPortfolio from './pages/ArtistPortfilio';  New Portfolio page
+
+
 import Artist from './pages/Artist';
 import ManageArtist from './pages/ManageArtist'; // Artist management
+
+
 
 
 import Contact from './pages/Contact'; // Contact page
@@ -45,6 +55,9 @@ import TattooTimeline from './pages/TattooTimeline'; // Public Tattoo Images com
 import ManageTattooImages from './pages/ManageTattooImages'; // Admin Tattoo Images dashboard
 
 
+
+
+import About from './pages/About'
 import ManageAbout from './pages/ManageAbout';
 
 
@@ -58,10 +71,10 @@ function App() {
         <Route path="/studio" element={<Studio />} /> {/* Studio overview */}
 
 
-
-        <Route path="/tattoo-gallery" element={<TattooGallery />} />{/* Route for viewing tattoo gallery */}
-
-
+         
+         <Route path="/tattoo-gallery" element={<TattooGallery />} />{/* Route for viewing tattoo gallery */}
+           
+           
 
 
 
@@ -70,8 +83,8 @@ function App() {
 
 
         <Route path="/gallery" element={<Gallery />} /> {/* Explore tattoo gallery */}
-        {/* <Route path="/artists" element={<Artists />} />  List of artists */}
-        {/* <Route path="/artists/:id" element={<ArtistProfilePage />} />  Detailed artist profile */}
+       {/* <Route path="/artists" element={<Artists />} />  List of artists */}
+       {/* <Route path="/artists/:id" element={<ArtistProfilePage />} />  Detailed artist profile */}
         <Route path="/contact" element={<Contact />} /> {/* Contact form */}
         <Route path="/blogs" element={<BlogList />} /> {/* Blog list */}
         <Route path="/blogs/:id" element={<BlogPost />} /> {/* Single blog post */}
@@ -89,13 +102,14 @@ function App() {
 
 
         <Route path="/artist" element={<Artist />} />
-        <Route path="/dashboard/artist" element={<ManageArtist />} />
+<Route path="/dashboard/artist" element={<ManageArtist />} />
 
 
 
 
         <Route path="/faq" element={<FAQPage />} /> {/* FAQ Page */}
         <Route path="/history" element={<History />} /> {/* History page */}
+        <Route path="/about" element={<About />} /> {/* History page */}
 
         {/* Admin Routes */}
         <Route path="/register" element={<AdminRegister />} /> {/* Admin registration */}
@@ -107,8 +121,8 @@ function App() {
 
 
 
-
-        {/* <Route path="/dashboard/artists" element={<ManageArtists />} />  Manage artists */}
+         
+       {/* <Route path="/dashboard/artists" element={<ManageArtists />} />  Manage artists */}
         <Route path="/dashboard/gallery" element={<ManageGallery />} /> {/* Manage gallery */}
         <Route path="/dashboard/studio" element={<ManageStudio />} /> {/* Manage studio */}
         <Route path="/dashboard/blogs" element={<AdminBlogManager />} /> {/* Manage blogs */}
@@ -116,7 +130,7 @@ function App() {
         <Route path="/dashboard/profiles" element={<ManageProfiles />} /> {/* Manage tattoo styles */}
         <Route path="/dashboard/faqs" element={<FAQManagement />} /> {/* Admin FAQ Management */}
         <Route path="/dashboard/history" element={<ManageHistory />} /> {/* Admin History management */}
-        <Route path="/dashboard/manage-about" element={<ManageAbout />} />
+        <Route path="/dashboard/manage-about" element={<ManageAbout/>} />
       </Routes>
     </Router>
   );

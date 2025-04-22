@@ -166,7 +166,7 @@ function Gallery() {
     context.font = '30px Arial';
     context.fillStyle = 'rgba(255, 255, 255, 0.8)';
     context.textAlign = 'center';
-    context.fillText('© YourGalleryName', canvas.width / 2, canvas.height - 20);
+    context.fillText('© InkPots', canvas.width / 2, canvas.height - 20);
 
     // Generate downloadable image
     const link = document.createElement('a');
@@ -184,135 +184,146 @@ function Gallery() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-6xl">
-        <h1 className="text-3xl font-extrabold mb-6 text-center text-white tracking-tight">
-          Tattoo Gallery
-        </h1>
-        
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-        
+<div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black p-8">
+  {/* Header Section */}
+  <header className="text-center mb-12">
+    <h1 className="text-7xl font-extrabold text-white drop-shadow-lg tracking-wide">
+      Tattoo Gallery
+    </h1>
+    <p className="text-xl text-gray-400 mt-4">
+      Explore stunning tattoo designs and artistic inspirations.
+    </p>
+  </header>
 
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search tattoos by name..."
-          className="w-full mb-6 p-2 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+  <div className="w-full max-w-screen-xl mx-auto">
+    {/* Error Message */}
+    {error && <p className="text-red-500 mb-6 text-center">{error}</p>}
 
-        {/* Filters */}
-        <div className="flex space-x-4 mb-6">
-          {/* Style Filter */}
-          <select
-            className="px-4 py-2 rounded-lg bg-gray-800 text-gray-200"
-            value={selectedFilter}
-            onChange={(e) => handleFilterChange('style', e.target.value)}
-          >
-            <option value="All Styles">All Styles</option>
-            {[...new Set(tattoos.map((tattoo) => tattoo.style))].map((style) => (
-              <option key={style} value={style}>
-                {style}
-              </option>
-            ))}
-          </select>
+    {/* Search Bar */}
+    <input
+      type="text"
+      placeholder="Search tattoos by name..."
+      className="w-full mb-8 px-4 py-3 rounded-lg bg-gray-800 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 shadow-lg text-lg"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
 
-          {/* Clear Filters */}
-          <button
-            className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-            onClick={clearFilters}
-          >
-            Clear All
+    {/* Filters */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      {/* Style Filter */}
+      <select
+        className="px-5 py-3 rounded-lg bg-gradient-to-r from-gray-700 via-gray-800 to-black text-lg font-semibold text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md transition-transform transform hover:scale-105"
+        value={selectedFilter}
+        onChange={(e) => handleFilterChange('style', e.target.value)}
+      >
+        <option value="All Styles">🌟 All Styles</option>
+        {[...new Set(tattoos.map((tattoo) => tattoo.style))].map((style) => (
+          <option key={style} value={style}>
+            {style}
+          </option>
+        ))}
+      </select>
+
+      {/* Clear Filters */}
+      <button
+        className="px-5 py-3 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white text-lg font-bold shadow-md hover:from-red-600 hover:to-black focus:outline-none focus:ring-2 focus:ring-red-500 transition-transform transform hover:scale-105 hover:rotate-3"
+        onClick={clearFilters}
+      >
+        🚫 Clear All
+      </button>
+    </div>
+
+    {/* Sorting */}
+    <div className="flex flex-wrap gap-4 mb-8 justify-center">
+      <button
+        className={`px-5 py-3 rounded-lg font-bold shadow-md ${
+          selectedSort === 'By Number' ? 'bg-green-500 text-white' : 'bg-gray-700 text-gray-300'
+        } hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform transform hover:scale-105`}
+        onClick={() => setSelectedSort('By Number')}
+      >
+        By Number
+      </button>
+      <button
+        className={`px-5 py-3 rounded-lg font-bold shadow-md ${
+          selectedSort === 'By Name' ? 'bg-green-500 text-white' : 'bg-gray-700 text-gray-300'
+        } hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform transform hover:scale-105`}
+        onClick={() => setSelectedSort('By Name')}
+      >
+        By Name
+      </button>
+      <button
+        className={`px-5 py-3 rounded-lg font-bold shadow-md ${
+          selectedSort === 'By Style' ? 'bg-green-500 text-white' : 'bg-gray-700 text-gray-300'
+        } hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform transform hover:scale-105`}
+        onClick={() => setSelectedSort('By Style')}
+      >
+        By Style
+      </button>
+    </div>
+
+    {/* Surprise Me Button */}
+    <div className="text-center mb-8">
+      <button
+        className="px-6 py-3 bg-purple-500 text-white text-xl font-bold rounded-lg hover:bg-purple-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-transform hover:scale-110"
+        onClick={() => {
+          const randomIndex = Math.floor(Math.random() * filteredTattoos.length);
+          setSelectedTattoo(filteredTattoos[randomIndex]);
+          setCurrentIndex(randomIndex);
+        }}
+      >
+        🎲 Surprise Me!
+      </button>
+    </div>
+  
+
+
+
+
+{/* Tattoo Grid */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+  {filteredTattoos.map((tattoo, index) => (
+    <div
+      key={tattoo._id}
+      className="group relative bg-gradient-to-br from-gray-800 via-gray-700 to-black rounded-2xl shadow-xl overflow-hidden cursor-pointer hover:shadow-2xl transition-transform transform hover:scale-105 hover:rotate-2"
+      onClick={() => {
+        setSelectedTattoo(tattoo);
+        setCurrentIndex(index);
+      }}
+    >
+      {/* Image */}
+      <img
+        src={tattoo.image}
+        alt={tattoo.name}
+        className="w-full h-96 sm:h-[28rem] lg:h-[32rem] object-cover rounded-t-2xl transition-transform transform group-hover:scale-110 group-hover:rotate-2"
+      />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/70 to-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <div className="flex flex-col items-center justify-center h-full space-y-5 px-6">
+          {/* Tattoo Name */}
+          <h3 className="text-white text-2xl font-extrabold tracking-wide uppercase">
+            {tattoo.name}
+          </h3>
+          {/* Additional Details */}
+          <p className="text-gray-300 text-lg font-light italic">
+            Style: {tattoo.style || "Unique Design"}
+          </p>
+          <p className="text-gray-400 text-base font-medium">
+            Popularity: {tattoo.popularity || "Unknown"}
+          </p>
+          {/* View More Button */}
+          <button className="px-6 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-lg font-bold rounded-full hover:scale-110 hover:shadow-lg transition-transform">
+            Explore Tattoo
           </button>
         </div>
+      </div>
 
-{/* Sorting */}
-<div className="flex space-x-4 mb-6">
-  <button
-    className={`px-4 py-2 rounded-lg ${
-      selectedSort === 'By Number' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
-    } hover:bg-green-600`}
-    onClick={() => setSelectedSort('By Number')}
-  >
-    By Number
-  </button>
-  <button
-    className={`px-4 py-2 rounded-lg ${
-      selectedSort === 'By Name' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
-    } hover:bg-green-600`}
-    onClick={() => setSelectedSort('By Name')}
-  >
-    By Name
-  </button>
-  <button
-    className={`px-4 py-2 rounded-lg ${
-      selectedSort === 'By Style' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
-    } hover:bg-green-600`}
-    onClick={() => setSelectedSort('By Style')}
-  >
-    By Style
-  </button>
+      {/* Decorative Border */}
+      <div className="absolute inset-0 border-[6px] border-transparent rounded-2xl group-hover:border-indigo-500 transition-all duration-500"></div>
+    </div>
+  ))}
 </div>
 
-{/* Surprise Me Button */}
-<div className="text-center mb-6">
-  <button
-    className="px-4 py-2 bg-purple-500 text-white font-bold rounded-lg hover:bg-purple-600 shadow-md transition-transform hover:scale-105"
-    onClick={() => {
-      const randomIndex = Math.floor(Math.random() * filteredTattoos.length);
-      setSelectedTattoo(filteredTattoos[randomIndex]);
-      setCurrentIndex(randomIndex);
-    }}
-  >
-    Surprise Me!
-  </button>
-</div>
-
-        {/* Tattoo Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTattoos.map((tattoo, index) => (
-            <div
-              key={tattoo._id}
-              className="group relative bg-gradient-to-br from-gray-800 via-gray-700 to-black rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition-shadow"
-              onClick={() => {
-                setSelectedTattoo(tattoo);
-                setCurrentIndex(index);
-              }}
-            >
-              {/* Image */}
-              <img
-                src={tattoo.image}
-                alt={tattoo.name}
-                className="w-full h-60 sm:h-72 lg:h-80 object-cover rounded-lg transition-transform transform group-hover:scale-110 group-hover:rotate-2"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/70 to-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                <div className="flex flex-col items-center justify-center h-full space-y-3 px-4">
-                  {/* Tattoo Name */}
-                  <h3 className="text-white text-xl font-extrabold tracking-wide uppercase">
-                    {tattoo.name}
-                  </h3>
-                  {/* Additional Details */}
-                  <p className="text-gray-300 text-sm font-light italic">
-                    Style: {tattoo.style || "Unique Design"}
-                  </p>
-                  <p className="text-gray-400 text-xs font-medium">
-                    Popularity: {tattoo.popularity || "Unknown"}
-                  </p>
-                  {/* View More Button */}
-                  <button className="px-5 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold rounded-full hover:scale-105 hover:shadow-lg transition-transform">
-                    Explore Tattoo
-                  </button>
-                </div>
-              </div>
-
-              {/* Decorative Border */}
-              <div className="absolute inset-0 border-4 border-transparent rounded-lg group-hover:border-indigo-500 transition-all duration-500"></div>
-            </div>
-          ))}
-        </div>
 
 
         {/* Fullscreen Modal */}

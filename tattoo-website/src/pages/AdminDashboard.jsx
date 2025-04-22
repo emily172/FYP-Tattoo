@@ -12,8 +12,8 @@ const AdminDashboard = () => {
           to="/dashboard/artist"
           className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
         >
-          <h2 className="text-xl font-bold">Manage Artists</h2>
-          <p>View and edit the artist profiles.</p>
+          <h2 className="text-xl font-bold">Manage Team</h2>
+          <p>View and edit the Team profiles.</p>
         </NavLink>
 
         {/* Manage Gallery */}

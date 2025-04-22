@@ -5,39 +5,38 @@ import {
   VerticalTimelineElement,
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faStar,
+  faCalendarAlt,
+  faBookmark,
+  faPlayCircle,
+  faArrowRight,
+  faArrowLeft,
+  faTimes,
+  faQuoteLeft,
+} from '@fortawesome/free-solid-svg-icons';
 
 const HistoryTimeline = () => {
   const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(null); // Index for active image in carousel
+  const [currentIndex, setCurrentIndex] = useState(null);
 
-  // Fetch history details from backend
   useEffect(() => {
     axios
       .get('http://localhost:5000/api/history')
-      .then((response) => {
-        console.log('Fetched History:', response.data);
-        setHistory(response.data); // Populate timeline
-      })
-      .catch((err) => {
-        console.error('Error fetching history:', err);
-        setError('Failed to load history details.');
-      });
+      .then((response) => setHistory(response.data))
+      .catch((err) => setError('Failed to load history details.'));
   }, []);
 
-  // Open the carousel modal at the selected index
   const openCarousel = (index) => {
     if (history[index]?.image) {
-      setCurrentIndex(index); // Open modal for the clicked image
+      setCurrentIndex(index);
     }
   };
 
-  // Close the carousel modal
-  const closeCarousel = () => {
-    setCurrentIndex(null);
-  };
+  const closeCarousel = () => setCurrentIndex(null);
 
-  // Navigate to the previous image with valid entries
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex > 0 ? prevIndex - 1 : history.length - 1;
@@ -48,7 +47,6 @@ const HistoryTimeline = () => {
     });
   };
 
-  // Navigate to the next image with valid entries
   const goToNext = () => {
     setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex < history.length - 1 ? prevIndex + 1 : 0;
@@ -59,43 +57,35 @@ const HistoryTimeline = () => {
     });
   };
 
-  // Handle keypress events
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (currentIndex !== null) {
-        if (event.key === 'ArrowLeft') {
-          goToPrevious(); // Navigate to the previous image
-        } else if (event.key === 'ArrowRight') {
-          goToNext(); // Navigate to the next image
-        } else if (event.key === 'Escape') {
-          closeCarousel(); // Close the modal on Escape key
-        }
+  const handleKeyDown = (event) => {
+    if (currentIndex !== null) {
+      if (event.key === 'Escape') {
+        closeCarousel();
+      } else if (event.key === 'ArrowLeft') {
+        goToPrevious();
+      } else if (event.key === 'ArrowRight') {
+        goToNext();
       }
-    };
+    }
+  };
 
+  const handleMouseScroll = (event) => {
+    if (currentIndex !== null) {
+      if (event.deltaY < 0) {
+        goToPrevious();
+      } else if (event.deltaY > 0) {
+        goToNext();
+      }
+    }
+  };
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleMouseScroll);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [currentIndex]);
-
-  // Handle mouse wheel scrolling
-  useEffect(() => {
-    const handleWheelScroll = (event) => {
-      if (currentIndex !== null) {
-        if (event.deltaY < 0) {
-          goToPrevious(); // Scroll up to go to previous image
-        } else if (event.deltaY > 0) {
-          goToNext(); // Scroll down to go to next image
-        }
-      }
-    };
-
-    window.addEventListener('wheel', handleWheelScroll);
-
-    return () => {
-      window.removeEventListener('wheel', handleWheelScroll);
+      window.removeEventListener('wheel', handleMouseScroll);
     };
   }, [currentIndex]);
 
@@ -104,129 +94,154 @@ const HistoryTimeline = () => {
   }
 
   return (
-    <div className="p-8 bg-gradient-to-r from-indigo-50 to-indigo-100 min-h-screen">
-      <h1 className="text-6xl font-extrabold text-center mb-8 text-indigo-800 tracking-wider">
-        📜 Our History
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black flex flex-col items-center p-4 sm:p-6">
+      {/* Header */}
+      <h1 className="text-7xl font-extrabold tracking-wide text-white drop-shadow-lg">
+        Our History
       </h1>
+
       <VerticalTimeline>
         {history.map((entry, index) => (
           <VerticalTimelineElement
             key={index}
-            date={entry.year}
             iconStyle={{
               background: 'linear-gradient(to bottom, #3b82f6, #9333ea)',
               color: '#fff',
             }}
-            icon={<i className="fas fa-star text-xl text-white"></i>} // Fancy icon!
-          >
-            <h3 className="text-2xl font-bold text-gray-800">{entry.year}</h3>
-            <p className="text-lg text-gray-600 mb-4">{entry.event}</p>
-
-            {/* Display Image */}
-            {entry.image && (
-              <img
-                src={entry.image}
-                alt="Milestone"
-                className="w-full mt-4 rounded-lg shadow-md hover:scale-105 transform transition-transform duration-300 cursor-pointer"
-                onClick={() => openCarousel(index)} // Open carousel on image click
+            icon={
+              <FontAwesomeIcon
+                icon={faStar}
+                className="text-white text-2xl hover:text-yellow-500 transition duration-300"
               />
-            )}
+            }
+          >
+            <div className="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-xl shadow-md border-2 border-transparent hover:border-gray-600 hover:shadow-2xl overflow-hidden transition-transform transform hover:scale-105">
+              {/* Year Section with Icon */}
+              <div className="text-center mb-4 flex items-center justify-center">
+                <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-indigo-400" />
+                <span className="text-4xl font-bold text-indigo-400 drop-shadow-lg">
+                  {entry.year}
+                </span>
+              </div>
 
-            {/* Handle YouTube Videos */}
-            {entry.video && entry.video.includes("youtube.com") ? (
-              <a
-                href={entry.video}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative block mt-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
-              >
-                {/* Video Thumbnail */}
-                <img
-                  src={`https://img.youtube.com/vi/${entry.video.split('v=')[1]}/0.jpg`}
-                  alt="Video Thumbnail"
-                  className="w-full rounded-lg group-hover:brightness-75 transition-all duration-300"
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="flex flex-col items-center justify-center">
-                    <span className="text-white text-4xl font-bold">▶</span>
-                    <span className="text-white text-lg mt-2 font-semibold">
-                      Watch Video
-                    </span>
-                  </div>
+              {/* Event Description */}
+              <p className="text-lg text-gray-300 text-center flex items-center">
+                <FontAwesomeIcon icon={faBookmark} className="mr-2 text-gray-300" />
+                {entry.event}
+              </p>
+
+              {/* Image */}
+              {entry.image && (
+                <div className="relative mt-6">
+                  <img
+                    src={entry.image}
+                    alt={`Timeline Event for ${entry.year}`}
+                    className="w-full rounded-lg shadow-lg hover:scale-105 hover:brightness-110 transform transition-transform duration-300 cursor-pointer"
+                    onClick={() => openCarousel(index)}
+                  />
                 </div>
-              </a>
-            ) : (
-              entry.video && (
-                <iframe
-                  src={entry.video}
-                  title="Milestone Video"
-                  className="w-full h-60 mt-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              )
-            )}
+              )}
 
-            {/* Display Testimonial */}
-            {entry.testimonial && (
-              <blockquote className="text-gray-600 italic mt-4 border-l-4 border-indigo-500 pl-4">
-                "{entry.testimonial}"
-              </blockquote>
-            )}
+              {/* Video Section */}
+              {entry.video && entry.video.includes('youtube.com') ? (
+                <a
+                  href={entry.video}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative block mt-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
+                >
+                  <img
+                    src={`https://img.youtube.com/vi/${entry.video.split('v=')[1]}/0.jpg`}
+                    alt="Video Thumbnail"
+                    className="w-full rounded-lg group-hover:brightness-75 transition duration-300"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <FontAwesomeIcon icon={faPlayCircle} className="text-white text-5xl" />
+                  </div>
+                </a>
+              ) : (
+                entry.video && (
+                  <iframe
+                    src={entry.video}
+                    title="Milestone Video"
+                    className="w-full h-60 mt-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                    allowFullScreen
+                  ></iframe>
+                )
+              )}
 
-            {/* Provide External Link */}
-            {entry.link && (
-              <a
-                href={entry.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-500 hover:underline mt-4 inline-block font-semibold"
-              >
-                Learn More ➡
-              </a>
-            )}
+              {/* Testimonial Section */}
+              {entry.testimonial && (
+                <blockquote className="text-gray-300 italic mt-6 border-l-4 border-indigo-500 pl-4">
+                  <FontAwesomeIcon icon={faQuoteLeft} className="text-indigo-500 mr-2" />
+                  "{entry.testimonial}"
+                </blockquote>
+              )}
+
+              {/* Learn More Button */}
+              {entry.link && (
+                <div className="text-center mt-6">
+                  <a
+                    href={entry.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-6 py-3 text-md font-bold text-white bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 rounded-md shadow-md hover:from-indigo-400 hover:to-pink-400 transform hover:scale-105 transition-transform flex items-center justify-center"
+                  >
+                    Learn More
+                    <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+                  </a>
+                </div>
+              )}
+            </div>
           </VerticalTimelineElement>
         ))}
       </VerticalTimeline>
 
-      {/* Image Carousel Modal */}
+      {/* Carousel Modal */}
       {currentIndex !== null && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
-          onClick={closeCarousel} // Close carousel
+          className="fixed inset-0 flex items-center justify-center bg-gradient-to-bl from-gray-900 via-black to-gray-800 bg-opacity-90 z-50 transition-opacity duration-300"
+          onClick={closeCarousel}
         >
-          <div className="relative">
+          <div
+            className="relative bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-lg shadow-2xl overflow-hidden p-6 max-w-screen-md mx-auto"
+            onClick={(e) => e.stopPropagation()} // Prevent background click from closing
+          >
             {/* Current Image */}
             <img
               src={history[currentIndex].image}
               alt="Carousel View"
-              className="rounded-lg shadow-lg max-w-full max-h-screen"
+              className="rounded-lg shadow-md hover:scale-105 transform transition-transform duration-300 max-w-full max-h-[80vh]"
             />
+
             {/* Navigation Buttons */}
             <button
               onClick={(e) => {
-                e.stopPropagation(); // Prevent modal close
+                e.stopPropagation();
                 goToPrevious();
               }}
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full"
+              className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full flex items-center shadow-lg transition"
             >
-              ◀ Previous
+              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+              Previous
             </button>
             <button
               onClick={(e) => {
-                e.stopPropagation(); // Prevent modal close
+                e.stopPropagation();
                 goToNext();
               }}
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full"
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full flex items-center shadow-lg transition"
             >
-              Next ▶
+              Next
+              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
             </button>
+
             {/* Close Button */}
             <button
               onClick={closeCarousel}
-              className="absolute top-4 right-4 text-white text-lg bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600"
+              className="absolute top-4 right-4 text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg flex items-center shadow-md"
             >
+              <FontAwesomeIcon icon={faTimes} className="mr-2" />
               Close
             </button>
           </div>
@@ -237,3 +252,4 @@ const HistoryTimeline = () => {
 };
 
 export default HistoryTimeline;
+

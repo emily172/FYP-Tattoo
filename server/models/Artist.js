@@ -3,26 +3,26 @@ const mongoose = require('mongoose');
 const artistSchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
-  specialisation: { type: String },
-  popularity: { type: Number },
-  bio: { type: String },
+  specialisation: { type: String, default: 'Not Specified' },
+  popularity: { type: Number, default: 0 },
+  bio: { type: String, default: 'No biography available.' },
   contacts: {
-    phone: { type: String },
-    email: { type: String },
-    address: { type: String },
+    phone: { type: String, default: 'Not Provided' },
+    email: { type: String, default: 'Not Provided' },
+    address: { type: String, default: 'Not Provided' },
   },
   socialMediaLinks: {
-    instagram: { type: String },
-    facebook: { type: String },
-    twitter: { type: String },
-    website: { type: String },
+    instagram: { type: String, default: '' },
+    facebook: { type: String, default: '' },
+    twitter: { type: String, default: '' },
+    website: { type: String, default: '' },
   },
-  experience: { type: Number },
-  certifications: [{ type: String }],
-  awards: [{ type: String }], // Simplified to an array of strings
-  artwork: [{ type: String }], // Array of strings for artwork references
-  portfolioTags: [{ type: String }],
-  languagesSpoken: [{ type: String }],
+  experience: { type: Number, default: 0 },
+  certifications: [{ type: String, default: [] }],
+  awards: [{ type: String, default: [] }],
+  artwork: [{ type: String, default: [] }],
+  portfolioTags: [{ type: String, default: [] }],
+  languagesSpoken: [{ type: String, default: [] }],
 });
 
 module.exports = mongoose.model('Artist', artistSchema);

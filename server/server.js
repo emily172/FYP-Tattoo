@@ -17,6 +17,7 @@ const Profile = require('./models/Profile');//TattooStyle model
 const FAQ = require('./models/FAQ'); //FAQ model
 const TattooImage = require('./models/TattooImage');
 const History = require('./models/History');
+const About = require('./models/About');
 const Image = require('./models/Image'); // Your Image schema
 
 
@@ -323,6 +324,33 @@ app.get('/blogs/:id', async (req, res) => {
   }
 });
 
+
+// Get all blog posts with filtering and searching
+app.get('/blogs', async (req, res) => {
+  try {
+    const { category, search } = req.query; // Query parameters for filtering and searching
+    let query = {};
+
+    // Add category filtering
+    if (category && category !== 'All') {
+      query.category = category; // Filter blogs by category
+    }
+
+    // Add search functionality
+    if (search) {
+      query.title = { $regex: search, $options: 'i' }; // Case-insensitive regex search by title
+    }
+
+    const blogs = await Blog.find(query).sort({ createdAt: -1 }); // Sort blogs by newest first
+    res.json(blogs); // Return filtered and sorted blogs
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch blogs' });
+  }
+});
+
+
+
+
 // Update a blog post
 app.put('/blogs/:id', async (req, res) => {
   try {
@@ -502,6 +530,7 @@ app.delete('/tattoo-styles/:id', async (req, res) => {
 });
 
 // Get all profiles
+// Get all profiles
 app.get('/profiles', async (req, res) => {
   try {
     const profiles = await Profile.find(); // Fetch all profiles
@@ -528,17 +557,49 @@ app.get('/profiles/:id', async (req, res) => {
 app.post('/profiles', async (req, res) => {
   try {
     const {
-      name, age, bio, profileImage, interests, skills, contactInfo,
-    } = req.body; // Include all new fields
-
-    const newProfile = new Profile({
       name,
-      age,
       bio,
       profileImage,
+      popularity,
       interests,
       skills,
       contactInfo,
+      experience,
+      tattooStyles,
+      portfolio,
+      certifications,
+      tags,
+      socialMediaLinks, // Includes TikTok, Instagram, Facebook, and X
+      languagesSpoken,
+      availability,
+      pricing,
+      safetyProtocols,
+      awards,
+      artwork,
+      origin, // Includes city and country
+    } = req.body;
+
+    const newProfile = new Profile({
+      name,
+      bio,
+      profileImage,
+      popularity,
+      interests,
+      skills,
+      contactInfo,
+      experience,
+      tattooStyles,
+      portfolio,
+      certifications,
+      tags,
+      socialMediaLinks,
+      languagesSpoken,
+      availability,
+      pricing,
+      safetyProtocols,
+      awards,
+      artwork,
+      origin,
     });
 
     await newProfile.save();
@@ -553,19 +614,51 @@ app.post('/profiles', async (req, res) => {
 app.put('/profiles/:id', async (req, res) => {
   try {
     const {
-      name, age, bio, profileImage, interests, skills, contactInfo,
-    } = req.body; // Accept updated fields
+      name,
+      bio,
+      profileImage,
+      popularity,
+      interests,
+      skills,
+      contactInfo,
+      experience,
+      tattooStyles,
+      portfolio,
+      certifications,
+      tags,
+      socialMediaLinks,
+      languagesSpoken,
+      availability,
+      pricing,
+      safetyProtocols,
+      awards,
+      artwork,
+      origin,
+    } = req.body;
 
     const updatedProfile = await Profile.findByIdAndUpdate(
       req.params.id,
       {
         name,
-        age,
         bio,
         profileImage,
+        popularity,
         interests,
         skills,
         contactInfo,
+        experience,
+        tattooStyles,
+        portfolio,
+        certifications,
+        tags,
+        socialMediaLinks,
+        languagesSpoken,
+        availability,
+        pricing,
+        safetyProtocols,
+        awards,
+        artwork,
+        origin,
       },
       { new: true } // Return the updated profile
     );
@@ -684,6 +777,30 @@ app.delete('/api/history/:id', async (req, res) => {
 });
 
 
+// PUT to Update a History Entry
+app.put('/api/history/:id', async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updatedHistory = await History.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied
+    });
+
+    if (!updatedHistory) {
+      return res.status(404).json({ error: 'History entry not found' });
+    }
+
+    res.status(200).json(updatedHistory);
+  } catch (err) {
+    console.error('Error updating history entry:', err);
+    res.status(500).json({ error: 'Failed to update history entry' });
+  }
+});
+
+
+
 // GET Tattoo Image details
 app.get('/api/images', async (req, res) => {
   try {
@@ -722,16 +839,6 @@ app.delete('/api/images/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete tattoo image entry' });
   }
 });
-
-
-
-
-
-
-
-
-
-
 
 
 
