@@ -8,7 +8,7 @@ const AdminMessages = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [messagesPerPage, setMessagesPerPage] = useState(10); // Default limit
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [filters, setFilters] = useState({
     startDate: '',
@@ -27,25 +27,11 @@ const AdminMessages = () => {
   }, []);
 
   // Fetch all messages
-  /*const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get('http://localhost:5000/api/contact');
-      setMessages(data);
-      setFilteredMessages(data); // Initialize filtered messages with all messages
-      setLoading(false);
-    } catch {
-      setError('Failed to fetch messages.');
-      setLoading(false);
-    }
-  };
-*/
-
-  const fetchMessages = async (page = 1) => {
+  const fetchMessages = async (page = 1, limit = messagesPerPage) => {
     try {
       setLoading(true);
       const { data } = await axios.get('http://localhost:5000/api/contact', {
-        params: { page, limit: 10 }, // Pass page and limit as query params
+        params: { page, limit }, // Pass page and limit as query params
       });
       setMessages(data.contacts); // Update messages with paginated results
       setFilteredMessages(data.contacts); // Update filtered messages
@@ -57,7 +43,6 @@ const AdminMessages = () => {
       setLoading(false);
     }
   };
-
 
   // Fetch statistics for statuses
   const fetchStats = async () => {
@@ -167,70 +152,63 @@ const AdminMessages = () => {
 
   // Bulk Delete Handler
   const handleBulkDelete = async () => {
-    // First Confirmation: "Are you sure you want to delete?"
     const firstConfirmation = window.confirm(
       "Are you sure you want to delete the selected messages?"
     );
 
     if (!firstConfirmation) {
-      return; // Exit if the first confirmation is declined
+      return; // Exit if declined
     }
 
-    // Second Confirmation: "There is no turning back!"
     const secondConfirmation = window.confirm(
-      "This action is irreversible! Are you absolutely sure you want to proceed?"
+      "This action is irreversible! Are you absolutely sure?"
     );
 
     if (!secondConfirmation) {
-      return; // Exit if the second confirmation is declined
+      return; // Exit if declined
     }
 
-    // Proceed with Soft Delete
     try {
       await axios.put('http://localhost:5000/api/contact/soft-delete', { ids: selectedIds });
 
-      // Temporarily hide the messages after 1 second
       setTimeout(() => {
         setFilteredMessages((prevMessages) =>
           prevMessages.filter((msg) => !selectedIds.includes(msg._id))
         );
-      }, 1000); // 1-second delay for hiding messages
+      }, 1000); // Temporarily hide messages after 1 second
 
-      // Show Undo Snackbar after hiding the messages
       setUndoVisible(true);
 
-      // Start Timer for Permanent Deletion
       const timer = setTimeout(async () => {
         try {
           await axios.delete('http://localhost:5000/api/contact/permanent-delete');
-          fetchMessages(); // Refresh messages after permanent deletion
+          fetchMessages(); // Refresh messages
         } catch {
           setError('Failed to permanently delete messages.');
         }
-      }, 10000); // 10 seconds timer for undo action
+      }, 10000); // Undo timer: 10 seconds
 
-      // Store the timer ID to allow undo action
       setUndoTimer(timer);
       setSelectedIds([]); // Clear selected IDs
     } catch {
-      setError('Failed to soft delete messages.');
+      setError('Failed to delete messages.');
     }
   };
 
   // Undo Delete Handler
   const handleUndoDelete = async () => {
-    clearTimeout(undoTimer); // Cancel the permanent delete timer
+    clearTimeout(undoTimer); // Cancel permanent delete timer
     try {
       await axios.put('http://localhost:5000/api/contact/undo-delete', { ids: selectedIds });
       setUndoVisible(false); // Hide Undo Snackbar
-      fetchMessages(); // Refresh messages to restore soft-deleted messages
+      fetchMessages(); // Refresh messages
     } catch {
       setError('Failed to undo delete.');
     }
   };
 
   if (loading) {
-    return <p className="text-center">Loading messages...</p>;
+    return <p className="text-center">Loading...</p>;
   }
 
   if (error) {
@@ -258,6 +236,7 @@ const AdminMessages = () => {
         ))}
       </div>
 
+      {/* Search and Filters */}
       {/* Search and Filters Section */}
       <div className="relative mb-6">
         <input
@@ -291,8 +270,8 @@ const AdminMessages = () => {
         </button>
       </div>
 
-      {/* Filters Section */}
-      <div className="mb-6 space-y-4">
+ {/* Filters Section */}
+ <div className="mb-6 space-y-4">
         <div>
           <label className="block text-lg font-bold text-gray-700">Start Date</label>
           <input
@@ -353,7 +332,6 @@ const AdminMessages = () => {
       </div>
 
       {/* Messages Table */}
-
       {filteredMessages.length === 0 ? (
         <p className="text-center text-gray-600">No messages found.</p>
       ) : (
@@ -421,18 +399,32 @@ const AdminMessages = () => {
         </table>
       )}
 
-      {/* Pagniation included */}
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
-          onClick={() => fetchMessages(currentPage - 1)}
+          onClick={() => fetchMessages(currentPage - 1, messagesPerPage)}
           disabled={currentPage === 1}
           className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
         >
           Previous
         </button>
-        <p className="text-gray-700">Page {currentPage} of {totalPages}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-gray-700">Page {currentPage} of {totalPages}</p>
+          <select
+            value={messagesPerPage}
+            onChange={(e) => {
+              setMessagesPerPage(Number(e.target.value));
+              fetchMessages(1, Number(e.target.value)); // Fetch with new limit
+            }}
+            className="p-2 border border-gray-300 rounded"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
         <button
-          onClick={() => fetchMessages(currentPage + 1)}
+          onClick={() => fetchMessages(currentPage + 1, messagesPerPage)}
           disabled={currentPage === totalPages}
           className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
         >
@@ -440,7 +432,26 @@ const AdminMessages = () => {
         </button>
       </div>
 
-
+      {/* Jump to Page */}
+      <div className="flex justify-center mt-4">
+        <input
+          type="number"
+          min="1"
+          max={totalPages}
+          value={currentPage}
+          onChange={(e) => {
+            const page = Math.min(Math.max(Number(e.target.value), 1), totalPages);
+            setCurrentPage(page); // Update current page state
+          }}
+          className="p-2 border border-gray-300 rounded text-center"
+        />
+        <button
+          onClick={() => fetchMessages(currentPage, messagesPerPage)}
+          className="px-4 py-2 ml-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Go
+        </button>
+      </div>
     </div>
   );
 };
