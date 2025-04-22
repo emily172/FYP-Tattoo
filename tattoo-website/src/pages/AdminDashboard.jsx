@@ -9,7 +9,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Manage Artists */}
         <NavLink
-          to="/dashboard/artists"
+          to="/dashboard/artist"
           className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
         >
           <h2 className="text-xl font-bold">Manage Artists</h2>

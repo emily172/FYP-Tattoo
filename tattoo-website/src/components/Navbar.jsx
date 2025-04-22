@@ -35,8 +35,8 @@ function Navbar() {
             Gallery
           </Link>
           <Link 
-            to="/artists" 
-            className={`hover:text-indigo-500 ${location.pathname === '/artists' ? 'text-indigo-500' : ''}`}
+            to="/artist" 
+            className={`hover:text-indigo-500 ${location.pathname === '/artist' ? 'text-indigo-500' : ''}`}
           >
             Artists
           </Link>

@@ -7,14 +7,17 @@ const jwt = require('jsonwebtoken');
 const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentication middleware
 
 const Admin = require('./models/Admin'); // Admin model
+const TattooGallery = require('./models/TattooGallery'); // Import TattooGallery model
 const Tattoo = require('./models/Tattoo'); // Tattoo model
-const Artist = require('./models/Artist'); // Artist model
+const Artist = require('./models/Artist');  
 const Blog = require('./models/Blog'); // Blog model
 const Studio = require('./models/Studio'); //Studio model
 const TattooStyle = require('./models/TattooStyle');//TattooStyle model
+const Profile = require('./models/Profile');//TattooStyle model
 const FAQ = require('./models/FAQ'); //FAQ model
-const History = require('./models/History'); //History model
-const Profile = require('./models/Profile'); // /Profile model'
+const TattooImage = require('./models/TattooImage');
+const History = require('./models/History');
+const Image = require('./models/Image'); // Your Image schema
 
 
 const app = express();
@@ -69,6 +72,57 @@ app.post('/admin/login', async (req, res) => {
     res.status(500).json({ error: 'Failed to log in' });
   }
 });
+
+//Tattoo Image Gallery
+// Get all tattoo images
+app.get('/tattoo-gallery', async (req, res) => {
+  try {
+    const tattoos = await TattooGallery.find().populate('createdBy');
+    res.json(tattoos);
+  } catch (err) {
+    console.error('Error fetching tattoo gallery:', err);
+    res.status(500).json({ error: 'Failed to fetch tattoo gallery' });
+  }
+});
+
+// Add a new tattoo image
+app.post('/tattoo-gallery', async (req, res) => {
+  const { title, imageUrl } = req.body;
+  
+  // Validate required fields
+  if (!title || !imageUrl) {
+    console.error('Validation Error: Missing required fields');
+    return res.status(400).json({ error: 'Title and Image URL are required' });
+  }
+
+  try {
+    const newTattoo = new TattooGallery(req.body);
+    await newTattoo.save();
+    res.status(201).json(newTattoo);
+  } catch (err) {
+    console.error('Error adding tattoo image:', err.message);
+    res.status(500).json({ error: 'Failed to add tattoo image' });
+  }
+});
+
+
+
+// Delete a tattoo image
+app.delete('/tattoo-gallery/:id', async (req, res) => {
+  try {
+    const deletedTattoo = await TattooGallery.findByIdAndDelete(req.params.id);
+    if (!deletedTattoo) return res.status(404).json({ error: 'Tattoo image not found' });
+    res.json({ message: 'Tattoo image deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting tattoo image:', err);
+    res.status(500).json({ error: 'Failed to delete tattoo image' });
+  }
+});
+
+
+
+
+
 
 // Fetch Tattoos
 app.get('/tattoos', async (req, res) => {
@@ -140,107 +194,99 @@ app.delete('/tattoos/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
-
-
-// Add Artist (Protected Route)
-app.post('/artists', authenticateAdmin, async (req, res) => {
-  const { name, bio, avatar, style } = req.body;
-
-  try {
-    const newArtist = new Artist({ name, bio, avatar, style });
-    await newArtist.save();
-    res.status(201).json(newArtist);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to add artist' });
-  }
-});
-
-
+//ARTIST
+// Fetch Artists
 app.get('/artists', async (req, res) => {
-  const { search, style, limit } = req.query; // Extract optional query parameters
+  const { search, specialisation, popularity, limit } = req.query;
   const filter = {};
 
-  // Add search and filter logic
-  if (search) filter.name = { $regex: search, $options: 'i' }; // Search by name (case-insensitive)
-  if (style) filter.style = style; // Filter by style
+  // Add filters based on query parameters
+  if (search) filter.name = { $regex: search, $options: 'i' };
+  if (specialisation) filter.specialisation = { $regex: specialisation, $options: 'i' };
+  if (popularity) filter.popularity = parseInt(popularity);
 
   try {
-    const artists = await Artist.find(filter).limit(parseInt(limit) || 0); // Fetch artists with optional limit
-    res.status(200).json(artists); // Send the artists as JSON
+    const artists = await Artist.find(filter).limit(parseInt(limit) || 0);
+    res.json(artists);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch artists' });
   }
 });
 
-app.get('/artists/styles', async (req, res) => {
+// Add Artist (Protected Route)
+app.post('/artists', authenticateAdmin, async (req, res) => {
+  const { 
+    name, image, popularity, contacts, socialMediaLinks, 
+    specialisation, bio, artwork, experience, languagesSpoken, 
+    awards, certifications, portfolioTags 
+  } = req.body;
+
+  // Log incoming data for debugging
+  console.log('Incoming artist data:', req.body);
+
   try {
-    const styles = await Artist.distinct('style'); // Fetch unique styles from the database
-    res.status(200).json(styles); // Return the styles as an array
+    const newArtist = new Artist({ 
+      name, image, popularity, contacts, socialMediaLinks, 
+      specialisation, bio, artwork, experience, languagesSpoken, 
+      awards, certifications, portfolioTags 
+    });
+
+    await newArtist.save();
+    res.status(201).json(newArtist);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch styles' });
+    console.error('Error creating artist:', err); // Log the error
+    res.status(400).json({ error: 'Failed to add artist', details: err.message });
   }
 });
 
+
+// Update Artist (Protected Route)
 app.put('/artists/:id', authenticateAdmin, async (req, res) => {
-  const { id } = req.params; // Extract artist ID
-  const { name, bio, avatar, style } = req.body; // Extract updated details
+  const { id } = req.params;
+  const { 
+    name, image, popularity, contacts, socialMediaLinks, 
+    specialisation, bio, artwork, experience, languagesSpoken, 
+    awards, certifications, portfolioTags 
+  } = req.body;
 
   try {
     const updatedArtist = await Artist.findByIdAndUpdate(
-      id, // Find artist by ID
-      { name, bio, avatar, style }, // Update fields
-      { new: true } // Return the updated document
+      id,
+      { 
+        name, image, popularity, contacts, socialMediaLinks, 
+        specialisation, bio, artwork, experience, languagesSpoken, 
+        awards, certifications, portfolioTags 
+      },
+      { new: true }
     );
 
     if (!updatedArtist) {
       return res.status(404).json({ error: 'Artist not found' });
     }
 
-    res.status(200).json(updatedArtist); // Return updated artist
+    res.status(200).json(updatedArtist);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update artist' });
   }
 });
 
+// Delete Artist (Protected Route)
 app.delete('/artists/:id', authenticateAdmin, async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params; // Ensure you're getting the correct ID
     const deletedArtist = await Artist.findByIdAndDelete(id);
+
     if (!deletedArtist) {
       return res.status(404).json({ error: 'Artist not found' });
     }
+
     res.status(200).json({ message: 'Artist deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete artist' });
   }
 });
 
-
-
-app.get('/stats/tattoos/popular-styles', authenticateAdmin, async (req, res) => {
-  try {
-    const popularStyles = await Tattoo.aggregate([
-      { $group: { _id: '$style', count: { $sum: 1 } } }, // Group by style
-      { $sort: { count: -1 } } // Sort by count in descending order
-    ]);
-
-    res.status(200).json(popularStyles); // Return aggregated data
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch statistics' });
-  }
-});
-
-
-app.get('/stats/general', authenticateAdmin, async (req, res) => {
-  try {
-    const totalTattoos = await Tattoo.countDocuments(); // Count total tattoos
-    const totalArtists = await Artist.countDocuments(); // Count total artists
-
-    res.status(200).json({ totalTattoos, totalArtists }); // Return totals
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch statistics' });
-  }
-});
 
 
 //Blogs
@@ -440,6 +486,9 @@ app.put('/tattoo-styles/:id', async (req, res) => {
   }
 });
 
+
+
+
 // Delete a tattoo style
 app.delete('/tattoo-styles/:id', async (req, res) => {
   try {
@@ -451,7 +500,6 @@ app.delete('/tattoo-styles/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete tattoo style' });
   }
 });
-
 
 // Get all profiles
 app.get('/profiles', async (req, res) => {
@@ -542,7 +590,6 @@ app.delete('/profiles/:id', async (req, res) => {
   }
 });
 
-
 // Routes for FAQs
 
 // GET all FAQs
@@ -597,8 +644,6 @@ app.delete('/api/faqs/:id', async (req, res) => {
 });
 
 
-//History Routes
-
 // GET History details
 app.get('/api/history', async (req, res) => {
   try {
@@ -637,6 +682,154 @@ app.delete('/api/history/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete history entry' });
   }
 });
+
+
+// GET Tattoo Image details
+app.get('/api/images', async (req, res) => {
+  try {
+    const images = await TattooImage.find(); // Fetch all tattoo image entries
+    res.status(200).json(images);
+  } catch (err) {
+    console.error('Error fetching tattoo images:', err);
+    res.status(500).json({ error: 'Failed to fetch tattoo image details' });
+  }
+});
+
+// POST to Create Tattoo Image Entry
+app.post('/api/images', async (req, res) => {
+  const imageData = req.body;
+  try {
+    const newImage = new TattooImage(imageData);
+    await newImage.save();
+    res.status(201).json(newImage);
+  } catch (err) {
+    console.error('Error creating tattoo image entry:', err);
+    res.status(500).json({ error: 'Failed to create tattoo image entry' });
+  }
+});
+
+// DELETE a Tattoo Image Entry
+app.delete('/api/images/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedImage = await TattooImage.findByIdAndDelete(id);
+    if (!deletedImage) {
+      return res.status(404).json({ error: 'Tattoo image entry not found' });
+    }
+    res.status(200).json({ message: 'Tattoo image entry deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting tattoo image entry:', err);
+    res.status(500).json({ error: 'Failed to delete tattoo image entry' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//About Page
+// Get About Page Content
+// Get About Page Content
+app.get('/api/about/manage', async (req, res) => {
+  try {
+    const about = await About.findOne(); // Fetch the about content
+    if (!about) return res.status(404).json({ message: 'About content not found.' });
+    res.json(about);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch About content.', error: err });
+  }
+});
+
+
+// Create About Content
+app.post('/manage', async (req, res) => {
+  const { mission, story, vision, values } = req.body;
+
+  try {
+    const newAbout = new About({ mission, story, vision, values });
+    const savedAbout = await newAbout.save();
+    res.status(201).json(savedAbout);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create About content', error: err });
+  }
+});
+
+// Update About Content
+app.put('/manage/:id', async (req, res) => {
+  const { mission, story, vision, values } = req.body;
+
+  try {
+    const updatedAbout = await About.findByIdAndUpdate(
+      req.params.id,
+      { mission, story, vision, values },
+      { new: true }
+    );
+    res.json(updatedAbout);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update About content', error: err });
+  }
+});
+
+//Images
+
+app.get('/api/images/:id', async (req, res) => {
+  try {
+    const image = await Image.findById(req.params.id);
+    if (!image) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+    res.status(200).json(image);
+  } catch (err) {
+    console.error('Error fetching image:', err);
+    res.status(500).json({ error: 'Failed to fetch image details' });
+  }
+});
+
+
+app.post('/api/images', async (req, res) => {
+  try {
+    const newImage = new Image(req.body);
+    await newImage.save();
+    res.status(201).json(newImage);
+  } catch (err) {
+    console.error('Error adding image:', err);
+    res.status(500).json({ error: 'Failed to add image' });
+  }
+});
+
+app.delete('/api/images/:id', async (req, res) => {
+  try {
+    const deletedImage = await Image.findByIdAndDelete(req.params.id);
+    if (!deletedImage) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+    res.status(200).json({ message: 'Image deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting image:', err);
+    res.status(500).json({ error: 'Failed to delete image' });
+  }
+});
+
+app.put('/api/images/:id', async (req, res) => {
+  try {
+    const updatedImage = await Image.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updatedImage);
+  } catch (err) {
+    console.error('Error updating image:', err);
+    res.status(500).json({ error: 'Failed to update image' });
+  }
+});
+
 
 
 // Start the Server

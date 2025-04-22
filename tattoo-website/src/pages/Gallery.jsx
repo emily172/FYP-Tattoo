@@ -1,119 +1,492 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faChevronLeft, faChevronRight, faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFacebookF, faTwitter, faTiktok, faInstagram, faPinterest } from '@fortawesome/free-brands-svg-icons';
+
 import axios from 'axios';
 
 function Gallery() {
-  // State variables to store tattoo data, loading status, and potential errors
   const [tattoos, setTattoos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [filteredTattoos, setFilteredTattoos] = useState([]);
+  const [selectedTattoo, setSelectedTattoo] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(null);
+  const [error, setError] = useState('');
+  const [isAutoplay, setIsAutoplay] = useState(false); // Autoplay state
 
-  // State variables for search and filter
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStyle, setFilterStyle] = useState('');
-  const [filterPopularity, setFilterPopularity] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); // Real-time search query
+  const [selectedFilter, setSelectedFilter] = useState('All Styles'); // Selected filter for style
+  const [selectedSort, setSelectedSort] = useState('By Number'); // Sorting state
 
-  // Fetch tattoo data from the backend with search and filter options
+  // Fetch tattoos from the backend
   useEffect(() => {
     axios
-      .get('http://localhost:5000/tattoos', {
-        params: {
-          search: searchTerm, // Pass search term to the backend
-          style: filterStyle, // Pass selected style filter
-          popularity: filterPopularity, // Pass popularity filter
-        },
-      })
+      .get('http://localhost:5000/tattoos')
       .then((response) => {
-        setTattoos(response.data); // Populate tattoos with the response data
-        setLoading(false); // Stop the loading spinner
+        const data = response.data;
+        setTattoos(data);
+        setFilteredTattoos(data); // Initialize filtered tattoos
       })
-      .catch((err) => {
-        console.error('Error fetching tattoos:', err); // Log the error to the console
-        setError('Failed to fetch tattoo data'); // Set error state
-        setLoading(false); // Stop the loading spinner
-      });
-  }, [searchTerm, filterStyle, filterPopularity]); // Dependency array ensures fetch triggers on input changes
+      .catch(() => setError('Failed to fetch tattoos.'));
+  }, []);
+
+  // Apply filters and sorting
+  useEffect(() => {
+    let result = [...tattoos];
+
+    // Filter by style
+    if (selectedFilter !== 'All Styles') {
+      result = result.filter((tattoo) => tattoo.style === selectedFilter);
+    }
+
+    // Search tattoos by name
+    if (searchQuery) {
+      result = result.filter((tattoo) =>
+        tattoo.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Sorting options
+    if (selectedSort === 'By Number') {
+      result.sort((a, b) => a._id - b._id); // Sort by ID number
+    } else if (selectedSort === 'By Name') {
+      result.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically by name
+    } else if (selectedSort === 'By Style') {
+      result.sort((a, b) => a.style.localeCompare(b.style)); // Sort alphabetically by style
+    }
+
+    setFilteredTattoos(result);
+  }, [tattoos, selectedFilter, searchQuery, selectedSort]);
+
+  // Autoplay functionality
+  useEffect(() => {
+    let interval;
+    if (isAutoplay) {
+      interval = setInterval(() => {
+        handleNext(); // Automatically navigate to the next image
+      }, 3000); // Change image every 3 seconds
+    }
+    return () => clearInterval(interval); // Clear interval when autoplay is toggled off or modal is closed
+  }, [isAutoplay, currentIndex]);
+
+  // Mouse and keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!selectedTattoo) return;
+
+      if (event.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (event.key === 'ArrowRight') {
+        handleNext();
+      } else if (event.key === 'Escape') {
+        closeModal();
+      }
+    };
+
+    const handleScroll = (event) => {
+      if (!selectedTattoo) return;
+
+      if (event.deltaY < 0) {
+        handlePrev(); // Scroll up
+      } else if (event.deltaY > 0) {
+        handleNext(); // Scroll down
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleScroll);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleScroll);
+    };
+  }, [selectedTattoo, currentIndex]);
+
+  const handleFilterChange = (key, value) => {
+    setSelectedFilter(value);
+  };
+
+  const clearFilters = () => {
+    setSelectedFilter('All Styles');
+    setSearchQuery('');
+  };
+
+  const handlePrev = () => {
+    const prevIndex = (currentIndex - 1 + filteredTattoos.length) % filteredTattoos.length;
+    setSelectedTattoo(filteredTattoos[prevIndex]);
+    setCurrentIndex(prevIndex);
+  };
+
+  const handleNext = () => {
+    const nextIndex = (currentIndex + 1) % filteredTattoos.length;
+    setSelectedTattoo(filteredTattoos[nextIndex]);
+    setCurrentIndex(nextIndex);
+  };
+
+  const closeModal = () => {
+    setSelectedTattoo(null);
+    setCurrentIndex(null);
+    setIsAutoplay(false); // Disable autoplay when closing the modal
+  };
+
+  const shareTattoo = (platform) => {
+    const tattooUrl = `http://localhost:5000/tattoos/${selectedTattoo._id}`;
+
+    if (platform === 'facebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(tattooUrl)}`, '_blank');
+    } else if (platform === 'x') {
+      window.open(
+        `https://twitter.com/intent/tweet?url=${encodeURIComponent(tattooUrl)}&text=Check out this tattoo!`,
+        '_blank'
+      );
+    } else if (platform === 'tiktok') {
+      window.open('https://www.tiktok.com', '_blank');
+    } else if (platform === 'instagram') {
+      window.open('https://www.instagram.com', '_blank');
+    } else if (platform === 'pinterest') {
+      window.open(`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(tattooUrl)}`, '_blank');
+    }
+  };
+
+
+  const handleDownload = (tattoo) => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  const image = new Image();
+
+  image.crossOrigin = 'Anonymous'; // Ensure images from external sources load correctly
+
+  image.onload = () => {
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+
+    // Draw the tattoo image onto the canvas
+    context.drawImage(image, 0, 0);
+
+    // Add watermark
+    context.font = '30px Arial';
+    context.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    context.textAlign = 'center';
+    context.fillText('© YourGalleryName', canvas.width / 2, canvas.height - 20);
+
+    // Generate downloadable image
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `${tattoo.name.replace(/\s+/g, '-')}-tattoo.png`;
+    link.click();
+  };
+
+  image.onerror = () => {
+    console.error('Failed to load the image.');
+  };
+
+  image.src = tattoo.image; // Tattoo image source
+};
+
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      {/* Page Title */}
-      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-12">
-        Tattoo <span className="text-indigo-500">Gallery</span>
-      </h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-6xl">
+        <h1 className="text-3xl font-extrabold mb-6 text-center text-white tracking-tight">
+          Tattoo Gallery
+        </h1>
+        
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+        
 
-      {/* Search Bar */}
-      <div className="mb-6 flex justify-center">
+        {/* Search Bar */}
         <input
           type="text"
           placeholder="Search tattoos by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-lg p-2 border rounded shadow-md"
+          className="w-full mb-6 p-2 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-      </div>
 
-      {/* Filters */}
-      <div className="mb-6 flex justify-center space-x-4">
-        <select
-          value={filterStyle}
-          onChange={(e) => setFilterStyle(e.target.value)}
-          className="p-2 border rounded shadow-md"
-        >
-          <option value="">All Styles</option>
-          <option value="Traditional">Traditional</option>
-          <option value="Black & Gray">Black & Gray</option>
-          <option value="Watercolor">Watercolor</option>
-        </select>
-        <select
-          value={filterPopularity}
-          onChange={(e) => setFilterPopularity(e.target.value)}
-          className="p-2 border rounded shadow-md"
-        >
-          <option value="">All Popularities</option>
-          <option value="1">Low</option>
-          <option value="2">Medium</option>
-          <option value="3">High</option>
-        </select>
-      </div>
+        {/* Filters */}
+        <div className="flex space-x-4 mb-6">
+          {/* Style Filter */}
+          <select
+            className="px-4 py-2 rounded-lg bg-gray-800 text-gray-200"
+            value={selectedFilter}
+            onChange={(e) => handleFilterChange('style', e.target.value)}
+          >
+            <option value="All Styles">All Styles</option>
+            {[...new Set(tattoos.map((tattoo) => tattoo.style))].map((style) => (
+              <option key={style} value={style}>
+                {style}
+              </option>
+            ))}
+          </select>
 
-      {/* Loading Spinner */}
-      {loading && <div className="text-center">Loading...</div>}
-      {/* Error Message */}
-      {error && <div className="text-center text-red-500">{error}</div>}
-      {/* Tattoos Grid */}
-      {!loading && !error && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tattoos.map((tattoo) => (
+          {/* Clear Filters */}
+          <button
+            className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+            onClick={clearFilters}
+          >
+            Clear All
+          </button>
+        </div>
+
+{/* Sorting */}
+<div className="flex space-x-4 mb-6">
+  <button
+    className={`px-4 py-2 rounded-lg ${
+      selectedSort === 'By Number' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
+    } hover:bg-green-600`}
+    onClick={() => setSelectedSort('By Number')}
+  >
+    By Number
+  </button>
+  <button
+    className={`px-4 py-2 rounded-lg ${
+      selectedSort === 'By Name' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
+    } hover:bg-green-600`}
+    onClick={() => setSelectedSort('By Name')}
+  >
+    By Name
+  </button>
+  <button
+    className={`px-4 py-2 rounded-lg ${
+      selectedSort === 'By Style' ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-200'
+    } hover:bg-green-600`}
+    onClick={() => setSelectedSort('By Style')}
+  >
+    By Style
+  </button>
+</div>
+
+{/* Surprise Me Button */}
+<div className="text-center mb-6">
+  <button
+    className="px-4 py-2 bg-purple-500 text-white font-bold rounded-lg hover:bg-purple-600 shadow-md transition-transform hover:scale-105"
+    onClick={() => {
+      const randomIndex = Math.floor(Math.random() * filteredTattoos.length);
+      setSelectedTattoo(filteredTattoos[randomIndex]);
+      setCurrentIndex(randomIndex);
+    }}
+  >
+    Surprise Me!
+  </button>
+</div>
+
+        {/* Tattoo Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTattoos.map((tattoo, index) => (
             <div
               key={tattoo._id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4"
+              className="group relative bg-gradient-to-br from-gray-800 via-gray-700 to-black rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition-shadow"
+              onClick={() => {
+                setSelectedTattoo(tattoo);
+                setCurrentIndex(index);
+              }}
             >
-              {/* Tattoo Image */}
-              <div className="relative w-full h-56 mb-4">
-                <img
-                  src={tattoo.image}
-                  alt={tattoo.name}
-                  className="w-full h-full object-cover rounded-md shadow-md border border-gray-300"
-                />
+              {/* Image */}
+              <img
+                src={tattoo.image}
+                alt={tattoo.name}
+                className="w-full h-60 sm:h-72 lg:h-80 object-cover rounded-lg transition-transform transform group-hover:scale-110 group-hover:rotate-2"
+              />
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/70 to-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <div className="flex flex-col items-center justify-center h-full space-y-3 px-4">
+                  {/* Tattoo Name */}
+                  <h3 className="text-white text-xl font-extrabold tracking-wide uppercase">
+                    {tattoo.name}
+                  </h3>
+                  {/* Additional Details */}
+                  <p className="text-gray-300 text-sm font-light italic">
+                    Style: {tattoo.style || "Unique Design"}
+                  </p>
+                  <p className="text-gray-400 text-xs font-medium">
+                    Popularity: {tattoo.popularity || "Unknown"}
+                  </p>
+                  {/* View More Button */}
+                  <button className="px-5 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold rounded-full hover:scale-105 hover:shadow-lg transition-transform">
+                    Explore Tattoo
+                  </button>
+                </div>
               </div>
 
-              {/* Tattoo Details */}
-              <h2 className="text-lg font-bold text-gray-800 text-center">
-                {tattoo.name}
-              </h2>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                <strong>Style:</strong> {tattoo.style}
-              </p>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                <strong>Popularity:</strong> {tattoo.popularity}
-              </p>
+              {/* Decorative Border */}
+              <div className="absolute inset-0 border-4 border-transparent rounded-lg group-hover:border-indigo-500 transition-all duration-500"></div>
             </div>
           ))}
         </div>
-      )}
-      {/* Empty State */}
-      {!loading && !error && tattoos.length === 0 && (
-        <div className="text-center text-gray-500">No tattoos found</div>
-      )}
+
+
+        {/* Fullscreen Modal */}
+        {selectedTattoo && (
+          <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-black flex items-center justify-center z-50 p-6">
+            <div className="relative max-w-screen-lg w-full max-h-screen bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+              {/* Close Icon */}
+              <button
+                className="absolute top-4 right-4 bg-red-600 w-12 h-12 rounded-full flex items-center justify-center hover:bg-red-700 hover:rotate-90 transition-transform duration-300 shadow-lg hover:shadow-xl"
+                onClick={closeModal}
+              >
+                <FontAwesomeIcon icon={faTimes} className="text-white text-2xl" />
+                {/* OR */}
+                {/* <FaTimes className="text-white text-2xl" /> */}
+              </button>
+
+
+              {/* Scrollable Content */}
+              <div className="flex flex-col items-center overflow-y-auto max-h-[90vh] p-4 space-y-4">
+                {/* Main Image */}
+                <div className="flex items-center justify-center mb-4">
+                  <img
+                    src={selectedTattoo.image}
+                    alt={selectedTattoo.name}
+                    className="max-w-full max-h-[50vh] object-contain rounded-lg shadow-lg"
+                  />
+                </div>
+
+                {/* Tattoo Details */}
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <h2 className="text-2xl font-bold text-white uppercase tracking-wide">
+                    {selectedTattoo.name}
+                  </h2>
+                  <p className="text-gray-300 text-sm italic">
+                    Style: {selectedTattoo.style || "Unknown Style"}
+                  </p>
+                  <p className="text-gray-400 text-xs font-medium">
+                    Popularity: {selectedTattoo.popularity || "Unrated"}
+                  </p>
+                  {/* Download Button */}
+                  <button
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 shadow-md transition-transform hover:scale-105"
+                    onClick={() => handleDownload(selectedTattoo)}
+                  >
+                    Download Image
+                  </button>
+                </div>
+
+
+                {/* Navigation Controls */}
+                {/* Previous Icon */}
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                  <button
+                    className="bg-gray-800 p-4 rounded-full shadow-lg hover:bg-gray-700 transition-transform hover:scale-110 hover:-translate-x-1"
+                    onClick={handlePrev}
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} className="text-white text-2xl" />
+                    {/* OR */}
+                    {/* <FaChevronLeft className="text-white text-2xl" /> */}
+                  </button>
+                </div>
+
+                {/* Next Icon */}
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <button
+                    className="bg-gray-800 p-4 rounded-full shadow-lg hover:bg-gray-700 transition-transform hover:scale-110 hover:translate-x-1"
+                    onClick={handleNext}
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} className="text-white text-2xl" />
+                    {/* OR */}
+                    {/* <FaChevronRight className="text-white text-2xl" /> */}
+                  </button>
+                </div>
+
+
+                <div className="flex">
+                  <button
+                    className={`relative flex items-center space-x-2 px-6 py-2 rounded-full text-sm font-bold transition-transform duration-300 ${isAutoplay
+                        ? 'bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 shadow-lg ring-2 ring-green-500 hover:ring-green-600'
+                        : 'bg-gradient-to-br from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 shadow-lg ring-2 ring-red-500 hover:ring-red-600'
+                      }`}
+                    onClick={() => setIsAutoplay(!isAutoplay)}
+                  >
+                    {/* Play/Pause Icon */}
+                    <div
+                      className={`transition-transform duration-300 ${isAutoplay ? 'translate-x-0' : '-translate-x-1'
+                        }`}
+                    >
+                      <FontAwesomeIcon
+                        icon={isAutoplay ? faPauseCircle : faPlayCircle}
+                        className="text-white text-lg"
+                      />
+                    </div>
+
+                    {/* Label */}
+                    <span className="text-white">
+                      {isAutoplay ? 'Autoplay: ON' : 'Autoplay: OFF'}
+                    </span>
+                  </button>
+                </div>
+
+
+
+
+
+                {/* Social Sharing Icons */}
+                <div className="flex mt-4 space-x-4">
+                  <button
+                    className="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-4 rounded-full hover:from-blue-500 hover:to-blue-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
+                    onClick={() => shareTattoo('facebook')}
+                  >
+                    <FontAwesomeIcon icon={faFacebookF} className="text-xl" />
+                    {/* OR */}
+                    {/* <FaFacebookF className="text-xl" /> */}
+                  </button>
+                  <button
+                    className="bg-gradient-to-br from-sky-400 to-sky-600 text-white p-4 rounded-full hover:from-sky-500 hover:to-sky-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
+                    onClick={() => shareTattoo('x')}
+                  >
+                    <FontAwesomeIcon icon={faTwitter} className="text-xl" />
+                    {/* OR */}
+                    {/* <FaTwitter className="text-xl" /> */}
+                  </button>
+                  <button
+                    className="bg-gradient-to-br from-pink-400 to-pink-600 text-white p-4 rounded-full hover:from-pink-500 hover:to-pink-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
+                    onClick={() => shareTattoo('tiktok')}
+                  >
+                    <FontAwesomeIcon icon={faTiktok} className="text-xl" />
+                    {/* OR */}
+                    {/* <FaTiktok className="text-xl" /> */}
+                  </button>
+                  <button
+                    className="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-4 rounded-full hover:from-orange-500 hover:to-orange-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
+                    onClick={() => shareTattoo('instagram')}
+                  >
+                    <FontAwesomeIcon icon={faInstagram} className="text-xl" />
+                    {/* OR */}
+                    {/* <FaInstagram className="text-xl" /> */}
+                  </button>
+                  <button
+                    className="bg-gradient-to-br from-red-400 to-red-600 text-white p-4 rounded-full hover:from-red-500 hover:to-red-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
+                    onClick={() => shareTattoo('pinterest')}
+                  >
+                    <FontAwesomeIcon icon={faPinterest} className="text-xl" />
+                    {/* OR */}
+                    {/* <FaPinterest className="text-xl" /> */}
+                  </button>
+                </div>
+
+
+
+
+                {/* Thumbnail Navigation */}
+                <div className="flex overflow-x-auto space-x-4">
+                  {tattoos.map((tattoo, index) => (
+                    <img
+                      key={tattoo._id}
+                      src={tattoo.image}
+                      alt={tattoo.name}
+                      className={`w-16 h-16 object-cover cursor-pointer ${index === currentIndex ? 'ring-4 ring-indigo-500' : ''
+                        } rounded-lg transition-transform hover:scale-105`}
+                      onClick={() => {
+                        setSelectedTattoo(tattoo);
+                        setCurrentIndex(index);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

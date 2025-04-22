@@ -21,3 +21,5 @@ const tattooStyleSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('TattooStyle', tattooStyleSchema);
+
+
