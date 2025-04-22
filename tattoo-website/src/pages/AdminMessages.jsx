@@ -15,6 +15,8 @@ const AdminMessages = () => {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [undoVisible, setUndoVisible] = useState(false); // Control Undo Snackbar visibility
+  const [undoTimer, setUndoTimer] = useState(null); // Timer for the undo action
 
   useEffect(() => {
     fetchMessages(); // Load all messages
@@ -129,7 +131,7 @@ const AdminMessages = () => {
         : [...prevSelectedIds, id]
     );
   };
-
+  
   // Bulk Update Handler
   const handleBulkUpdate = async (status) => {
     try {
@@ -140,33 +142,68 @@ const AdminMessages = () => {
       setError('Failed to perform bulk update.');
     }
   };
-
+  
   // Bulk Delete Handler
   const handleBulkDelete = async () => {
-    // Warning Confirmation Dialogs
+    // First Confirmation: "Are you sure you want to delete?"
     const firstConfirmation = window.confirm(
-      "Are you sure you want to delete? This action cannot be undone."
+      "Are you sure you want to delete the selected messages?"
     );
   
     if (!firstConfirmation) {
       return; // Exit if the first confirmation is declined
     }
   
+    // Second Confirmation: "There is no turning back!"
     const secondConfirmation = window.confirm(
-      "Are you absolutely sure you want to delete? There is no turning back!"
+      "This action is irreversible! Are you absolutely sure you want to proceed?"
     );
   
     if (!secondConfirmation) {
       return; // Exit if the second confirmation is declined
     }
   
-    // Proceed with Bulk Delete
+    // Proceed with Soft Delete
     try {
-      await axios.delete('http://localhost:5000/api/contact/bulk-delete', { data: { ids: selectedIds } });
-      fetchMessages(); // Refresh messages after deletion
+      await axios.put('http://localhost:5000/api/contact/soft-delete', { ids: selectedIds });
+  
+      // Temporarily hide the messages after 1 second
+      setTimeout(() => {
+        setFilteredMessages((prevMessages) =>
+          prevMessages.filter((msg) => !selectedIds.includes(msg._id))
+        );
+      }, 1000); // 1-second delay for hiding messages
+  
+      // Show Undo Snackbar after hiding the messages
+      setUndoVisible(true);
+  
+      // Start Timer for Permanent Deletion
+      const timer = setTimeout(async () => {
+        try {
+          await axios.delete('http://localhost:5000/api/contact/permanent-delete');
+          fetchMessages(); // Refresh messages after permanent deletion
+        } catch {
+          setError('Failed to permanently delete messages.');
+        }
+      }, 10000); // 10 seconds timer for undo action
+  
+      // Store the timer ID to allow undo action
+      setUndoTimer(timer);
       setSelectedIds([]); // Clear selected IDs
     } catch {
-      setError('Failed to perform bulk delete.');
+      setError('Failed to soft delete messages.');
+    }
+  };
+  
+  // Undo Delete Handler
+  const handleUndoDelete = async () => {
+    clearTimeout(undoTimer); // Cancel the permanent delete timer
+    try {
+      await axios.put('http://localhost:5000/api/contact/undo-delete', { ids: selectedIds });
+      setUndoVisible(false); // Hide Undo Snackbar
+      fetchMessages(); // Refresh messages to restore soft-deleted messages
+    } catch {
+      setError('Failed to undo delete.');
     }
   };
 
@@ -181,6 +218,13 @@ const AdminMessages = () => {
   return (
     <div className="p-8 bg-gradient-to-r from-gray-50 to-gray-100 min-h-screen">
       <h1 className="text-4xl font-bold text-center mb-8">Admin Dashboard - Contact Messages</h1>
+
+      {/* Undo Snackbar */}
+      {undoVisible && (
+        <div className="fixed bottom-4 left-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg">
+          <p>Messages deleted. <button onClick={handleUndoDelete} className="underline">Undo</button></p>
+        </div>
+      )}
 
       {/* Statistics Section */}
       <div className="mb-6">
@@ -201,9 +245,8 @@ const AdminMessages = () => {
           onChange={(e) => handleAutocomplete(e.target.value)}
           className="w-full p-3 rounded-lg border border-gray-300"
         />
-
-               {/* Autocomplete Dropdown */}
-               {autocompleteResults.length > 0 && (
+        {/* Autocomplete Dropdown */}
+        {autocompleteResults.length > 0 && (
           <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 z-10">
             {autocompleteResults.map((result, index) => (
               <div
@@ -218,7 +261,6 @@ const AdminMessages = () => {
             ))}
           </div>
         )}
-
         <button
           onClick={handleSearch}
           className="w-full mt-4 p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"

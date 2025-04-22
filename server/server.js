@@ -1077,8 +1077,7 @@ app.put('/api/contact/bulk-update', async (req, res) => {
     res.status(500).json({ message: 'Failed to update contacts', error: err });
   }
 });
-
-
+/*
 app.delete('/api/contact/bulk-delete', async (req, res) => {
   const { ids } = req.body;
 
@@ -1087,6 +1086,47 @@ app.delete('/api/contact/bulk-delete', async (req, res) => {
     res.json({ message: 'Bulk delete successful' });
   } catch (err) {
     res.status(500).json({ message: 'Failed to delete contacts', error: err });
+  }
+});*/
+app.put('/api/contact/soft-delete', async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    await Contact.updateMany(
+      { _id: { $in: ids } },
+      { $set: { softDeleted: true } } // Set the softDeleted flag to true
+    );
+    res.json({ message: 'Messages soft deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to soft delete messages', error: err });
+  }
+});
+
+
+app.delete('/api/contact/permanent-delete', async (req, res) => {
+  try {
+    await Contact.deleteMany({ softDeleted: true }); // Permanently delete flagged messages
+    res.json({ message: 'Messages permanently deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete messages', error: err });
+  }
+});
+
+app.put('/api/contact/undo-delete', async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || !Array.isArray(ids)) {
+    return res.status(400).json({ message: 'Invalid or missing "ids" array' });
+  }
+
+  try {
+    const result = await Contact.updateMany(
+      { _id: { $in: ids } },
+      { $set: { softDeleted: false } }
+    );
+    res.json({ message: 'Messages restored successfully', result });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to undo delete', error: err });
   }
 });
 
