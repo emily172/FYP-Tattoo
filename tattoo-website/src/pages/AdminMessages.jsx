@@ -6,6 +6,9 @@ const AdminMessages = () => {
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]); // Track selected IDs for bulk actions
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [filters, setFilters] = useState({
     startDate: '',
@@ -24,7 +27,7 @@ const AdminMessages = () => {
   }, []);
 
   // Fetch all messages
-  const fetchMessages = async () => {
+  /*const fetchMessages = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get('http://localhost:5000/api/contact');
@@ -36,6 +39,25 @@ const AdminMessages = () => {
       setLoading(false);
     }
   };
+*/
+
+  const fetchMessages = async (page = 1) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get('http://localhost:5000/api/contact', {
+        params: { page, limit: 10 }, // Pass page and limit as query params
+      });
+      setMessages(data.contacts); // Update messages with paginated results
+      setFilteredMessages(data.contacts); // Update filtered messages
+      setCurrentPage(data.page); // Update current page
+      setTotalPages(data.totalPages); // Update total pages
+      setLoading(false);
+    } catch {
+      setError('Failed to fetch messages.');
+      setLoading(false);
+    }
+  };
+
 
   // Fetch statistics for statuses
   const fetchStats = async () => {
@@ -131,7 +153,7 @@ const AdminMessages = () => {
         : [...prevSelectedIds, id]
     );
   };
-  
+
   // Bulk Update Handler
   const handleBulkUpdate = async (status) => {
     try {
@@ -142,41 +164,41 @@ const AdminMessages = () => {
       setError('Failed to perform bulk update.');
     }
   };
-  
+
   // Bulk Delete Handler
   const handleBulkDelete = async () => {
     // First Confirmation: "Are you sure you want to delete?"
     const firstConfirmation = window.confirm(
       "Are you sure you want to delete the selected messages?"
     );
-  
+
     if (!firstConfirmation) {
       return; // Exit if the first confirmation is declined
     }
-  
+
     // Second Confirmation: "There is no turning back!"
     const secondConfirmation = window.confirm(
       "This action is irreversible! Are you absolutely sure you want to proceed?"
     );
-  
+
     if (!secondConfirmation) {
       return; // Exit if the second confirmation is declined
     }
-  
+
     // Proceed with Soft Delete
     try {
       await axios.put('http://localhost:5000/api/contact/soft-delete', { ids: selectedIds });
-  
+
       // Temporarily hide the messages after 1 second
       setTimeout(() => {
         setFilteredMessages((prevMessages) =>
           prevMessages.filter((msg) => !selectedIds.includes(msg._id))
         );
       }, 1000); // 1-second delay for hiding messages
-  
+
       // Show Undo Snackbar after hiding the messages
       setUndoVisible(true);
-  
+
       // Start Timer for Permanent Deletion
       const timer = setTimeout(async () => {
         try {
@@ -186,7 +208,7 @@ const AdminMessages = () => {
           setError('Failed to permanently delete messages.');
         }
       }, 10000); // 10 seconds timer for undo action
-  
+
       // Store the timer ID to allow undo action
       setUndoTimer(timer);
       setSelectedIds([]); // Clear selected IDs
@@ -194,7 +216,7 @@ const AdminMessages = () => {
       setError('Failed to soft delete messages.');
     }
   };
-  
+
   // Undo Delete Handler
   const handleUndoDelete = async () => {
     clearTimeout(undoTimer); // Cancel the permanent delete timer
@@ -331,6 +353,7 @@ const AdminMessages = () => {
       </div>
 
       {/* Messages Table */}
+
       {filteredMessages.length === 0 ? (
         <p className="text-center text-gray-600">No messages found.</p>
       ) : (
@@ -397,6 +420,27 @@ const AdminMessages = () => {
           </tbody>
         </table>
       )}
+
+      {/* Pagniation included */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => fetchMessages(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+        >
+          Previous
+        </button>
+        <p className="text-gray-700">Page {currentPage} of {totalPages}</p>
+        <button
+          onClick={() => fetchMessages(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+        >
+          Next
+        </button>
+      </div>
+
+
     </div>
   );
 };

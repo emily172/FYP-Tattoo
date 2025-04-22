@@ -958,6 +958,29 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+app.get('/api/contact', async (req, res) => {
+  const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 results per page
+
+  try {
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .skip((page - 1) * limit) // Skip documents based on the current page
+      .limit(Number(limit)); // Limit the number of documents
+
+    const total = await Contact.countDocuments(); // Total number of documents for pagination metadata
+
+    res.json({
+      contacts,
+      total, // Total messages
+      page: Number(page), // Current page
+      totalPages: Math.ceil(total / limit), // Total pages
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch contact messages', error: err });
+  }
+});
+
+
 // Get All Contact Messages (for Admins)
 app.get('/api/contact', async (req, res) => {
   try {
