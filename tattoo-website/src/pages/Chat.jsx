@@ -1,19 +1,50 @@
 import React, { useState } from "react";
-import ChatSidebar from "./ChatSidebar";
-import ChatRoom from "./ChatRoom";
+import ChatSidebar from "./ChatSidebar"; // Sidebar component
+import ChatRoom from "./ChatRoom"; // Chat room component
 
 const Chat = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to toggle sidebar
+  const [selectedUser, setSelectedUser] = useState(null); // Selected contact
 
   return (
-    <div className="chat-container" style={{ display: "flex" }}>
-      <ChatSidebar onSelectUser={setSelectedUser} />
-      <div className="chat-room-container" style={{ flex: 1 }}>
-        {selectedUser ? (
-          <ChatRoom selectedUser={selectedUser} />
-        ) : (
-          <p style={{ padding: "20px" }}>Select a contact to start chatting</p>
-        )}
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      {isSidebarOpen && (
+        <div className="w-64 bg-gray-100 shadow-lg transition-all duration-300">
+          <ChatSidebar
+            onSelectUser={setSelectedUser}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div
+        className={`flex-grow flex flex-col transition-all duration-300 ${
+          isSidebarOpen ? "pl-0 lg:pl-64" : ""
+        }`}
+      >
+        {/* Header Section */}
+        <div className="flex items-center justify-between bg-blue-500 text-white px-4 py-2 shadow">
+          <h1 className="text-lg font-bold">Chat Application</h1>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="bg-gray-800 text-white px-3 py-2 rounded-md shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            {isSidebarOpen ? "Hide Contacts" : "Show Contacts"}
+          </button>
+        </div>
+
+        {/* Chat Room */}
+        <div className="flex-grow">
+          {selectedUser ? (
+            <ChatRoom selectedUser={selectedUser} />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <p>Select a contact to start chatting</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
