@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Icons for toggle button
+import { FaEye, FaEyeSlash, FaThumbtack } from "react-icons/fa"; // Icons for toggle and pin
 
 const ChatSidebar = ({ onSelectUser }) => {
   const [contacts, setContacts] = useState([]);
+  const [favorites, setFavorites] = useState([]); // List of pinned favorites
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Toggle state for sidebar
+  const [searchTerm, setSearchTerm] = useState(""); // Search term for filtering contacts
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -41,6 +43,25 @@ const ChatSidebar = ({ onSelectUser }) => {
     fetchContacts();
   }, []);
 
+  // Filter contacts based on the search term
+  const filteredContacts = contacts.filter((contact) =>
+    contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Handle pin/unpin functionality
+  const handlePin = (contact) => {
+    setFavorites((prev) =>
+      prev.some((fav) => fav._id === contact._id)
+        ? prev.filter((fav) => fav._id !== contact._id) // Remove from favorites
+        : [...prev, contact] // Add to favorites
+    );
+  };
+
+  // Remove pinned contacts from the main list
+  const nonFavoriteContacts = filteredContacts.filter(
+    (contact) => !favorites.some((fav) => fav._id === contact._id)
+  );
+
   return (
     <div className="relative">
       {/* Header Section with Toggle Button */}
@@ -68,17 +89,66 @@ const ChatSidebar = ({ onSelectUser }) => {
         ) : error ? (
           <p className="text-red-500 p-4">{error}</p>
         ) : (
-          <ul className="divide-y divide-gray-200 overflow-y-auto h-[calc(100%-4rem)]">
-            {contacts.map((contact) => (
-              <li
-                key={contact._id}
-                onClick={() => onSelectUser(contact)}
-                className="p-4 hover:bg-blue-100 cursor-pointer"
-              >
-                <p className="text-gray-800 font-medium">{contact.email}</p>
-              </li>
-            ))}
-          </ul>
+          <>
+            {/* Search Bar */}
+            <div className="p-4">
+              <input
+                type="text"
+                placeholder="Search contacts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Favorites Section */}
+            {favorites.length > 0 && (
+              <div className="bg-gray-200 p-4">
+                <h3 className="text-sm font-bold text-gray-600">Pinned Contacts</h3>
+                <ul className="divide-y divide-gray-300">
+                  {favorites.map((favorite) => (
+                    <li
+                      key={favorite._id}
+                      onClick={() => onSelectUser(favorite)}
+                      className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+                    >
+                      <p className="text-gray-800 font-medium">{favorite.email}</p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePin(favorite);
+                        }}
+                        className="text-gray-500 hover:text-gray-800"
+                      >
+                        <FaThumbtack />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Filtered Contacts Section */}
+            <ul className="divide-y divide-gray-200 overflow-y-auto h-[calc(100%-8rem)]">
+              {nonFavoriteContacts.map((contact) => (
+                <li
+                  key={contact._id}
+                  onClick={() => onSelectUser(contact)}
+                  className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+                >
+                  <p className="text-gray-800 font-medium">{contact.email}</p>
+                  <button
+                    onClick={(e) => {
+                      handlePin(contact);
+                    }}
+                    className="text-gray-500 hover:text-gray-800"
+                  >
+                    <FaThumbtack />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
     </div>

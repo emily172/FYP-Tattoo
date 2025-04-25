@@ -234,6 +234,77 @@ app.get('/api/contacts', authenticateAdmin, async (req, res) => {
 });
 
 
+app.post("/messages/:messageId/react", authenticate, async (req, res) => {
+  const { emoji, userId } = req.body; // Emoji and user who reacted
+  try {
+    const message = await Message.findById(req.params.messageId);
+    if (!message) return res.status(404).send({ error: "Message not found" });
+
+    message.reactions.push({ emoji, userId });
+    await message.save();
+    res.status(200).send(message);
+  } catch (err) {
+    res.status(500).send({ error: "Failed to add reaction." });
+  }
+});
+
+//PIN 
+app.post("/api/users/:userId/pin-contact", authenticate, async (req, res) => {
+  const { contactId } = req.body; // ID of the contact to pin
+
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).send({ error: "User not found" });
+
+    // Add contact to pinnedContacts if not already pinned
+    if (!user.pinnedContacts.includes(contactId)) {
+      user.pinnedContacts.push(contactId);
+      await user.save();
+    }
+
+    res.status(200).send({ message: "Contact pinned successfully", pinnedContacts: user.pinnedContacts });
+  } catch (err) {
+    console.error("Error pinning contact:", err);
+    res.status(500).send({ error: "Failed to pin contact." });
+  }
+});
+
+
+//UNPIN
+app.post("/api/users/:userId/unpin-contact", authenticate, async (req, res) => {
+  const { contactId } = req.body; // ID of the contact to unpin
+
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).send({ error: "User not found" });
+
+    // Remove contact from pinnedContacts if it exists
+    user.pinnedContacts = user.pinnedContacts.filter((id) => id.toString() !== contactId);
+    await user.save();
+
+    res.status(200).send({ message: "Contact unpinned successfully", pinnedContacts: user.pinnedContacts });
+  } catch (err) {
+    console.error("Error unpinning contact:", err);
+    res.status(500).send({ error: "Failed to unpin contact." });
+  }
+});
+
+//GET ALL PINS
+app.get("/api/users/:userId/pinned-contacts", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).populate("pinnedContacts"); // Populate contact details
+    if (!user) return res.status(404).send({ error: "User not found" });
+
+    res.status(200).send({ pinnedContacts: user.pinnedContacts });
+  } catch (err) {
+    console.error("Error fetching pinned contacts:", err);
+    res.status(500).send({ error: "Failed to fetch pinned contacts." });
+  }
+});
+
+
+
+
 //Tattoo Image Gallery
 // Get all tattoo images
 app.get('/tattoo-gallery', async (req, res) => {
