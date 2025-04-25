@@ -81,11 +81,21 @@ function Navbar() {
 
 
           <Link 
-            to="/blogs" 
-            className={`hover:text-indigo-500 ${location.pathname === '/blogs' ? 'text-indigo-500' : ''}`}
+            to="/user/register" 
+            className={`hover:text-indigo-500 ${location.pathname === '/user/register' ? 'text-indigo-500' : ''}`}
           >
-            Blog
+            User Register
           </Link>
+
+
+          
+          <Link 
+            to="/user/login" 
+            className={`hover:text-indigo-500 ${location.pathname === '/user/login' ? 'text-indigo-500' : ''}`}
+          >
+            User Login
+          </Link>
+
 
           {/* Admin Links */}
           {token ? (
