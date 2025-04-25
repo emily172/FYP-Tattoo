@@ -49,8 +49,8 @@ const ChatRoom = ({ selectedUser }) => {
       // Emit the message to the server
       socket.emit("sendMessage", newMessageObj);
 
-      // Optionally: Update the message list immediately
-      setMessages((prev) => [...prev, newMessageObj]);
+      // Update the message list immediately
+      setMessages((prev) => [...prev, { ...newMessageObj, _id: Date.now().toString() }]); // Generate a temporary unique key
       setNewMessage("");
     } catch (err) {
       console.error("Error sending message:", err);
@@ -58,21 +58,34 @@ const ChatRoom = ({ selectedUser }) => {
   };
 
   return (
-    <div className="chat-room">
-      <div className="messages">
+    <div className="chat-room flex flex-col p-4 bg-white shadow-md rounded-lg">
+      <div className="messages flex-grow overflow-y-auto border-b border-gray-300 pb-4">
         {messages.map((msg) => (
-          <p key={msg._id} className={msg.senderId === selectedUser._id ? "received" : "sent"}>
+          <p
+            key={msg._id} // Ensures every child element has a unique key
+            className={`my-2 p-2 rounded-md ${
+              msg.senderId === selectedUser._id ? "bg-gray-200 text-gray-700" : "bg-blue-500 text-white"
+            }`}
+          >
             {msg.message}
           </p>
         ))}
       </div>
-      <input
-        type="text"
-        placeholder="Type a message..."
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-      />
-      <button onClick={handleSendMessage}>Send</button>
+      <div className="input-area flex mt-4">
+        <input
+          type="text"
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleSendMessage}
+          className="ml-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none"
+        >
+          Send
+        </button>
+      </div>
     </div>
   );
 };

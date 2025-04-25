@@ -220,6 +220,20 @@ app.get("/api/admins", authenticate, async (req, res) => {
 });
 
 
+
+// Fetch both users and admins for admin role
+app.get('/api/contacts', authenticateAdmin, async (req, res) => {
+  try {
+    const users = await User.find().select("email _id"); // Fetch all users
+    const admins = await Admin.find().select("email _id"); // Fetch all admins
+    const combinedContacts = [...users, ...admins]; // Combine both lists
+    res.status(200).json({ contacts: combinedContacts });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch contacts." });
+  }
+});
+
+
 //Tattoo Image Gallery
 // Get all tattoo images
 app.get('/tattoo-gallery', async (req, res) => {
