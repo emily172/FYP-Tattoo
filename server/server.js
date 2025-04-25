@@ -9,6 +9,10 @@ const jwt = require('jsonwebtoken');
 const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentication middleware
 
 const Admin = require('./models/Admin'); // Admin model
+const User = require('./models/User'); // User model
+
+
+
 const TattooGallery = require('./models/TattooGallery'); // Import TattooGallery model
 const Tattoo = require('./models/Tattoo'); // Tattoo model
 const Artist = require('./models/Artist');
@@ -26,6 +30,9 @@ const Contact = require('./models/Contact');
 
 //Chatting Application
 const ChatMessage = require('./models/ChatMessage'); // Import the ChatMessage model
+
+
+
 
 const app = express();
 const server = http.createServer(app); // Create server for Socket.IO
@@ -86,6 +93,49 @@ app.post('/admin/login', async (req, res) => {
     res.status(500).json({ error: 'Failed to log in' });
   }
 });
+
+
+//User Login
+
+app.post('/user/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'User already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword });
+    await newUser.save();
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to register user' });
+  }
+});
+
+
+app.post('/user/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return res.status(401).json({ error: 'Invalid password' });
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '24h',
+    });
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to log in' });
+  }
+});
+
+
 
 //Tattoo Image Gallery
 // Get all tattoo images
@@ -1195,42 +1245,34 @@ app.post('/api/chat', async (req, res) => {
 });
 
 /** Real-Time Chat (Socket.IO Integration) */
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  try {
-    // Send chat history to the newly connected user
-    const messages = await ChatMessage.find().sort({ timestamp: 1 });
-    socket.emit('chatHistory', messages);
-  } catch (err) {
-    console.error('Failed to fetch chat history:', err);
-    socket.emit('error', { error: 'Failed to load chat history.' }); // Notify client about the error
-  }
+  // Send chat history
+  ChatMessage.find()
+    .sort({ timestamp: 1 })
+    .then((messages) => {
+      socket.emit('chatHistory', messages);
+    })
+    .catch((err) => {
+      console.error('Failed to fetch chat history:', err);
+    });
 
-  // Listen for typing events
-  socket.on('typing', (isTyping) => {
-    socket.broadcast.emit('userTyping', isTyping); // Broadcast typing status
-  });
-
-  // Listen for incoming chat messages
+  // Listen for incoming messages
   socket.on('sendMessage', async (message) => {
-    console.log('Message received:', message);
-
     try {
-      // Save the new message to MongoDB
       const savedMessage = await ChatMessage.create(message);
-      io.emit('receiveMessage', savedMessage); // Broadcast the message to all connected clients
+      io.emit('receiveMessage', savedMessage); // Broadcast to all users
     } catch (err) {
       console.error('Error saving chat message:', err);
-      socket.emit('error', { error: 'Failed to send message.' }); // Notify client about the error
     }
   });
 
-  // Handle user disconnection
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
+
 
 
 // Start the server
