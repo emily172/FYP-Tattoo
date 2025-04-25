@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Define the Image schema
+
 const imageSchema = new mongoose.Schema({
   title: { type: String, required: true }, // Title or name of the image
   imageURL: { type: String, required: true }, // URL of the image

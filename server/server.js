@@ -22,7 +22,7 @@ const Artist = require('./models/Artist');
 const Blog = require('./models/Blog'); // Blog model
 const Studio = require('./models/Studio'); //Studio model
 const TattooStyle = require('./models/TattooStyle');//TattooStyle model
-const Profile = require('./models/Profile');//TattooStyle model
+const Profile = require('./models/Profile');//Profile model
 const FAQ = require('./models/FAQ'); //FAQ model
 const TattooImage = require('./models/TattooImage');
 const History = require('./models/History');
@@ -142,23 +142,7 @@ app.post('/messages', authenticate, upload.single('file'), async (req, res) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Fetch messages
-/*app.get('/messages', authenticate, async (req, res) => {
-  const { chatWithId } = req.query;
 
-  try {
-    const messages = await Message.find({
-      $or: [
-        { senderId: req.userId, receiverId: chatWithId },
-        { senderId: chatWithId, receiverId: req.userId },
-      ],
-    }).sort({ timestamp: 1 }); // Sort by timestamp
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch messages' });
-  }
-});
-*/
 // Fetch messages for a specific chat
 app.get('/messages', authenticate, async (req, res) => {
   const { chatWithId } = req.query;
@@ -948,152 +932,57 @@ app.delete('/tattoo-styles/:id', async (req, res) => {
   }
 });
 
+
 // Get all profiles
-// Get all profiles
+// API Routes
 app.get('/profiles', async (req, res) => {
   try {
-    const profiles = await Profile.find(); // Fetch all profiles
-    res.json(profiles); // Include all fields in the response
+    const profiles = await Profile.find();
+    res.json(profiles);
   } catch (err) {
     console.error('Error fetching profiles:', err);
     res.status(500).json({ error: 'Failed to fetch profiles' });
   }
 });
 
-// Get a single profile
 app.get('/profiles/:id', async (req, res) => {
   try {
-    const profile = await Profile.findById(req.params.id); // Fetch profile by ID
+    const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: 'Profile not found' });
-    res.json(profile); // Include all fields in the response
+    res.json(profile);
   } catch (err) {
     console.error('Error fetching profile:', err);
     res.status(500).json({ error: 'Failed to fetch profile' });
   }
 });
 
-// Add a new profile
 app.post('/profiles', async (req, res) => {
   try {
-    const {
-      name,
-      bio,
-      profileImage,
-      popularity,
-      interests,
-      skills,
-      contactInfo,
-      experience,
-      tattooStyles,
-      portfolio,
-      certifications,
-      tags,
-      socialMediaLinks, // Includes TikTok, Instagram, Facebook, and X
-      languagesSpoken,
-      availability,
-      pricing,
-      safetyProtocols,
-      awards,
-      artwork,
-      origin, // Includes city and country
-    } = req.body;
-
-    const newProfile = new Profile({
-      name,
-      bio,
-      profileImage,
-      popularity,
-      interests,
-      skills,
-      contactInfo,
-      experience,
-      tattooStyles,
-      portfolio,
-      certifications,
-      tags,
-      socialMediaLinks,
-      languagesSpoken,
-      availability,
-      pricing,
-      safetyProtocols,
-      awards,
-      artwork,
-      origin,
-    });
-
-    await newProfile.save();
-    res.status(201).json(newProfile); // Return the newly created profile
+    const newProfile = new Profile(req.body);
+    const savedProfile = await newProfile.save();
+    res.status(201).json(savedProfile);
   } catch (err) {
     console.error('Error adding profile:', err);
     res.status(500).json({ error: 'Failed to add profile' });
   }
 });
 
-// Update a profile
 app.put('/profiles/:id', async (req, res) => {
   try {
-    const {
-      name,
-      bio,
-      profileImage,
-      popularity,
-      interests,
-      skills,
-      contactInfo,
-      experience,
-      tattooStyles,
-      portfolio,
-      certifications,
-      tags,
-      socialMediaLinks,
-      languagesSpoken,
-      availability,
-      pricing,
-      safetyProtocols,
-      awards,
-      artwork,
-      origin,
-    } = req.body;
-
-    const updatedProfile = await Profile.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        bio,
-        profileImage,
-        popularity,
-        interests,
-        skills,
-        contactInfo,
-        experience,
-        tattooStyles,
-        portfolio,
-        certifications,
-        tags,
-        socialMediaLinks,
-        languagesSpoken,
-        availability,
-        pricing,
-        safetyProtocols,
-        awards,
-        artwork,
-        origin,
-      },
-      { new: true } // Return the updated profile
-    );
-
+    console.log('Incoming Payload:', req.body); // Debugging incoming data
+    const updatedProfile = await Profile.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedProfile) return res.status(404).json({ error: 'Profile not found' });
     res.json(updatedProfile);
   } catch (err) {
-    console.error('Error updating profile:', err);
+    console.error('Error:', err.message); // Log detailed error
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 
-// Delete a profile
+
 app.delete('/profiles/:id', async (req, res) => {
   try {
-    const deletedProfile = await Profile.findByIdAndDelete(req.params.id); // Delete profile by ID
+    const deletedProfile = await Profile.findByIdAndDelete(req.params.id);
     if (!deletedProfile) return res.status(404).json({ error: 'Profile not found' });
     res.json({ message: 'Profile deleted successfully' });
   } catch (err) {
@@ -1101,6 +990,37 @@ app.delete('/profiles/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete profile' });
   }
 });
+
+
+//Update a Profile
+/*app.put('/profiles/:id', async (req, res) => {
+  try {
+    console.log('Request Body:', req.body); // Debugging
+    const updatedProfile = await Profile.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    if (!updatedProfile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    res.json(updatedProfile);
+  } catch (err) {
+    console.error('Error updating profile:', err.message); // More descriptive logging
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+app.put('/profiles/:id', async (req, res) => {
+  try {
+    console.log('Incoming Payload:', req.body); // Debugging the request body
+    const updatedProfile = await Profile.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedProfile) return res.status(404).json({ error: 'Profile not found' });
+    res.json(updatedProfile);
+  } catch (err) {
+    console.error('Error:', err.message); // Log the error message
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+*/
 
 // Routes for FAQs
 
@@ -1570,67 +1490,6 @@ app.put('/api/contact/undo-delete', async (req, res) => {
 });
 
 
-
-// Real-Time Chat (Socket.IO Integration)
-/** Chat Functionality */
-// REST API: Fetch all chat messages
-/** REST API: Fetch all chat messages */
-// Fetch and sort by timestamp
-// Return messages
-/*app.get('/api/chat', async (req, res) => {
-  try {
-    const messages = await ChatMessage.find().sort({ timestamp: 1 }); 
-    res.status(200).json(messages); 
-  } catch (err) {
-    console.error('Error fetching chat messages:', err);
-    res.status(500).json({ error: 'Failed to fetch chat messages' });
-  }
-});*/
-
-/** REST API: Add a new chat message // Create new message // Respond with the saved message*/
-/*app.post('/api/chat', async (req, res) => {
-  const { sender, content } = req.body;
-
-  try {
-    const newMessage = await ChatMessage.create({ sender, content }); 
-    res.status(201).json(newMessage); 
-  } catch (err) {
-    console.error('Error saving chat message:', err);
-    res.status(500).json({ error: 'Failed to save chat message' });
-  }
-});*/
-
-/** Real-Time Chat (Socket.IO Integration) */
-/*io.on('connection', (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
-  // Send chat history
-  ChatMessage.find()
-    .sort({ timestamp: 1 })
-    .then((messages) => {
-      socket.emit('chatHistory', messages);
-    })
-    .catch((err) => {
-      console.error('Failed to fetch chat history:', err);
-    });
-
-  // Listen for incoming messages
-  socket.on('sendMessage', async (message) => {
-    try {
-      const savedMessage = await ChatMessage.create(message);
-      io.emit('receiveMessage', savedMessage); // Broadcast to all users
-    } catch (err) {
-      console.error('Error saving chat message:', err);
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`User disconnected: ${socket.id}`);
-  });
-});
-*/
-
-
 // Start the server
-const PORT = 5000; // Adjust the port if needed
+const PORT = 5000; 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPhone, faGlobe, faBriefcase } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faInstagram, faFacebook, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faUserTie, faStar, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -294,8 +294,8 @@ function Artist() {
                         rel="noopener noreferrer"
                         className="text-sky-400 hover:text-sky-500 transition flex items-center"
                       >
-                        <FontAwesomeIcon icon={faTwitter} className="mr-2" />
-                        Twitter
+                        <FontAwesomeIcon icon={faXTwitter} className="mr-2" />
+                        X
                       </a>
                     )}
                     {selectedArtist.socialMediaLinks?.website && (
@@ -346,5 +346,7 @@ function Artist() {
     </div>
   );
 }
+
+
 
 export default Artist;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faChevronLeft, faChevronRight, faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
-import { faFacebookF, faTwitter, faTiktok, faInstagram, faPinterest } from '@fortawesome/free-brands-svg-icons';
+import { faFacebookF, faXTwitter, faTiktok, faInstagram, faPinterest } from '@fortawesome/free-brands-svg-icons';
 
 import axios from 'axios';
 
@@ -135,7 +135,7 @@ function Gallery() {
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(tattooUrl)}`, '_blank');
     } else if (platform === 'x') {
       window.open(
-        `https://twitter.com/intent/tweet?url=${encodeURIComponent(tattooUrl)}&text=Check out this tattoo!`,
+        `https://X.com/intent/tweet?url=${encodeURIComponent(tattooUrl)}&text=Check out this tattoo!`,
         '_blank'
       );
     } else if (platform === 'tiktok') {
@@ -426,9 +426,6 @@ function Gallery() {
                 </div>
 
 
-
-
-
                 {/* Social Sharing Icons */}
                 <div className="flex mt-4 space-x-4">
                   <button
@@ -443,9 +440,7 @@ function Gallery() {
                     className="bg-gradient-to-br from-sky-400 to-sky-600 text-white p-4 rounded-full hover:from-sky-500 hover:to-sky-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
                     onClick={() => shareTattoo('x')}
                   >
-                    <FontAwesomeIcon icon={faTwitter} className="text-xl" />
-                    {/* OR */}
-                    {/* <FaTwitter className="text-xl" /> */}
+                    <FontAwesomeIcon icon={faXTwitter} className="text-xl" />
                   </button>
                   <button
                     className="bg-gradient-to-br from-pink-400 to-pink-600 text-white p-4 rounded-full hover:from-pink-500 hover:to-pink-700 transition-transform hover:scale-110 shadow-lg flex items-center justify-center"
@@ -472,7 +467,6 @@ function Gallery() {
                     {/* <FaPinterest className="text-xl" /> */}
                   </button>
                 </div>
-
 
 
 

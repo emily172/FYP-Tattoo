@@ -6,7 +6,7 @@ import Testimonials from '../components/Testimonials';
 
 function Home() {
   return (
-    <div>
+    <div className="bg-gradient-to-b from-gray-900 via-gray-800 to-black">
       <Hero />
       <FeaturedTattoos />
       <FeaturedArtists />
@@ -16,4 +16,3 @@ function Home() {
 }
 
 export default Home;
-

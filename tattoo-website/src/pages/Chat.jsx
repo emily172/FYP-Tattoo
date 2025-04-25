@@ -17,10 +17,10 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 flex">
       {/* Sidebar Section */}
       {isSidebarOpen && (
-        <div className="w-64 bg-gray-100 shadow-lg transition-all duration-300">
+        <div className="w-64 bg-white shadow-lg rounded-r-lg transition-all duration-300">
           <ChatSidebar
             onSelectUser={setSelectedUser} // Select a user for chat
             onStartVideoCall={handleStartVideoCall} // Initiate video call
@@ -29,26 +29,30 @@ const Chat = () => {
       )}
 
       {/* Main Content Area */}
-      <div className={`flex-grow flex flex-col transition-all duration-300 ${isSidebarOpen ? "pl-0 lg:pl-64" : ""}`}>
+      <div
+        className={`flex-grow flex flex-col transition-all duration-300 ${
+          isSidebarOpen ? "pl-0 lg:pl-64" : ""
+        }`}
+      >
         {/* Header Section */}
-        <div className="flex items-center justify-between bg-blue-500 text-white px-4 py-2 shadow">
-          <h1 className="text-lg font-bold">Chat Application</h1>
+        <header className="bg-blue-800 text-white px-6 py-4 shadow-lg flex justify-between items-center">
+          <h1 className="text-3xl font-extrabold">Chat Portal</h1>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="bg-gray-800 text-white px-3 py-2 rounded-md shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
           >
             {isSidebarOpen ? "Hide Contacts" : "Show Contacts"}
           </button>
-        </div>
+        </header>
 
         {/* Main Content: ChatRoom or VideoCall */}
-        <div className="flex-grow">
+        <div className="flex-grow p-6">
           {videoCallUser ? (
             <VideoCall user={videoCallUser} onEndCall={handleEndVideoCall} />
           ) : selectedUser ? (
             <ChatRoom selectedUser={selectedUser} onStartVideoCall={handleStartVideoCall} />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-gray-600">
               <p>Select a contact to start chatting or initiate a video call.</p>
             </div>
           )}

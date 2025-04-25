@@ -11,35 +11,39 @@ function FeaturedArtists() {
   }, []);
 
   return (
-    <div className="p-8 bg-gray-200">
-      <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-8">
+    <div className="py-16 bg-gradient-to-b from-gray-900 via-gray-800 to-black">
+      <h2 className="text-4xl font-extrabold text-center text-white mb-12">
         Meet Our <span className="text-indigo-500">Artists</span>
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      {/* Enhanced Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {artists.map((artist) => (
           <div
             key={artist._id}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 text-center"
+            className="group bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105"
           >
-            {/* Updated Artist Image */}
-            <div className="relative w-full h-48 mx-auto mb-4">
+            {/* Enhanced Image Styling */}
+            <div className="relative h-60 rounded-t-lg overflow-hidden">
               <img
                 src={artist.image}
                 alt={artist.name}
-                className="w-full h-full object-cover rounded-md shadow-lg border border-indigo-500"
+                className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-110"
               />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
             </div>
 
-            {/* Artist Name */}
-            <h3 className="text-xl font-bold text-gray-800">{artist.name}</h3>
-
-            {/* Artist Bio */}
-            <p className="text-sm text-gray-600 mt-2">{artist.bio}</p>
-
-            {/* Artist Specialty */}
-            <p className="text-sm text-gray-500 mt-4">
-              <strong>Specialty:</strong> {artist.style}
-            </p>
+            {/* Artist Details */}
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                {artist.name}
+              </h3>
+              <p className="text-sm text-gray-400 mt-2">{artist.bio || 'Learn more about our talented artist.'}</p>
+              <p className="text-sm text-gray-500 mt-4">
+                <strong>Specialty:</strong> {artist.style || 'Various styles'}
+              </p>
+            </div>
           </div>
         ))}
       </div>

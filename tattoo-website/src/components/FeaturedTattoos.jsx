@@ -12,13 +12,37 @@ function FeaturedTattoos() {
   }, []);
 
   return (
-    <div className="p-8 bg-gray-100">
-      <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-8">
+    <div className="py-16 bg-gradient-to-b from-gray-900 via-gray-800 to-black">
+      <h2 className="text-4xl font-extrabold text-center text-white mb-12">
         Featured <span className="text-indigo-500">Tattoos</span>
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      {/* Updated Grid for Better Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {tattoos.map((tattoo) => (
-          <TattooCard key={tattoo._id} tattoo={tattoo} />
+          <div
+            key={tattoo._id}
+            className="group bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105"
+          >
+            {/* Enhanced Image Styling */}
+            <div className="relative h-60 rounded-t-lg overflow-hidden">
+              <img
+                src={tattoo.image}
+                alt={tattoo.name}
+                className="w-full h-full object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-110"
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
+            </div>
+            
+            {/* Tattoo Details */}
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                {tattoo.name}
+              </h3>
+              <p className="text-gray-400 mt-2">{tattoo.description || 'Beautiful tattoo artwork.'}</p>
+            </div>
+          </div>
         ))}
       </div>
     </div>

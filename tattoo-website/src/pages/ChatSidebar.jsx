@@ -69,10 +69,10 @@ const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
   );
 
   return (
-    <div className="relative">
+    <div className="relative bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 shadow-md h-full rounded-xl">
       {/* Header Section */}
-      <div className="bg-gray-100 border-b p-4">
-        <h2 className="text-lg font-bold text-gray-700">
+      <div className="bg-blue-600 text-white p-4 rounded-t-xl">
+        <h2 className="text-lg font-bold">
           {role === "admin" ? "All Contacts" : "Admins"}
         </h2>
         <input
@@ -80,28 +80,28 @@ const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
           placeholder="Search contacts..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-          className="w-full p-2 rounded-md border border-gray-300 mt-2"
+          className="w-full mt-2 p-2 rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
 
       {/* Favorites Section */}
       {favorites.length > 0 && (
-        <div className="bg-gray-200 p-4">
-          <h3 className="text-sm font-bold text-gray-600">Pinned Contacts</h3>
-          <ul className="divide-y divide-gray-300">
+        <div className="bg-blue-100 p-4">
+          <h3 className="text-sm font-bold text-blue-700">Pinned Contacts</h3>
+          <ul className="divide-y divide-blue-300">
             {favorites.map((favorite) => (
               <li
                 key={favorite._id}
                 onClick={() => onSelectUser(favorite)}
-                className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+                className="p-4 flex justify-between hover:bg-blue-200 cursor-pointer rounded-lg transition"
               >
-                <p className="text-gray-800 font-medium">{favorite.email}</p>
+                <p className="text-blue-900 font-medium">{favorite.email}</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handlePin(favorite);
                   }}
-                  className="text-gray-500 hover:text-gray-800"
+                  className="text-blue-500 hover:text-blue-700"
                 >
                   <FaThumbtack />
                 </button>
@@ -112,17 +112,17 @@ const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
       )}
 
       {/* Filtered Contacts Section */}
-      <ul className="divide-y divide-gray-200 overflow-y-auto h-[calc(100%-8rem)]">
+      <ul className="divide-y divide-blue-200 overflow-y-auto h-[calc(100%-8rem)] px-4 pb-4">
         {nonFavoriteContacts.map((contact) => (
           <li
             key={contact._id}
             onClick={() => onSelectUser(contact)}
-            className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+            className="p-4 flex justify-between hover:bg-blue-200 cursor-pointer rounded-lg transition"
           >
-            <p className="text-gray-800 font-medium">{contact.email}</p>
+            <p className="text-blue-900 font-medium">{contact.email}</p>
             <div className="flex space-x-2">
               <button
-                className="bg-blue-500 text-white py-1 px-2 rounded text-sm hover:bg-blue-700"
+                className="bg-blue-500 text-white py-1 px-2 rounded text-sm hover:bg-blue-700 transition"
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering onSelectUser
                   onStartVideoCall(contact); // Trigger video call handler
@@ -135,7 +135,7 @@ const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
                   e.stopPropagation();
                   handlePin(contact);
                 }}
-                className="text-gray-500 hover:text-gray-800"
+                className="text-blue-500 hover:text-blue-700"
               >
                 <FaThumbtack />
               </button>
@@ -143,8 +143,16 @@ const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
           </li>
         ))}
       </ul>
+
+      {/* Error Message */}
+      {error && (
+        <p className="text-center text-red-500 font-semibold py-2">
+          {error}
+        </p>
+      )}
     </div>
   );
 };
 
 export default ChatSidebar;
+

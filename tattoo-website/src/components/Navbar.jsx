@@ -7,7 +7,8 @@ function Navbar() {
   return (
     <nav className="bg-gray-900 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Tattoo Studio</h1>
+        {/* Updated size of "Tattoo Studio" */}
+        <h1 className="text-4xl font-extrabold">Ink Pots Tattoo Studio</h1>
         <div className="space-x-4">
           {/* General User Links */}
           <Link 
@@ -48,7 +49,6 @@ function Navbar() {
             Styles
           </Link>
 
-
           <Link 
             to="/profiles" 
             className={`hover:text-indigo-500 ${location.pathname === '/profiles' ? 'text-indigo-500' : ''}`}
@@ -67,7 +67,6 @@ function Navbar() {
             to="/contact" 
             className={`hover:text-indigo-500 ${location.pathname === '/contact' ? 'text-indigo-500' : ''}`}
           >
-            
             Contact
           </Link>
           <Link 
@@ -77,9 +76,6 @@ function Navbar() {
             Blog
           </Link>
 
-
-
-
           <Link 
             to="/user/register" 
             className={`hover:text-indigo-500 ${location.pathname === '/user/register' ? 'text-indigo-500' : ''}`}
@@ -87,15 +83,12 @@ function Navbar() {
             User Register
           </Link>
 
-
-          
           <Link 
             to="/user/login" 
             className={`hover:text-indigo-500 ${location.pathname === '/user/login' ? 'text-indigo-500' : ''}`}
           >
             User Login
           </Link>
-
 
           {/* Admin Links */}
           {token ? (

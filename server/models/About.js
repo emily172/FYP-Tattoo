@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const aboutSchema = new mongoose.Schema({
   mission: { type: String, required: true },
   story: { type: String, required: true },
-  vision: { type: String }, // Optional field
-  values: [{ type: String }], // Optional list of values
+  vision: { type: String },
+  values: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -19,31 +19,45 @@ function AdminRegister() {
   };
 
   return (
-    <div className="p-8 bg-gray-200 min-h-screen flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
-        <h1 className="text-2xl font-bold text-center mb-6">Admin Registration</h1>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black flex items-center justify-center">
+      <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-lg rounded-lg px-8 pt-8 pb-8 max-w-md w-full">
+        <h1 className="text-4xl font-extrabold text-center text-white drop-shadow-md mb-6">
+          Admin Registration
+        </h1>
+        {error && (
+          <p className="text-red-500 font-semibold text-center mb-4">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-green-500 font-semibold text-center mb-4">
+            {success}
+          </p>
+        )}
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full p-2 border rounded mb-4"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full p-2 border rounded mb-4"
-            required
-          />
+          <div className="mb-6">
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white px-4 py-2 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <input
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white px-4 py-2 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
           <button
             type="submit"
-            className="w-full bg-indigo-500 text-white py-2 rounded hover:bg-indigo-600 transition"
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 rounded-lg shadow-lg hover:shadow-indigo-700 hover:opacity-90 transition"
           >
             Register
           </button>
@@ -54,60 +68,3 @@ function AdminRegister() {
 }
 
 export default AdminRegister;
-
-
-/**import React, { useState } from 'react';
-import axios from 'axios';
-
-function AdminRegister() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:5000/admin/register', formData);
-      setSuccess(response.data.message);
-      setError('');
-      setFormData({ email: '', password: '' }); // Clear form
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to register admin');
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-200">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-6">Admin Register</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {success && <p className="text-green-500 mb-4">{success}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-indigo-500 text-white py-2 rounded hover:bg-indigo-600"
-        >
-          Register
-        </button>
-      </form>
-    </div>
-  );
-}
-
-export default AdminRegister;
- */

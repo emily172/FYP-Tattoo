@@ -80,12 +80,22 @@ const AdminDashboard = () => {
         </NavLink>
 
         
-        {/* Manage History */}
+        {/* Manage Messages */}
         <NavLink
           to="/dashboard/admin-messages"
           className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
         >
           <h2 className="text-xl font-bold">View New Messages</h2>
+          <p>View Message sent by Clients.</p>
+        </NavLink>
+
+
+          {/* Manage Chatting */}
+                <NavLink
+          to="/dashboard/chat"
+          className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"
+        >
+          <h2 className="text-xl font-bold">Communicate with Clients and other Artists</h2>
           <p>View Message sent by Clients.</p>
         </NavLink>
       </div>

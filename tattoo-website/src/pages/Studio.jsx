@@ -27,7 +27,7 @@ function Studio() {
           {studio.name}
         </h1>
         <p className="text-xl text-gray-400 mt-4">
-          Welcome to our studio—a hub of creativity and artistry.
+          Welcome to our studio a tattoo hub of creativity and artistry.
         </p>
       </header>
 
@@ -323,9 +323,9 @@ function Studio() {
 
       {/* Footer Section */}
       <footer className="text-center text-gray-400 mt-12">
-        <p>&copy; {new Date().getFullYear()} {studio.name}. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} {studio.name}. All Rights Reserved to Waterford City Ink.</p>
         <p className="mt-2">
-          Powered by passion and creativity. Follow us on our journey to excellence.
+          Powered by passion and creativity for our talented artists. Follow us on our journey for ink passion.
         </p>
       </footer>
     </div>
