@@ -1,4 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import ChatSidebar from "./ChatSidebar";
+import ChatRoom from "./ChatRoom";
+
+const Chat = () => {
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  return (
+    <div className="chat-container" style={{ display: "flex" }}>
+      <ChatSidebar onSelectUser={setSelectedUser} />
+      <div className="chat-room-container" style={{ flex: 1 }}>
+        {selectedUser ? (
+          <ChatRoom selectedUser={selectedUser} />
+        ) : (
+          <p style={{ padding: "20px" }}>Select a contact to start chatting</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Chat;
+
+
+
+
+
+
+
+/*import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 const Chat = () => {
@@ -49,24 +78,24 @@ const Chat = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-lg">
       <h2 className="text-center text-3xl font-semibold text-gray-700 mb-6">Chat Application</h2>
-      
+      */
       {/* Chat Messages Area */}
-      <div className="h-80 overflow-y-scroll border border-gray-300 bg-white rounded-lg p-4">
+      /*<div className="h-80 overflow-y-scroll border border-gray-300 bg-white rounded-lg p-4">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`grid grid-cols-[auto,1fr] gap-4 items-center mb-4 p-3 rounded-lg shadow-sm ${
               msg.sender === 'Admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
             }`}
-          >
+          >*/
             {/* Avatar */}
-            <img
+           /* <img
               src={msg.sender === 'Admin' ? './img1.jpg' : '/user-avatar.png'}
               alt={`${msg.sender} avatar`}
               className="w-10 h-10 rounded-full"
-            />
+            />*/
             {/* Message Content */}
-            <div>
+            /*<div>
               <p className="font-medium">{msg.sender}</p>
               <p>{msg.content}</p>
               <span className="text-xs text-gray-500 block mt-1">
@@ -74,15 +103,15 @@ const Chat = () => {
               </span>
             </div>
           </div>
-        ))}
+        ))}*/
         {/* Typing Indicator */}
-        {isTyping && (
+      /*{isTyping && (
           <div className="text-sm text-gray-500 italic">Someone is typing...</div>
         )}
       </div>
-
+*/
       {/* Input and Button Section */}
-      <div className="mt-4 flex items-center space-x-2">
+    /*  <div className="mt-4 flex items-center space-x-2">
         <input
           type="text"
           value={input}
@@ -101,4 +130,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default Chat;*/

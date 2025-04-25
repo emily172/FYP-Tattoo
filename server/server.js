@@ -7,6 +7,9 @@ const socketIo = require('socket.io'); // Required for real-time chat functional
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentication middleware
+const authenticateRole = require('./middlewares/authorizeRole'); // General authentication middleware
+const authenticate = require('./middlewares/authenticate'); // General authentication middleware
+
 
 const Admin = require('./models/Admin'); // Admin model
 const User = require('./models/User'); // User model
@@ -30,7 +33,7 @@ const Contact = require('./models/Contact');
 
 //Chatting Application
 const ChatMessage = require('./models/ChatMessage'); // Import the ChatMessage model
-
+const Message = require('./models/Message'); // Message model
 
 
 
@@ -55,7 +58,71 @@ mongoose
 
 // Routes
 
-// Admin Registration
+
+// ----- Chat Functionality -----
+// POST: Send a message
+// Send a message
+app.post('/messages', authenticate, async (req, res) => {
+  const { receiverId, message } = req.body;
+
+  try {
+    const newMessage = new Message({
+      senderId: req.userId, // Extracted from token
+      receiverId,
+      message,
+    });
+    await newMessage.save();
+    res.status(201).json(newMessage);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send message' });
+  }
+});
+
+// Fetch messages
+app.get('/messages', authenticate, async (req, res) => {
+  const { chatWithId } = req.query;
+
+  try {
+    const messages = await Message.find({
+      $or: [
+        { senderId: req.userId, receiverId: chatWithId },
+        { senderId: chatWithId, receiverId: req.userId },
+      ],
+    }).sort({ timestamp: 1 }); // Sort by timestamp
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// ----- Real-Time Chat with Socket.IO -----
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // Listen for incoming messages
+  socket.on('sendMessage', async (data) => {
+    const { senderId, receiverId, message } = data;
+
+    try {
+      // Save message to the database
+      const newMessage = await Message.create({ senderId, receiverId, message });
+
+      // Emit the new message to the intended recipient
+      io.to(receiverId).emit('receiveMessage', newMessage);
+    } catch (err) {
+      console.error('Error saving message:', err);
+    }
+  });
+
+  // Handle user disconnection
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
+
+
+// ----- Authentication Routes -----
+// Admin registration
 app.post('/admin/register', async (req, res) => {
   const { email, password } = req.body;
 
@@ -73,7 +140,7 @@ app.post('/admin/register', async (req, res) => {
   }
 });
 
-// Admin Login
+// Admin login
 app.post('/admin/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -94,9 +161,17 @@ app.post('/admin/login', async (req, res) => {
   }
 });
 
+app.get("/api/users", authenticateAdmin, async (req, res) => {
+  try {
+    const users = await User.find({ role: "user" }).select("email _id"); // Fetch users only
+    res.status(200).json({ contacts: users });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch users." });
+  }
+});
 
-//User Login
 
+// User registration
 app.post('/user/register', async (req, res) => {
   const { email, password } = req.body;
 
@@ -114,7 +189,7 @@ app.post('/user/register', async (req, res) => {
   }
 });
 
-
+// User login
 app.post('/user/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -135,6 +210,14 @@ app.post('/user/login', async (req, res) => {
   }
 });
 
+app.get("/api/admins", authenticate, async (req, res) => {
+  try {
+    const admins = await Admin.find().select("email _id"); // Fetch admins only
+    res.status(200).json({ contacts: admins });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch admins." });
+  }
+});
 
 
 //Tattoo Image Gallery
@@ -182,9 +265,6 @@ app.delete('/tattoo-gallery/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete tattoo image' });
   }
 });
-
-
-
 
 
 
@@ -905,8 +985,6 @@ app.delete('/api/images/:id', async (req, res) => {
 
 
 
-
-
 //About Page
 // Get About Page Content
 // Get About Page Content
@@ -1221,31 +1299,33 @@ app.put('/api/contact/undo-delete', async (req, res) => {
 /** Chat Functionality */
 // REST API: Fetch all chat messages
 /** REST API: Fetch all chat messages */
-app.get('/api/chat', async (req, res) => {
+// Fetch and sort by timestamp
+// Return messages
+/*app.get('/api/chat', async (req, res) => {
   try {
-    const messages = await ChatMessage.find().sort({ timestamp: 1 }); // Fetch and sort by timestamp
-    res.status(200).json(messages); // Return messages
+    const messages = await ChatMessage.find().sort({ timestamp: 1 }); 
+    res.status(200).json(messages); 
   } catch (err) {
     console.error('Error fetching chat messages:', err);
     res.status(500).json({ error: 'Failed to fetch chat messages' });
   }
-});
+});*/
 
-/** REST API: Add a new chat message */
-app.post('/api/chat', async (req, res) => {
+/** REST API: Add a new chat message // Create new message // Respond with the saved message*/
+/*app.post('/api/chat', async (req, res) => {
   const { sender, content } = req.body;
 
   try {
-    const newMessage = await ChatMessage.create({ sender, content }); // Create new message
-    res.status(201).json(newMessage); // Respond with the saved message
+    const newMessage = await ChatMessage.create({ sender, content }); 
+    res.status(201).json(newMessage); 
   } catch (err) {
     console.error('Error saving chat message:', err);
     res.status(500).json({ error: 'Failed to save chat message' });
   }
-});
+});*/
 
 /** Real-Time Chat (Socket.IO Integration) */
-io.on('connection', (socket) => {
+/*io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   // Send chat history
@@ -1272,7 +1352,7 @@ io.on('connection', (socket) => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
-
+*/
 
 
 // Start the server
