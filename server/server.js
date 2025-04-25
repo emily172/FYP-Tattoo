@@ -2,6 +2,8 @@ require('dotenv').config(); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const http = require('http'); // Required for Socket.IO integration
+const socketIo = require('socket.io'); // Required for real-time chat functionality
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentication middleware
@@ -9,7 +11,7 @@ const authenticateAdmin = require('./middlewares/authMiddleware'); // Authentica
 const Admin = require('./models/Admin'); // Admin model
 const TattooGallery = require('./models/TattooGallery'); // Import TattooGallery model
 const Tattoo = require('./models/Tattoo'); // Tattoo model
-const Artist = require('./models/Artist');  
+const Artist = require('./models/Artist');
 const Blog = require('./models/Blog'); // Blog model
 const Studio = require('./models/Studio'); //Studio model
 const TattooStyle = require('./models/TattooStyle');//TattooStyle model
@@ -19,13 +21,20 @@ const TattooImage = require('./models/TattooImage');
 const History = require('./models/History');
 const About = require('./models/About');
 const Image = require('./models/Image'); // Your Image schema
-
-
-
 const Contact = require('./models/Contact');
 
 
+//Chatting Application
+const ChatMessage = require('./models/ChatMessage'); // Import the ChatMessage model
+
 const app = express();
+const server = http.createServer(app); // Create server for Socket.IO
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:5173', // Your frontend address
+    methods: ['GET', 'POST'],
+  },
+});
 
 // Middleware
 app.use(cors());
@@ -93,7 +102,7 @@ app.get('/tattoo-gallery', async (req, res) => {
 // Add a new tattoo image
 app.post('/tattoo-gallery', async (req, res) => {
   const { title, imageUrl } = req.body;
-  
+
   // Validate required fields
   if (!title || !imageUrl) {
     console.error('Validation Error: Missing required fields');
@@ -220,20 +229,20 @@ app.get('/artists', async (req, res) => {
 
 // Add Artist (Protected Route)
 app.post('/artists', authenticateAdmin, async (req, res) => {
-  const { 
-    name, image, popularity, contacts, socialMediaLinks, 
-    specialisation, bio, artwork, experience, languagesSpoken, 
-    awards, certifications, portfolioTags 
+  const {
+    name, image, popularity, contacts, socialMediaLinks,
+    specialisation, bio, artwork, experience, languagesSpoken,
+    awards, certifications, portfolioTags
   } = req.body;
 
   // Log incoming data for debugging
   console.log('Incoming artist data:', req.body);
 
   try {
-    const newArtist = new Artist({ 
-      name, image, popularity, contacts, socialMediaLinks, 
-      specialisation, bio, artwork, experience, languagesSpoken, 
-      awards, certifications, portfolioTags 
+    const newArtist = new Artist({
+      name, image, popularity, contacts, socialMediaLinks,
+      specialisation, bio, artwork, experience, languagesSpoken,
+      awards, certifications, portfolioTags
     });
 
     await newArtist.save();
@@ -248,19 +257,19 @@ app.post('/artists', authenticateAdmin, async (req, res) => {
 // Update Artist (Protected Route)
 app.put('/artists/:id', authenticateAdmin, async (req, res) => {
   const { id } = req.params;
-  const { 
-    name, image, popularity, contacts, socialMediaLinks, 
-    specialisation, bio, artwork, experience, languagesSpoken, 
-    awards, certifications, portfolioTags 
+  const {
+    name, image, popularity, contacts, socialMediaLinks,
+    specialisation, bio, artwork, experience, languagesSpoken,
+    awards, certifications, portfolioTags
   } = req.body;
 
   try {
     const updatedArtist = await Artist.findByIdAndUpdate(
       id,
-      { 
-        name, image, popularity, contacts, socialMediaLinks, 
-        specialisation, bio, artwork, experience, languagesSpoken, 
-        awards, certifications, portfolioTags 
+      {
+        name, image, popularity, contacts, socialMediaLinks,
+        specialisation, bio, artwork, experience, languagesSpoken,
+        awards, certifications, portfolioTags
       },
       { new: true }
     );
@@ -1158,6 +1167,66 @@ app.put('/api/contact/undo-delete', async (req, res) => {
 
 
 
-// Start the Server
-app.listen(5000, () => console.log('Server running on port 5000'));
+// Real-Time Chat (Socket.IO Integration)
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
 
+  // Fetch chat history from MongoDB and send to the connected user
+  ChatMessage.find()
+    .sort({ timestamp: 1 }) // Oldest messages first
+    .then((messages) => {
+      socket.emit('chatHistory', messages);
+    })
+    .catch((err) => {
+      console.error('Failed to fetch chat history:', err);
+    });
+
+  // Listen for new chat messages
+  socket.on('sendMessage', async (message) => {
+    console.log('Message received:', message);
+
+    try {
+      // Save the new message to MongoDB
+      const savedMessage = await ChatMessage.create(message);
+
+      // Broadcast the new message to all connected clients
+      io.emit('receiveMessage', savedMessage);
+    } catch (err) {
+      console.error('Error saving chat message:', err);
+    }
+  });
+
+  // Handle user disconnection
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
+
+// REST API Endpoints for Chat
+// Fetch all chat messages
+app.get('/api/chat', async (req, res) => {
+  try {
+    const messages = await ChatMessage.find().sort({ timestamp: 1 });
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error('Error fetching chat messages:', err);
+    res.status(500).json({ error: 'Failed to fetch chat messages' });
+  }
+});
+
+// Add a new chat message
+app.post('/api/chat', async (req, res) => {
+  const { sender, content } = req.body;
+
+  try {
+    const newMessage = await ChatMessage.create({ sender, content });
+    res.status(201).json(newMessage);
+  } catch (err) {
+    console.error('Error saving chat message:', err);
+    res.status(500).json({ error: 'Failed to save chat message' });
+  }
+});
+
+// Start the server
+const PORT = 5000; // Adjust the port if needed
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

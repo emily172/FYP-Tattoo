@@ -62,6 +62,11 @@ import About from './pages/About'
 import ManageAbout from './pages/ManageAbout';
 
 
+
+import Chat from './pages/Chat'; // Adjust the path based on your folder structure
+
+
+
 function App() {
   return (
     <Router>
@@ -132,9 +137,11 @@ function App() {
         <Route path="/dashboard/faqs" element={<FAQManagement />} /> {/* Admin FAQ Management */}
         <Route path="/dashboard/history" element={<ManageHistory />} /> {/* Admin History management */}
         <Route path="/dashboard/manage-about" element={<ManageAbout/>} />
-
-
         <Route path="/dashboard/admin-messages" element={<AdminMessages/>} />
+
+
+        <Route path="/dashboard/chat" element={<Chat />} /> {/* Route for the chat page */}
+
 
       </Routes>
     </Router>

@@ -77,6 +77,16 @@ function Navbar() {
             Blog
           </Link>
 
+
+
+
+          <Link 
+            to="/blogs" 
+            className={`hover:text-indigo-500 ${location.pathname === '/blogs' ? 'text-indigo-500' : ''}`}
+          >
+            Blog
+          </Link>
+
           {/* Admin Links */}
           {token ? (
             <>
