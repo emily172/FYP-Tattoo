@@ -80,7 +80,7 @@ const AdminDashboard = () => {
         </NavLink>
 
         
-        {/* Manage Messages */}
+        {/* Manage History */}
         <NavLink
           to="/dashboard/admin-messages"
           className="bg-gray-800 text-white p-4 rounded shadow-md hover:bg-gray-700 text-center"

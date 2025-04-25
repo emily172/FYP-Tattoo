@@ -946,17 +946,6 @@ app.put('/api/images/:id', async (req, res) => {
 //Contact
 
 // Submit a Contact Message
-app.post('/api/contact', async (req, res) => {
-  const { name, email, message } = req.body;
-
-  try {
-    const newContact = new Contact({ name, email, message });
-    const savedContact = await newContact.save();
-    res.status(201).json(savedContact);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to submit contact message', error: err });
-  }
-});
 
 app.get('/api/contact', async (req, res) => {
   const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 results per page
@@ -983,11 +972,35 @@ app.get('/api/contact', async (req, res) => {
 
 // Get All Contact Messages (for Admins)
 app.get('/api/contact', async (req, res) => {
+  const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 messages per page
+
   try {
-    const contacts = await Contact.find().sort({ createdAt: -1 });
-    res.json(contacts);
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .skip((page - 1) * limit) // Skip documents based on page number
+      .limit(Number(limit)); // Limit the number of documents per page
+
+    const total = await Contact.countDocuments(); // Total number of messages for pagination metadata
+
+    res.json({
+      contacts,         // Paginated messages
+      total,            // Total number of messages
+      page: Number(page), // Current page
+      limit: Number(limit), // Limit per page
+      totalPages: Math.ceil(total / limit), // Total number of pages
+    });
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch contact messages', error: err });
+  }
+});
+
+app.post('/api/contact', async (req, res) => {
+  try {
+    const contact = new Contact(req.body); // Assuming Contact is your Mongoose model
+    await contact.save(); // Save the new contact message to the database
+    res.status(201).json(contact); // Respond with the created contact
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create contact', error: err });
   }
 });
 
@@ -1100,17 +1113,7 @@ app.put('/api/contact/bulk-update', async (req, res) => {
     res.status(500).json({ message: 'Failed to update contacts', error: err });
   }
 });
-/*
-app.delete('/api/contact/bulk-delete', async (req, res) => {
-  const { ids } = req.body;
 
-  try {
-    await Contact.deleteMany({ _id: { $in: ids } }); // Delete all matching IDs
-    res.json({ message: 'Bulk delete successful' });
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to delete contacts', error: err });
-  }
-});*/
 app.put('/api/contact/soft-delete', async (req, res) => {
   const { ids } = req.body;
 

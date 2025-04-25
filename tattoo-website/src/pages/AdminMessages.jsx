@@ -4,11 +4,13 @@ import axios from 'axios';
 const AdminMessages = () => {
   const [messages, setMessages] = useState([]);
   const [filteredMessages, setFilteredMessages] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]); // Track selected IDs for bulk actions
+  const [unansweredMessages, setUnansweredMessages] = useState([]);
+  const [handledMessages, setHandledMessages] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [messagesPerPage, setMessagesPerPage] = useState(10); // Default limit
+  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [filters, setFilters] = useState({
     startDate: '',
@@ -18,12 +20,12 @@ const AdminMessages = () => {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [undoVisible, setUndoVisible] = useState(false); // Control Undo Snackbar visibility
-  const [undoTimer, setUndoTimer] = useState(null); // Timer for the undo action
+  const [undoVisible, setUndoVisible] = useState(false);
+  const [undoTimer, setUndoTimer] = useState(null);
 
   useEffect(() => {
-    fetchMessages(); // Load all messages
-    fetchStats(); // Load statistics
+    fetchMessages();
+    fetchStats();
   }, []);
 
   // Fetch all messages
@@ -31,12 +33,14 @@ const AdminMessages = () => {
     try {
       setLoading(true);
       const { data } = await axios.get('http://localhost:5000/api/contact', {
-        params: { page, limit }, // Pass page and limit as query params
+        params: { page, limit },
       });
-      setMessages(data.contacts); // Update messages with paginated results
-      setFilteredMessages(data.contacts); // Update filtered messages
-      setCurrentPage(data.page); // Update current page
-      setTotalPages(data.totalPages); // Update total pages
+      setMessages(data.contacts);
+      setFilteredMessages(data.contacts);
+      setUnansweredMessages(data.contacts.filter((msg) => msg.status === 'Unanswered'));
+      setHandledMessages(data.contacts.filter((msg) => msg.status === 'Handled'));
+      setCurrentPage(data.page);
+      setTotalPages(data.totalPages);
       setLoading(false);
     } catch {
       setError('Failed to fetch messages.');
@@ -66,6 +70,8 @@ const AdminMessages = () => {
       setLoading(true);
       const { data } = await axios.get('http://localhost:5000/api/contact/filter', { params: filters });
       setFilteredMessages(data);
+      setUnansweredMessages(data.filter((msg) => msg.status === 'Unanswered'));
+      setHandledMessages(data.filter((msg) => msg.status === 'Handled'));
       setLoading(false);
     } catch {
       setError('Failed to filter messages.');
@@ -76,7 +82,6 @@ const AdminMessages = () => {
   // Handle autocomplete search
   const handleAutocomplete = (query) => {
     setSearchQuery(query);
-
     if (query.length > 2) {
       axios
         .get(`http://localhost:5000/api/contact/autocomplete?query=${query}`)
@@ -87,20 +92,20 @@ const AdminMessages = () => {
           setAutocompleteResults([]);
         });
     } else {
-      setAutocompleteResults([]); // Clear suggestions for short queries
+      setAutocompleteResults([]);
     }
   };
 
   // Handle suggestion click from autocomplete
   const handleSuggestionClick = (suggestion) => {
-    setSearchQuery(suggestion.name); // Set query to selected suggestion
-    setAutocompleteResults([]); // Clear autocomplete results
-
-    // Perform search immediately
+    setSearchQuery(suggestion.name);
+    setAutocompleteResults([]);
     axios
       .get(`http://localhost:5000/api/contact/search?query=${suggestion.name}`)
       .then((response) => {
-        setFilteredMessages(response.data); // Update messages with search results
+        setFilteredMessages(response.data);
+        setUnansweredMessages(response.data.filter((msg) => msg.status === 'Unanswered'));
+        setHandledMessages(response.data.filter((msg) => msg.status === 'Handled'));
       })
       .catch(() => {
         setError('Failed to search messages.');
@@ -113,6 +118,8 @@ const AdminMessages = () => {
       setLoading(true);
       const { data } = await axios.get(`http://localhost:5000/api/contact/search?query=${searchQuery}`);
       setFilteredMessages(data);
+      setUnansweredMessages(data.filter((msg) => msg.status === 'Unanswered'));
+      setHandledMessages(data.filter((msg) => msg.status === 'Handled'));
       setLoading(false);
     } catch {
       setError('Failed to search messages.');
@@ -124,7 +131,7 @@ const AdminMessages = () => {
   const handleStatusUpdate = async (id, status) => {
     try {
       await axios.put(`http://localhost:5000/api/contact/${id}/status`, { status });
-      fetchMessages(); // Refresh messages after update
+      fetchMessages();
     } catch {
       setError('Failed to update status.');
     }
@@ -143,8 +150,8 @@ const AdminMessages = () => {
   const handleBulkUpdate = async (status) => {
     try {
       await axios.put('http://localhost:5000/api/contact/bulk-update', { ids: selectedIds, status });
-      fetchMessages(); // Refresh messages after bulk update
-      setSelectedIds([]); // Clear selected IDs
+      fetchMessages();
+      setSelectedIds([]);
     } catch {
       setError('Failed to perform bulk update.');
     }
@@ -155,41 +162,33 @@ const AdminMessages = () => {
     const firstConfirmation = window.confirm(
       "Are you sure you want to delete the selected messages?"
     );
-
     if (!firstConfirmation) {
-      return; // Exit if declined
+      return;
     }
-
     const secondConfirmation = window.confirm(
       "This action is irreversible! Are you absolutely sure?"
     );
-
     if (!secondConfirmation) {
-      return; // Exit if declined
+      return;
     }
-
     try {
       await axios.put('http://localhost:5000/api/contact/soft-delete', { ids: selectedIds });
-
       setTimeout(() => {
         setFilteredMessages((prevMessages) =>
           prevMessages.filter((msg) => !selectedIds.includes(msg._id))
         );
-      }, 1000); // Temporarily hide messages after 1 second
-
+      }, 1000);
       setUndoVisible(true);
-
       const timer = setTimeout(async () => {
         try {
           await axios.delete('http://localhost:5000/api/contact/permanent-delete');
-          fetchMessages(); // Refresh messages
+          fetchMessages();
         } catch {
           setError('Failed to permanently delete messages.');
         }
-      }, 10000); // Undo timer: 10 seconds
-
+      }, 10000);
       setUndoTimer(timer);
-      setSelectedIds([]); // Clear selected IDs
+      setSelectedIds([]);
     } catch {
       setError('Failed to delete messages.');
     }
@@ -197,11 +196,11 @@ const AdminMessages = () => {
 
   // Undo Delete Handler
   const handleUndoDelete = async () => {
-    clearTimeout(undoTimer); // Cancel permanent delete timer
+    clearTimeout(undoTimer);
     try {
       await axios.put('http://localhost:5000/api/contact/undo-delete', { ids: selectedIds });
-      setUndoVisible(false); // Hide Undo Snackbar
-      fetchMessages(); // Refresh messages
+      setUndoVisible(false);
+      fetchMessages();
     } catch {
       setError('Failed to undo delete.');
     }
@@ -237,7 +236,6 @@ const AdminMessages = () => {
       </div>
 
       {/* Search and Filters */}
-      {/* Search and Filters Section */}
       <div className="relative mb-6">
         <input
           type="text"
@@ -270,8 +268,8 @@ const AdminMessages = () => {
         </button>
       </div>
 
- {/* Filters Section */}
- <div className="mb-6 space-y-4">
+      {/* Filters Section */}
+      <div className="mb-6 space-y-4">
         <div>
           <label className="block text-lg font-bold text-gray-700">Start Date</label>
           <input
@@ -331,76 +329,114 @@ const AdminMessages = () => {
         </button>
       </div>
 
-      {/* Messages Table */}
-      {filteredMessages.length === 0 ? (
-        <p className="text-center text-gray-600">No messages found.</p>
-      ) : (
-        <table className="mt-8 w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 p-2">
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      const allIds = filteredMessages.map((msg) => msg._id);
-                      setSelectedIds(allIds);
-                    } else {
-                      setSelectedIds([]);
-                    }
-                  }}
-                  checked={selectedIds.length === filteredMessages.length && selectedIds.length > 0}
-                />
-              </th>
-              <th className="border border-gray-300 p-2">Name</th>
-              <th className="border border-gray-300 p-2">Email</th>
-              <th className="border border-gray-300 p-2">Message</th>
-              <th className="border border-gray-300 p-2">Status</th>
-              <th className="border border-gray-300 p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMessages.map((msg) => (
-              <tr key={msg._id}>
-                <td className="border border-gray-300 p-2">
+      {/* Unanswered Messages Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Unanswered Messages</h2>
+        {unansweredMessages.length === 0 ? (
+          <p className="text-center text-gray-600">No unanswered messages.</p>
+        ) : (
+          <table className="mt-4 w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(msg._id)}
-                    onChange={() => handleSelect(msg._id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const allIds = unansweredMessages.map((msg) => msg._id);
+                        setSelectedIds(allIds);
+                      } else {
+                        setSelectedIds([]);
+                      }
+                    }}
+                    checked={selectedIds.length === unansweredMessages.length && selectedIds.length > 0}
                   />
-                </td>
-                <td className="border border-gray-300 p-2">{msg.name}</td>
-                <td className="border border-gray-300 p-2">{msg.email}</td>
-                <td className="border border-gray-300 p-2">{msg.message}</td>
-                <td className="border border-gray-300 p-2">
-                  <span
-                    className={
-                      msg.status === 'Unanswered'
-                        ? 'text-red-600 font-bold'
-                        : 'text-green-600 font-bold'
-                    }
-                  >
-                    {msg.status}
-                  </span>
-                </td>
-                <td className="border border-gray-300 p-2">
-                  {msg.status === 'Unanswered' && (
+                </th>
+                <th className="border border-gray-300 p-2">Name</th>
+                <th className="border border-gray-300 p-2">Email</th>
+                <th className="border border-gray-300 p-2">Message</th>
+                <th className="border border-gray-300 p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unansweredMessages.map((msg) => (
+                <tr key={msg._id}>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(msg._id)}
+                      onChange={() => handleSelect(msg._id)}
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">{msg.name}</td>
+                  <td className="border border-gray-300 p-2">{msg.email}</td>
+                  <td className="border border-gray-300 p-2">{msg.message}</td>
+                  <td className="border border-gray-300 p-2">
                     <button
                       onClick={() => handleStatusUpdate(msg._id, 'Handled')}
                       className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                     >
                       Mark as Handled
                     </button>
-                  )}
-                </td>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Handled Messages Section */}
+      <div>
+        <h2 className="text-2xl font-bold text-green-600 mb-4">Handled Messages</h2>
+        {handledMessages.length === 0 ? (
+          <p className="text-center text-gray-600">No handled messages.</p>
+        ) : (
+          <table className="mt-4 w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const allIds = handledMessages.map((msg) => msg._id);
+                        setSelectedIds(allIds);
+                      } else {
+                        setSelectedIds([]);
+                      }
+                    }}
+                    checked={selectedIds.length === handledMessages.length && selectedIds.length > 0}
+                  />
+                </th>
+                <th className="border border-gray-300 p-2">Name</th>
+                <th className="border border-gray-300 p-2">Email</th>
+                <th className="border border-gray-300 p-2">Message</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {handledMessages.map((msg) => (
+                <tr key={msg._id}>
+                  <td className="border border-gray-300 p-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(msg._id)}
+                      onChange={() => handleSelect(msg._id)}
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">{msg.name}</td>
+                  <td className="border border-gray-300 p-2">{msg.email}</td>
+                  <td className="border border-gray-300 p-2">{msg.message}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
+        {/* Previous Button */}
         <button
           onClick={() => fetchMessages(currentPage - 1, messagesPerPage)}
           disabled={currentPage === 1}
@@ -408,13 +444,17 @@ const AdminMessages = () => {
         >
           Previous
         </button>
+
+        {/* Current Page and Total Pages */}
         <div className="flex items-center gap-2">
           <p className="text-gray-700">Page {currentPage} of {totalPages}</p>
+
+          {/* Dynamic Limit Dropdown */}
           <select
             value={messagesPerPage}
             onChange={(e) => {
-              setMessagesPerPage(Number(e.target.value));
-              fetchMessages(1, Number(e.target.value)); // Fetch with new limit
+              setMessagesPerPage(Number(e.target.value)); // Update the messages limit
+              fetchMessages(1, Number(e.target.value)); // Fetch the first page with new limit
             }}
             className="p-2 border border-gray-300 rounded"
           >
@@ -423,6 +463,8 @@ const AdminMessages = () => {
             <option value={50}>50</option>
           </select>
         </div>
+
+        {/* Next Button */}
         <button
           onClick={() => fetchMessages(currentPage + 1, messagesPerPage)}
           disabled={currentPage === totalPages}
@@ -440,7 +482,7 @@ const AdminMessages = () => {
           max={totalPages}
           value={currentPage}
           onChange={(e) => {
-            const page = Math.min(Math.max(Number(e.target.value), 1), totalPages);
+            const page = Math.min(Math.max(Number(e.target.value), 1), totalPages); // Ensure page stays within valid bounds
             setCurrentPage(page); // Update current page state
           }}
           className="p-2 border border-gray-300 rounded text-center"
