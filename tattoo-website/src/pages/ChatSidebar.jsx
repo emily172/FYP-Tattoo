@@ -32,6 +32,10 @@ const ChatSidebar = ({ onSelectUser }) => {
         }
 
         setContacts(response.data.contacts);
+
+        // Load pinned contacts from local storage
+        const storedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+        setFavorites(storedFavorites);
       } catch (err) {
         setError("Failed to fetch contacts. Please try again.");
         console.error("Error fetching contacts:", err);
@@ -50,11 +54,14 @@ const ChatSidebar = ({ onSelectUser }) => {
 
   // Handle pin/unpin functionality
   const handlePin = (contact) => {
-    setFavorites((prev) =>
-      prev.some((fav) => fav._id === contact._id)
-        ? prev.filter((fav) => fav._id !== contact._id) // Remove from favorites
-        : [...prev, contact] // Add to favorites
-    );
+    const updatedFavorites = favorites.some((fav) => fav._id === contact._id)
+      ? favorites.filter((fav) => fav._id !== contact._id) // Remove from favorites
+      : [...favorites, contact]; // Add to favorites
+
+    setFavorites(updatedFavorites);
+
+    // Save updated favorites to local storage
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
   // Remove pinned contacts from the main list
@@ -139,6 +146,7 @@ const ChatSidebar = ({ onSelectUser }) => {
                   <p className="text-gray-800 font-medium">{contact.email}</p>
                   <button
                     onClick={(e) => {
+                      e.stopPropagation();
                       handlePin(contact);
                     }}
                     className="text-gray-500 hover:text-gray-800"
