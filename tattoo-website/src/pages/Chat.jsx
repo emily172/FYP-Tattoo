@@ -1,29 +1,35 @@
 import React, { useState } from "react";
 import ChatSidebar from "./ChatSidebar"; // Sidebar component
 import ChatRoom from "./ChatRoom"; // Chat room component
+import VideoCall from "./VideoCall"; // Video call component
 
 const Chat = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to toggle sidebar
-  const [selectedUser, setSelectedUser] = useState(null); // Selected contact
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to toggle sidebar visibility
+  const [selectedUser, setSelectedUser] = useState(null); // The user selected for chatting
+  const [videoCallUser, setVideoCallUser] = useState(null); // The user selected for video calling
+
+  const handleStartVideoCall = (user) => {
+    setVideoCallUser(user); // Set the user for video call
+  };
+
+  const handleEndVideoCall = () => {
+    setVideoCallUser(null); // End the video call
+  };
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
+      {/* Sidebar Section */}
       {isSidebarOpen && (
         <div className="w-64 bg-gray-100 shadow-lg transition-all duration-300">
           <ChatSidebar
-            onSelectUser={setSelectedUser}
-            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            onSelectUser={setSelectedUser} // Select a user for chat
+            onStartVideoCall={handleStartVideoCall} // Initiate video call
           />
         </div>
       )}
 
       {/* Main Content Area */}
-      <div
-        className={`flex-grow flex flex-col transition-all duration-300 ${
-          isSidebarOpen ? "pl-0 lg:pl-64" : ""
-        }`}
-      >
+      <div className={`flex-grow flex flex-col transition-all duration-300 ${isSidebarOpen ? "pl-0 lg:pl-64" : ""}`}>
         {/* Header Section */}
         <div className="flex items-center justify-between bg-blue-500 text-white px-4 py-2 shadow">
           <h1 className="text-lg font-bold">Chat Application</h1>
@@ -35,13 +41,15 @@ const Chat = () => {
           </button>
         </div>
 
-        {/* Chat Room */}
+        {/* Main Content: ChatRoom or VideoCall */}
         <div className="flex-grow">
-          {selectedUser ? (
-            <ChatRoom selectedUser={selectedUser} />
+          {videoCallUser ? (
+            <VideoCall user={videoCallUser} onEndCall={handleEndVideoCall} />
+          ) : selectedUser ? (
+            <ChatRoom selectedUser={selectedUser} onStartVideoCall={handleStartVideoCall} />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
-              <p>Select a contact to start chatting</p>
+              <p>Select a contact to start chatting or initiate a video call.</p>
             </div>
           )}
         </div>
@@ -51,6 +59,7 @@ const Chat = () => {
 };
 
 export default Chat;
+
 
 
 

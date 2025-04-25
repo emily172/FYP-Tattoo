@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:5000");
 
-const ChatRoom = ({ selectedUser }) => {
+const ChatRoom = ({ selectedUser, onStartVideoCall }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // For message search
+  const [searchTerm, setSearchTerm] = useState(""); // For filtering messages
+  const messagesEndRef = useRef(null); // To scroll to the latest message
 
   // Fetch messages for the selected user
   useEffect(() => {
@@ -28,33 +29,33 @@ const ChatRoom = ({ selectedUser }) => {
 
     if (selectedUser) fetchMessages();
 
-    // Listen for incoming messages and reaction updates via socket
+    // Real-time incoming message listener
     socket.on("receiveMessage", (message) => {
       if (message.senderId === selectedUser._id || message.receiverId === selectedUser._id) {
         setMessages((prev) => [...prev, message]);
       }
     });
 
-    socket.on("updateReactions", ({ messageId, reactions }) => {
-      setMessages((prev) =>
-        prev.map((msg) => (msg._id === messageId ? { ...msg, reactions } : msg))
-      );
-    });
-
     return () => {
       socket.off("receiveMessage");
-      socket.off("updateReactions");
     };
   }, [selectedUser]);
+
+  // Automatically scroll to the latest message
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Filter messages based on the search term
   const filteredMessages = messages.filter((msg) =>
     msg.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle sending messages
+  // Handle sending a new message
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "") return; // Prevent empty messages
+    if (newMessage.trim() === "") return;
 
     try {
       const token = localStorage.getItem("userToken") || localStorage.getItem("adminToken");
@@ -66,42 +67,22 @@ const ChatRoom = ({ selectedUser }) => {
         message: newMessage,
       };
 
-      socket.emit("sendMessage", newMessageObj); // Emit message to server
+      socket.emit("sendMessage", newMessageObj); // Emit the message in real-time
 
       setMessages((prev) => [
         ...prev,
-        { ...newMessageObj, _id: Date.now().toString(), timestamp: new Date(), reactions: [] },
+        { ...newMessageObj, _id: Date.now().toString(), timestamp: new Date() },
       ]);
-      setNewMessage(""); // Clear input field
+      setNewMessage(""); // Clear the input field
     } catch (err) {
       console.error("Error sending message:", err);
     }
   };
 
-  // Handle pressing the Enter key
+  // Handle pressing "Enter" to send a message
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSendMessage(); // Send the message when Enter is pressed
-    }
-  };
-
-  // Handle adding a reaction to a message
-  const handleReaction = async (messageId) => {
-    const emoji = prompt("Choose a reaction (e.g., 👍, 😂, ❤️):"); // Prompt user to pick an emoji
-    if (!emoji) return;
-
-    const token = localStorage.getItem("userToken") || localStorage.getItem("adminToken");
-    const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-    try {
-      const response = await axios.post(
-        `http://localhost:5000/messages/${messageId}/react`,
-        { emoji, userId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      socket.emit("addReaction", { messageId, emoji, userId }); // Emit reaction to server
-    } catch (err) {
-      console.error("Error adding reaction:", err);
+      handleSendMessage();
     }
   };
 
@@ -110,14 +91,23 @@ const ChatRoom = ({ selectedUser }) => {
       {/* Header Section */}
       <div className="bg-blue-500 text-white p-4 rounded-t-lg flex justify-between items-center">
         <h2 className="text-lg font-bold">Chat with {selectedUser.email}</h2>
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search messages..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-          className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="flex items-center space-x-2">
+          {/* Search Messages */}
+          <input
+            type="text"
+            placeholder="Search messages..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {/* Video Call Button */}
+          <button
+            onClick={() => onStartVideoCall(selectedUser)}
+            className="bg-blue-500 text-white px-3 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none"
+          >
+            Video Call
+          </button>
+        </div>
       </div>
 
       {/* Messages Section */}
@@ -125,29 +115,23 @@ const ChatRoom = ({ selectedUser }) => {
         {filteredMessages.map((msg) => (
           <div
             key={msg._id}
-            className={`flex ${msg.senderId === selectedUser._id ? "justify-start" : "justify-end"}`}
+            className={`flex ${
+              msg.senderId === selectedUser._id ? "justify-start" : "justify-end"
+            }`}
           >
             <div
-              className={`max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl p-3 rounded-lg shadow-md ${
+              className={`max-w-xs p-3 rounded-lg shadow-md ${
                 msg.senderId === selectedUser._id ? "bg-gray-200 text-gray-700" : "bg-blue-500 text-white"
               }`}
             >
               <p>{msg.message}</p>
-              <div className="flex items-center space-x-2 mt-2">
-                {/* Display reactions */}
-                {msg.reactions?.map((reaction, index) => (
-                  <span key={index} className="text-lg">{reaction.emoji}</span>
-                ))}
-                <button
-                  onClick={() => handleReaction(msg._id)}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  React
-                </button>
-              </div>
+              <span className="text-xs text-gray-500 mt-1">
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </span>
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Section */}
@@ -157,7 +141,7 @@ const ChatRoom = ({ selectedUser }) => {
           placeholder="Type your message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress} // Listen for Enter key press
+          onKeyPress={handleKeyPress} // Trigger send on "Enter"
           className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button

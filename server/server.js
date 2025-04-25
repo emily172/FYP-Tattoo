@@ -118,8 +118,114 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
   });
+
+
+  // Handle WebRTC offer
+  socket.on('offer', (data) => {
+    const { offer, to } = data;
+    socket.to(to).emit('offer', { offer, from: socket.id });
+  });
+
+  // Handle WebRTC answer
+  socket.on('answer', (data) => {
+    const { answer, to } = data;
+    socket.to(to).emit('answer', { answer, from: socket.id });
+  });
+
+  // Handle ICE candidates
+  socket.on('ice-candidate', (data) => {
+    const { candidate, to } = data;
+    socket.to(to).emit('ice-candidate', { candidate, from: socket.id });
+  });
+
+  // Notify when user disconnects
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+
+  
 });
 
+// Store connected users and their socket IDs
+const connectedUsers = {}; // Key: userId, Value: socketId
+
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  socket.on('register-user', (userId) => {
+    connectedUsers[userId] = socket.id; // Map userId to socketId
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+    const userId = Object.keys(connectedUsers).find((key) => connectedUsers[key] === socket.id);
+    if (userId) delete connectedUsers[userId];
+  });
+});
+
+// Route to fetch Socket ID for a user
+app.get('/api/socket/:userId', authenticate, (req, res) => {
+  const { userId } = req.params;
+  const socketId = connectedUsers[userId];
+  if (socketId) {
+    res.status(200).json({ socketId });
+  } else {
+    res.status(404).json({ error: 'User not connected' });
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // Handle WebRTC offer
+  socket.on('offer', (data) => {
+    const { offer, to } = data;
+    socket.to(to).emit('offer', { offer, from: socket.id });
+  });
+
+  // Handle WebRTC answer
+  socket.on('answer', (data) => {
+    const { answer, to } = data;
+    socket.to(to).emit('answer', { answer, from: socket.id });
+  });
+
+  // Handle ICE candidates
+  socket.on('ice-candidate', (data) => {
+    const { candidate, to } = data;
+    socket.to(to).emit('ice-candidate', { candidate, from: socket.id });
+  });
+
+  socket.on('register-user', (userId) => {
+    connectedUsers[userId] = socket.id;
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+    const userId = Object.keys(connectedUsers).find((key) => connectedUsers[key] === socket.id);
+    if (userId) delete connectedUsers[userId];
+  });
+});
+
+// Route to fetch connected Socket IDs
+app.get('/api/socket/:userId', authenticate, (req, res) => {
+  const { userId } = req.params;
+  const socketId = connectedUsers[userId];
+  socketId ? res.status(200).json({ socketId }) : res.status(404).json({ error: 'User not connected' });
+});
+ 
+/*
+socket.on('offer', (data) => {
+  console.log(`Offer from ${socket.id} to ${data.to}`);
+});
+
+socket.on('answer', (data) => {
+  console.log(`Answer from ${socket.id} to ${data.to}`);
+});
+
+socket.on('ice-candidate', (data) => {
+  console.log(`ICE candidate from ${socket.id} to ${data.to}`);
+});
+*/
 
 // ----- Authentication Routes -----
 // Admin registration

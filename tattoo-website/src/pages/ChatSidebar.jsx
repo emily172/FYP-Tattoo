@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEyeSlash, FaThumbtack } from "react-icons/fa"; // Icons for toggle and pin
+import { FaThumbtack } from "react-icons/fa"; // Icon for pin functionality
 
-const ChatSidebar = ({ onSelectUser }) => {
+const ChatSidebar = ({ onSelectUser, onStartVideoCall }) => {
   const [contacts, setContacts] = useState([]);
   const [favorites, setFavorites] = useState([]); // List of pinned favorites
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Toggle state for sidebar
   const [searchTerm, setSearchTerm] = useState(""); // Search term for filtering contacts
 
   useEffect(() => {
@@ -71,94 +70,79 @@ const ChatSidebar = ({ onSelectUser }) => {
 
   return (
     <div className="relative">
-      {/* Header Section with Toggle Button */}
-      <div className="flex items-center justify-between bg-gray-100 border-b p-4">
+      {/* Header Section */}
+      <div className="bg-gray-100 border-b p-4">
         <h2 className="text-lg font-bold text-gray-700">
           {role === "admin" ? "All Contacts" : "Admins"}
         </h2>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg flex items-center transition-transform hover:scale-105 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-        >
-          {isSidebarOpen ? <FaEyeSlash className="mr-2" /> : <FaEye className="mr-2" />}
-          {isSidebarOpen ? "Hide" : "Show"} Contacts
-        </button>
+        <input
+          type="text"
+          placeholder="Search contacts..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+          className="w-full p-2 rounded-md border border-gray-300 mt-2"
+        />
       </div>
 
-      {/* Sidebar Content */}
-      <div
-        className={`bg-gray-100 w-full lg:w-64 h-full shadow-lg transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {loading ? (
-          <p className="text-gray-500 p-4">Loading contacts...</p>
-        ) : error ? (
-          <p className="text-red-500 p-4">{error}</p>
-        ) : (
-          <>
-            {/* Search Bar */}
-            <div className="p-4">
-              <input
-                type="text"
-                placeholder="Search contacts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-                className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Favorites Section */}
-            {favorites.length > 0 && (
-              <div className="bg-gray-200 p-4">
-                <h3 className="text-sm font-bold text-gray-600">Pinned Contacts</h3>
-                <ul className="divide-y divide-gray-300">
-                  {favorites.map((favorite) => (
-                    <li
-                      key={favorite._id}
-                      onClick={() => onSelectUser(favorite)}
-                      className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
-                    >
-                      <p className="text-gray-800 font-medium">{favorite.email}</p>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePin(favorite);
-                        }}
-                        className="text-gray-500 hover:text-gray-800"
-                      >
-                        <FaThumbtack />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Filtered Contacts Section */}
-            <ul className="divide-y divide-gray-200 overflow-y-auto h-[calc(100%-8rem)]">
-              {nonFavoriteContacts.map((contact) => (
-                <li
-                  key={contact._id}
-                  onClick={() => onSelectUser(contact)}
-                  className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+      {/* Favorites Section */}
+      {favorites.length > 0 && (
+        <div className="bg-gray-200 p-4">
+          <h3 className="text-sm font-bold text-gray-600">Pinned Contacts</h3>
+          <ul className="divide-y divide-gray-300">
+            {favorites.map((favorite) => (
+              <li
+                key={favorite._id}
+                onClick={() => onSelectUser(favorite)}
+                className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+              >
+                <p className="text-gray-800 font-medium">{favorite.email}</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePin(favorite);
+                  }}
+                  className="text-gray-500 hover:text-gray-800"
                 >
-                  <p className="text-gray-800 font-medium">{contact.email}</p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePin(contact);
-                    }}
-                    className="text-gray-500 hover:text-gray-800"
-                  >
-                    <FaThumbtack />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
+                  <FaThumbtack />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Filtered Contacts Section */}
+      <ul className="divide-y divide-gray-200 overflow-y-auto h-[calc(100%-8rem)]">
+        {nonFavoriteContacts.map((contact) => (
+          <li
+            key={contact._id}
+            onClick={() => onSelectUser(contact)}
+            className="p-4 flex justify-between hover:bg-blue-100 cursor-pointer"
+          >
+            <p className="text-gray-800 font-medium">{contact.email}</p>
+            <div className="flex space-x-2">
+              <button
+                className="bg-blue-500 text-white py-1 px-2 rounded text-sm hover:bg-blue-700"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering onSelectUser
+                  onStartVideoCall(contact); // Trigger video call handler
+                }}
+              >
+                Video Call
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePin(contact);
+                }}
+                className="text-gray-500 hover:text-gray-800"
+              >
+                <FaThumbtack />
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
