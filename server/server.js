@@ -37,6 +37,40 @@ const Message = require('./models/Message'); // Message model
 
 
 
+
+//Uploads
+const multer = require("multer");
+const path = require("path");
+
+// Configure Multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "uploads")); // Save files to the "uploads" directory
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + file.originalname;
+    cb(null, uniqueSuffix); // Ensure unique file names
+  },
+});
+
+// Initialize Multer
+const upload = multer({ storage });
+
+
+const fs = require("fs");
+
+
+// Ensure the "uploads" directory exists
+const uploadsDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("Created 'uploads' directory");
+}
+
+
+
+
 const app = express();
 const server = http.createServer(app); // Create server for Socket.IO
 const io = socketIo(server, {
@@ -62,7 +96,7 @@ mongoose
 // ----- Chat Functionality -----
 // POST: Send a message
 // Send a message
-app.post('/messages', authenticate, async (req, res) => {
+/*app.post('/messages', authenticate, async (req, res) => {
   const { receiverId, message } = req.body;
 
   try {
@@ -76,10 +110,40 @@ app.post('/messages', authenticate, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to send message' });
   }
+});*/
+
+// Route for sending a message (with optional file)
+app.post('/messages', authenticate, upload.single('file'), async (req, res) => {
+  const { receiverId, message } = req.body;
+
+  try {
+    // Create a new message object
+    const newMessage = new Message({
+      senderId: req.userId, // Extracted from token
+      receiverId,
+      message,
+    });
+
+    // If a file is uploaded, include file metadata
+    if (req.file) {
+      newMessage.fileName = req.file.originalname; // Store the original file name
+      newMessage.filePath = `/uploads/${req.file.filename}`; // Save the file path
+      newMessage.fileType = req.file.mimetype; // Save the MIME type (e.g., image/png)
+    }
+
+    // Save the message to the database
+    const savedMessage = await newMessage.save();
+    res.status(201).json(savedMessage);
+  } catch (err) {
+    console.error("Error saving message:", err);
+    res.status(500).json({ error: "Failed to send message" });
+  }
 });
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Fetch messages
-app.get('/messages', authenticate, async (req, res) => {
+/*app.get('/messages', authenticate, async (req, res) => {
   const { chatWithId } = req.query;
 
   try {
@@ -94,6 +158,27 @@ app.get('/messages', authenticate, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
+*/
+// Fetch messages for a specific chat
+app.get('/messages', authenticate, async (req, res) => {
+  const { chatWithId } = req.query;
+
+  try {
+    // Find messages between the sender and receiver
+    const messages = await Message.find({
+      $or: [
+        { senderId: req.userId, receiverId: chatWithId },
+        { senderId: chatWithId, receiverId: req.userId },
+      ],
+    }).sort({ timestamp: 1 }); // Sort by timestamp (oldest to newest)
+    
+    res.status(200).json(messages); // Send the fetched messages to the frontend
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
+});
+
 
 // ----- Real-Time Chat with Socket.IO -----
 io.on('connection', (socket) => {
