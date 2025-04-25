@@ -2,68 +2,97 @@ import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const socket = io('http://localhost:5000'); // Connect to your backend server
+  const [messages, setMessages] = useState([]); // State for chat messages
+  const [input, setInput] = useState(''); // State for the current input
+  const [isTyping, setIsTyping] = useState(false); // State for typing indicator
+  const socket = io('http://localhost:5000'); // Connect to the Socket.IO server
 
   useEffect(() => {
-    // Listen for chat history on initial connection
+    // Fetch chat history on initial connection
     socket.on('chatHistory', (messages) => {
       setMessages(messages);
     });
 
-    // Listen for new messages broadcasted by the server
+    // Listen for new messages from the server
     socket.on('receiveMessage', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    return () => socket.disconnect(); // Cleanup socket connection on unmount
+    // Listen for typing notifications
+    socket.on('userTyping', (typing) => {
+      setIsTyping(typing);
+    });
+
+    return () => socket.disconnect(); // Cleanup socket connection on component unmount
   }, []);
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+    socket.emit('typing', e.target.value.length > 0); // Notify server about typing status
+  };
 
   const sendMessage = () => {
     if (input.trim() === '') return; // Prevent sending empty messages
 
     const message = {
-      sender: 'Admin', // Replace with actual user (e.g., dynamically fetched username)
+      sender: 'Admin', // Replace with actual user name or ID
       content: input,
       timestamp: new Date(),
     };
 
-    socket.emit('sendMessage', message); // Emit message to the server
-    setMessages((prevMessages) => [...prevMessages, message]); // Update local state
-    setInput(''); // Clear input field
+    socket.emit('sendMessage', message); // Send the message to the server
+    setMessages((prevMessages) => [...prevMessages, message]); // Add the message locally
+    setInput(''); // Clear the input field
+    socket.emit('typing', false); // Notify server that typing has stopped
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-lg">
       <h2 className="text-center text-3xl font-semibold text-gray-700 mb-6">Chat Application</h2>
+      
+      {/* Chat Messages Area */}
       <div className="h-80 overflow-y-scroll border border-gray-300 bg-white rounded-lg p-4">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`mb-4 p-3 rounded-lg shadow-sm ${
+            className={`grid grid-cols-[auto,1fr] gap-4 items-center mb-4 p-3 rounded-lg shadow-sm ${
               msg.sender === 'Admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
             }`}
           >
-            <p className="font-medium">{msg.sender}</p>
-            <p>{msg.content}</p>
-            <span className="text-xs text-gray-500 block mt-1">
-              {new Date(msg.timestamp).toLocaleTimeString()}
-            </span>
+            {/* Avatar */}
+            <img
+              src={msg.sender === 'Admin' ? './img1.jpg' : '/user-avatar.png'}
+              alt={`${msg.sender} avatar`}
+              className="w-10 h-10 rounded-full"
+            />
+            {/* Message Content */}
+            <div>
+              <p className="font-medium">{msg.sender}</p>
+              <p>{msg.content}</p>
+              <span className="text-xs text-gray-500 block mt-1">
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
           </div>
         ))}
+        {/* Typing Indicator */}
+        {isTyping && (
+          <div className="text-sm text-gray-500 italic">Someone is typing...</div>
+        )}
       </div>
-      <div className="mt-4 flex">
+
+      {/* Input and Button Section */}
+      <div className="mt-4 flex items-center space-x-2">
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Type your message..."
-          className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
         />
         <button
           onClick={sendMessage}
-          className="p-3 bg-blue-500 text-white font-medium rounded-r-lg hover:bg-blue-600 transition duration-200"
+          className="p-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-200"
         >
           Send
         </button>

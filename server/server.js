@@ -1168,31 +1168,61 @@ app.put('/api/contact/undo-delete', async (req, res) => {
 
 
 // Real-Time Chat (Socket.IO Integration)
-io.on('connection', (socket) => {
+/** Chat Functionality */
+// REST API: Fetch all chat messages
+/** REST API: Fetch all chat messages */
+app.get('/api/chat', async (req, res) => {
+  try {
+    const messages = await ChatMessage.find().sort({ timestamp: 1 }); // Fetch and sort by timestamp
+    res.status(200).json(messages); // Return messages
+  } catch (err) {
+    console.error('Error fetching chat messages:', err);
+    res.status(500).json({ error: 'Failed to fetch chat messages' });
+  }
+});
+
+/** REST API: Add a new chat message */
+app.post('/api/chat', async (req, res) => {
+  const { sender, content } = req.body;
+
+  try {
+    const newMessage = await ChatMessage.create({ sender, content }); // Create new message
+    res.status(201).json(newMessage); // Respond with the saved message
+  } catch (err) {
+    console.error('Error saving chat message:', err);
+    res.status(500).json({ error: 'Failed to save chat message' });
+  }
+});
+
+/** Real-Time Chat (Socket.IO Integration) */
+io.on('connection', async (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  // Fetch chat history from MongoDB and send to the connected user
-  ChatMessage.find()
-    .sort({ timestamp: 1 }) // Oldest messages first
-    .then((messages) => {
-      socket.emit('chatHistory', messages);
-    })
-    .catch((err) => {
-      console.error('Failed to fetch chat history:', err);
-    });
+  try {
+    // Send chat history to the newly connected user
+    const messages = await ChatMessage.find().sort({ timestamp: 1 });
+    socket.emit('chatHistory', messages);
+  } catch (err) {
+    console.error('Failed to fetch chat history:', err);
+    socket.emit('error', { error: 'Failed to load chat history.' }); // Notify client about the error
+  }
 
-  // Listen for new chat messages
+  // Listen for typing events
+  socket.on('typing', (isTyping) => {
+    socket.broadcast.emit('userTyping', isTyping); // Broadcast typing status
+  });
+
+  // Listen for incoming chat messages
   socket.on('sendMessage', async (message) => {
     console.log('Message received:', message);
 
     try {
       // Save the new message to MongoDB
       const savedMessage = await ChatMessage.create(message);
-
-      // Broadcast the new message to all connected clients
-      io.emit('receiveMessage', savedMessage);
+      io.emit('receiveMessage', savedMessage); // Broadcast the message to all connected clients
     } catch (err) {
       console.error('Error saving chat message:', err);
+      socket.emit('error', { error: 'Failed to send message.' }); // Notify client about the error
     }
   });
 
@@ -1202,30 +1232,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// REST API Endpoints for Chat
-// Fetch all chat messages
-app.get('/api/chat', async (req, res) => {
-  try {
-    const messages = await ChatMessage.find().sort({ timestamp: 1 });
-    res.status(200).json(messages);
-  } catch (err) {
-    console.error('Error fetching chat messages:', err);
-    res.status(500).json({ error: 'Failed to fetch chat messages' });
-  }
-});
-
-// Add a new chat message
-app.post('/api/chat', async (req, res) => {
-  const { sender, content } = req.body;
-
-  try {
-    const newMessage = await ChatMessage.create({ sender, content });
-    res.status(201).json(newMessage);
-  } catch (err) {
-    console.error('Error saving chat message:', err);
-    res.status(500).json({ error: 'Failed to save chat message' });
-  }
-});
 
 // Start the server
 const PORT = 5000; // Adjust the port if needed
