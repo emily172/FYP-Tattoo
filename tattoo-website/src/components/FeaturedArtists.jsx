@@ -13,7 +13,7 @@ function FeaturedArtists() {
   return (
     <div className="py-16 bg-gradient-to-b from-gray-900 via-gray-800 to-black">
       <h2 className="text-4xl font-extrabold text-center text-white mb-12">
-        Meet Our <span className="text-indigo-500">Artists</span>
+        Meet Our <span className="text-indigo-500">Team</span>
       </h2>
       
       {/* Enhanced Grid Layout */}
